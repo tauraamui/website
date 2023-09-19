@@ -26,3 +26,9 @@ pub fn (mut app App) page_home() vweb.Result {
 
 	return $vweb.html()
 }
+
+['/assets/:name']
+pub fn (mut app App) static_files_test(name string) vweb.Result {
+	return app.ok(name)
+}
+
