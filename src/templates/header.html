@@ -39,15 +39,18 @@ wtf are you looking at
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <head>
        <meta charset='UTF-8' name='viewport' content='width=device-width, initial-scale=1.0'>
-       <link href='/assets/hack.css' rel='stylesheet'>
-       <link href='/assets/dark-grey.css' rel='stylesheet'>
+       @css '/assets/css/hack.css'
+       @css '/assets/css/dark-grey.css'
+       @css '/assets/css/site.css'
        <title>${title}</title>
     </head>
    <body class="hack dark-grey">
-      <div class="container">
+      <div class="root container">
          <header>
             <nav>
                <a href="/">Home</a>
+               <a href="/blog">Blog</a>
+               <a href="/contact">Contact</a>
             </nav>
          </header>
          <br/>
