@@ -48,7 +48,12 @@ pub fn (mut app App) face() vweb.Result {
 ['/']
 pub fn (mut app App) home() vweb.Result {
 	title := "tauraamui's website"
+	return $vweb.html()
+}
 
+['/contact']
+pub fn (mut app App) contact() vweb.Result {
+	title := "Contact Info - tauraamui's website"
 	return $vweb.html()
 }
 
