@@ -5,3 +5,11 @@
 nav {
     font-size: 1.5rem;
 }
+
+.hack h1 {
+    font-size: 1.8rem;
+}
+
+.hack h1::after {
+    content: none;
+}

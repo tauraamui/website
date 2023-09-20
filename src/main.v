@@ -16,11 +16,6 @@ struct App {
 
 fn main() {
 	mut app := &App{}
-	app.serve_static('/assets/black_wolf_face.png', 'src/assets/imgs/black_wolf_face.png')
-	// app.serve_static('/assets/css/dark-grey.css', 'src/assets/css/dark-grey.css')
-	// app.serve_static('/assets/css/hack.css', 'src/assets/css/hack.css')
-	// makes all static files available.
-
 	vweb.run(app, port)
 }
 
@@ -43,6 +38,11 @@ pub fn (mut app App) css(name string) vweb.Result {
 			return app.not_found()
 		}
 	}
+}
+
+['/assets/black_wolf_face.png']
+pub fn (mut app App) face() vweb.Result {
+	return app.ok(wolf_face_png.to_string())
 }
 
 ['/']
