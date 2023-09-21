@@ -52,12 +52,21 @@ pub fn (mut app App) home() vweb.Result {
 	return $vweb.html()
 }
 
+['/blog']
+pub fn (mut app App) blog() vweb.Result {
+	title := "Blog - tauraamui's website"
+	existing_site := "https://tauraamui.substack.com/"
+	return $vweb.html()
+}
+
+
 ['/contact']
 pub fn (mut app App) contact() vweb.Result {
 	title := "Contact Info - tauraamui's website"
 	email := html.escape("adamstringer@hey.com")
 	github := html.escape("https://github.com/tauraamui")
 	telegram := html.escape("https://t.me/tauraamui")
+	discord := html.escape("https://discordapp.com/users/753689188213194862")
 	return $vweb.html()
 }
 
