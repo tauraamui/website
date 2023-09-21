@@ -56,6 +56,7 @@ pub fn (mut app App) home() vweb.Result {
 pub fn (mut app App) contact() vweb.Result {
 	title := "Contact Info - tauraamui's website"
 	email := html.escape("adamstringer@hey.com")
+	github := html.escape("https://github.com/tauraamui")
 	telegram := html.escape("https://t.me/tauraamui")
 	return $vweb.html()
 }
