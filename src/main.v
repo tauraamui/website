@@ -1,7 +1,10 @@
 module main
 
+import os
+import os.cmdline
 import vweb
 import encoding.html
+import strconv
 
 const (
 	wolf_face_png = $embed_file('src/assets/imgs/black_wolf_face.png')
@@ -15,9 +18,17 @@ struct App {
 	vweb.Context
 }
 
+fn resolve_port() int {
+	port_arg := cmdline.option(os.args_after(""), "-port", "8082")
+	return strconv.atoi(port_arg) or {
+		println("invalid port ${port_arg} (must be digits)")
+		exit(1)
+	}
+}
+
 fn main() {
 	mut app := &App{}
-	vweb.run(app, port)
+	vweb.run(app, resolve_port())
 }
 
 ['/assets/css/:name']
