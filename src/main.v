@@ -1,6 +1,7 @@
 module main
 
 import vweb
+import encoding.html
 
 const (
 	wolf_face_png = $embed_file('src/assets/imgs/black_wolf_face.png')
@@ -54,6 +55,8 @@ pub fn (mut app App) home() vweb.Result {
 ['/contact']
 pub fn (mut app App) contact() vweb.Result {
 	title := "Contact Info - tauraamui's website"
+	email := html.escape("adamstringer@hey.com")
+	telegram := html.escape("https://t.me/tauraamui")
 	return $vweb.html()
 }
 
