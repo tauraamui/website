@@ -7,6 +7,10 @@ nav {
     font-size: 1.8rem;
 }
 
+.hack li {
+    padding-bottom: .5rem;
+}
+
 .hack h2, .hack h3 {
     font-size: 1.8rem;
 }
