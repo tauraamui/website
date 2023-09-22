@@ -8,9 +8,9 @@ import strconv
 
 const (
 	wolf_face_png = $embed_file('src/assets/imgs/black_wolf_face.png', .zlib)
-	hack_css = $embed_file('src/assets/css/hack.css')
-	dark_grey_css = $embed_file('src/assets/css/dark-grey.css')
-	site_css = $embed_file('src/assets/css/site.css')
+	hack_css = $embed_file('src/assets/css/hack.css', .zlib)
+	dark_grey_css = $embed_file('src/assets/css/dark-grey.css', .zlib)
+	site_css = $embed_file('src/assets/css/site.css', .zlib)
 	port = 8082
 )
 
