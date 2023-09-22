@@ -113,6 +113,7 @@ pub fn (mut app App) metrics() vweb.Result {
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["metrics"] += 1
+		} else {
 			result.write_string("hello me!\n")
 		}
 		for k, v in app.views {
