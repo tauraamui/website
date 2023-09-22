@@ -7,7 +7,7 @@ import encoding.html
 import strconv
 
 const (
-	wolf_face_png = $embed_file('src/assets/imgs/black_wolf_face.png')
+	wolf_face_png = $embed_file('src/assets/imgs/black_wolf_face.png', .zlib)
 	hack_css = $embed_file('src/assets/css/hack.css')
 	dark_grey_css = $embed_file('src/assets/css/dark-grey.css')
 	site_css = $embed_file('src/assets/css/site.css')
@@ -35,15 +35,15 @@ fn main() {
 pub fn (mut app App) css(name string) vweb.Result {
 	match name {
 		"hack.css" {
-			app.set_content_type(app.req.header.get(.content_type) or { "" })
+			app.set_content_type(vweb.mime_types[".css"] or { "" })
 			return app.ok(hack_css.to_string())
 		}
 		"dark-grey.css" {
-			app.set_content_type(app.req.header.get(.content_type) or { "" })
+			app.set_content_type(vweb.mime_types[".css"] or { "" })
 			return app.ok(dark_grey_css.to_string())
 		}
 		"site.css" {
-			app.set_content_type(app.req.header.get(.content_type) or { "" })
+			app.set_content_type(vweb.mime_types[".css"] or { "" })
 			return app.ok(site_css.to_string())
 		}
 		else {
@@ -54,6 +54,7 @@ pub fn (mut app App) css(name string) vweb.Result {
 
 ['/assets/black_wolf_face.png']
 pub fn (mut app App) face() vweb.Result {
+	app.set_content_type(vweb.mime_types[".png"] or { "" })
 	return app.ok(wolf_face_png.to_string())
 }
 
