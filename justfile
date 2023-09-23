@@ -2,7 +2,7 @@ run:
     v run .
 
 compile-blogs:
-    v run ./src/compile_blogs.v
+    v -d compile run .
 
 run-watch:
     v -d vweb_livereload watch run .
