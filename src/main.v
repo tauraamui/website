@@ -8,10 +8,10 @@ import strconv
 import strings
 
 const (
-	wolf_face_png = $embed_file('src/assets/imgs/black_wolf_face.png', .zlib)
-	hack_css = $embed_file('src/assets/css/hack.css', .zlib)
-	dark_grey_css = $embed_file('src/assets/css/dark-grey.css', .zlib)
-	site_css = $embed_file('src/assets/css/site.css', .zlib)
+	wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png', .zlib)
+	hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
+	dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
+	site_css = $embed_file('./src/assets/css/site.css', .zlib)
 	port = 8082
 )
 
@@ -89,6 +89,11 @@ pub fn (mut app App) blog() vweb.Result {
 	title := "Blog - tauraamui's website"
 	existing_site := "https://tauraamui.substack.com/"
 	return $vweb.html()
+}
+
+['/blog/:name']
+pub fn (mut app App) blog_view(name string) vweb.Result {
+	return app.ok("")
 }
 
 

@@ -6,7 +6,13 @@ import strings
 
 fn main() {
 	compile_markdown_blogs_into_html_files()
-	generate_blog_embeds()
+
+	target := "./src/resolve_blogs.v"
+	code := generate_blog_embeds_code()
+	os.rm(target) or { println("unable to remove ${target}: ${err}") }
+	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
+	defer { wfd.close() }
+	wfd.write_string(code) or { panic("unable to write to file: ${target}") }
 }
 
 fn compile_markdown_blogs_into_html_files() {
@@ -46,19 +52,36 @@ fn compile_markdown_blogs_into_html_files() {
 	})
 }
 
-fn generate_blog_embeds() {
+fn generate_blog_embeds_code() string {
+	mut generated_files := []string{}
+	mut ref := &generated_files
+
+	os.walk("./src/blogs", fn [mut ref] (path string) {
+		ref << path
+	})
 	mut code := strings.new_builder(1024)
 
 	code.writeln("module main")
 	code.writeln("")
 	code.writeln("const (")
 
-	mut code_ref := &code
-	os.walk("./src/blogs", fn [mut code_ref] (path string)  {
-		code_ref.writeln("\t${os.base(path).replace("-", "_").replace(".html", "")} = \$embed_file('${path}', .zlib)")
-	})
+	for f in generated_files {
+		code.writeln("\t${os.base(f).replace("-", "_").replace(".html", "")} = \$embed_file('${f}', .zlib)")
+	}
 
 	code.writeln(")")
+	code.writeln("")
 
-	println(code.str())
+	code.writeln("fn resolve_blog(name string) !string {")
+	code.writeln("\treturn match name {")
+	for f in generated_files {
+		code.writeln("\t\t\"${os.base(f)}\" {")
+		code.writeln("\t\t\t${os.base(f).replace("-", "_").replace(".html", "")}.to_string()")
+		code.writeln("\t\t}")
+		code.writeln("\t\telse { error(\"unable to resolve blog\") }")
+	}
+	code.writeln("\t}")
+	code.writeln("}")
+
+	return code.str()
 }
