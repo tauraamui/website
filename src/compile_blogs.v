@@ -24,7 +24,14 @@ fn compile_markdown_blogs_into_html_files() {
 		for !fd.eof() {
 			mut buffer := []u8{ len: 1024 }
 			read_bytes := fd.read_bytes_into_newline(mut &buffer) or { panic(err) }
-			// TODO:(tauraamui) -> handle stupidly long lines
+
+			if read_bytes == 1024 {
+				input_line := buffer.bytestr()
+				output_line := markdown.to_html(input_line)
+				wfd.write_string(output_line) or { println("unable to write to file: ${target}"); return }
+				return
+			}
+
 			if read_bytes < 1024 {
 				mut output_line := "<br/>"
 				if read_bytes > 1 {
