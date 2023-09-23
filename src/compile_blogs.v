@@ -2,9 +2,11 @@ module main
 
 import os
 import markdown
+import strings
 
 fn main() {
 	compile_markdown_blogs_into_html_files()
+	generate_blog_embeds()
 }
 
 fn compile_markdown_blogs_into_html_files() {
@@ -42,4 +44,21 @@ fn compile_markdown_blogs_into_html_files() {
 			}
 		}
 	})
+}
+
+fn generate_blog_embeds() {
+	mut code := strings.new_builder(1024)
+
+	code.writeln("module main")
+	code.writeln("")
+	code.writeln("const (")
+
+	mut code_ref := &code
+	os.walk("./src/blogs", fn [mut code_ref] (path string)  {
+		code_ref.writeln("\t${os.base(path).replace("-", "_").replace(".html", "")} = \$embed_file('${path}', .zlib)")
+	})
+
+	code.writeln(")")
+
+	println(code.str())
 }
