@@ -28,7 +28,7 @@ fn compile_markdown_blogs_into_html_files() {
 			if read_bytes < 1024 {
 				mut output_line := "<br/>"
 				if read_bytes > 1 {
-					input_line := buffer[..read_bytes - if read_bytes > 1 { 1 } else { 0 }].bytestr()
+					input_line := buffer[..read_bytes - 1].bytestr()
 					output_line = markdown.to_html(input_line)
 				}
 				wfd.writeln(output_line) or { println("unable to write to file: ${target}"); return }
