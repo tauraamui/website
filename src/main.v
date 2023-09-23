@@ -93,8 +93,7 @@ pub fn (mut app App) blog() vweb.Result {
 
 ['/blog/:name']
 pub fn (mut app App) blog_view(name string) vweb.Result {
-	return app.ok("")
-}
+	return app.html(resolve_blog("${name}.html") or { return app.not_found() })}
 
 
 ['/contact']

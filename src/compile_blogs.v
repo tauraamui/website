@@ -4,7 +4,7 @@ import os
 import markdown
 import strings
 
-fn main() {
+fn main2() {
 	compile_markdown_blogs_into_html_files()
 
 	target := "./src/resolve_blogs.v"
