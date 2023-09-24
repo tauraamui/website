@@ -11,6 +11,6 @@ I have a strong feeling that most people simply don't know how to wash up correc
 
 ### Prepare
 
-This should go without saying, but clearing your crockery of as much solid food residue as possible before you being is essential to doing adulting correctly.
+This should go without saying, but clearing your crockery of as much solid food residue as possible before you begin is essential to doing adulting correctly.
 
 ### Step 1.
