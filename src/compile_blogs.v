@@ -10,7 +10,10 @@ fn compile_markdown_blogs_into_html_files() {
 
 	os.walk("./src/blogs", fn (path string) { os.rm(path) or { println("unable to remove ${path}: ${err}"); return } })
 
-	os.walk("./blogs", fn (path string) {
+	header_content := os.read_file("./src/templates/header.html") or { println("unable to extract header content"); return }
+	footer_content := os.read_file("./src/templates/footer.html") or { println("unable to extract footer content"); return }
+
+	os.walk("./blogs", fn [header_content, footer_content] (path string) {
 		mut fd := os.open(path) or { println("unable to open ${path} for conversion"); return }
 		defer { fd.close() }
 
@@ -18,9 +21,13 @@ fn compile_markdown_blogs_into_html_files() {
 		mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
 		defer { wfd.close() }
 
+		wfd.write_string(header_content) or { println("unable to prepend header to file: ${err}"); return }
+
 		for !fd.eof() {
 			mut buffer := []u8{ len: 1024 }
 			read_bytes := fd.read_bytes_into_newline(mut &buffer) or { panic(err) }
+
+			wfd.write_string(" ".repeat(9)) or { println("unable to write to file: ${target}"); return }
 
 			if read_bytes == 1024 {
 				input_line := buffer.bytestr()
@@ -38,6 +45,8 @@ fn compile_markdown_blogs_into_html_files() {
 				wfd.writeln(output_line) or { println("unable to write to file: ${target}"); return }
 			}
 		}
+
+		wfd.write_string("${" ".repeat(6)}</div>\n${footer_content}") or { println("unable to append footer to file: ${err}"); return }
 	})
 }
 
