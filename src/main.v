@@ -8,10 +8,11 @@ import strconv
 import strings
 
 const (
-	wolf_face_png = $embed_file('src/assets/imgs/black_wolf_face.png', .zlib)
-	hack_css = $embed_file('src/assets/css/hack.css', .zlib)
-	dark_grey_css = $embed_file('src/assets/css/dark-grey.css', .zlib)
-	site_css = $embed_file('src/assets/css/site.css', .zlib)
+	wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png', .zlib)
+	hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
+	dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
+	site_css = $embed_file('./src/assets/css/site.css', .zlib)
+	blog_css = $embed_file('./src/assets/css/blog.css', .zlib)
 	port = 8082
 )
 
@@ -56,6 +57,10 @@ pub fn (mut app App) css(name string) vweb.Result {
 			app.set_content_type(vweb.mime_types[".css"] or { "" })
 			return app.ok(site_css.to_string())
 		}
+		"blog.css" {
+			app.set_content_type(vweb.mime_types[".css"] or { "" })
+			return app.ok(blog_css.to_string())
+		}
 		else {
 			return app.not_found()
 		}
@@ -89,6 +94,12 @@ pub fn (mut app App) blog() vweb.Result {
 	title := "Blog - tauraamui's website"
 	existing_site := "https://tauraamui.substack.com/"
 	return $vweb.html()
+}
+
+['/blog/:name']
+pub fn (mut app App) blog_view(name string) vweb.Result {
+	content := resolve_blog("${name}.html") or { return app.not_found() }
+	return app.html(content.replace("\$\{title\}", "${name} - tauraamui's website").replace("site.css", "blog.css"))
 }
 
 
