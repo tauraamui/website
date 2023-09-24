@@ -1,8 +1,8 @@
 run:
-    v run .
+    v run ./src
 
 compile-blogs:
-    v -d compile run .
+    v run compile_blogs.v
 
 run-watch:
     v -d vweb_livereload watch run .

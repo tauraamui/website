@@ -30,16 +30,6 @@ fn resolve_port() int {
 }
 
 fn main() {
-	$if compile ? {
-		compile_markdown_blogs_into_html_files()
-		target := "./src/resolve_blogs.v"
-		code := generate_blog_embeds_code()
-		os.rm(target) or { println("unable to remove ${target}: ${err}") }
-		mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
-		defer { wfd.close() }
-		wfd.write_string(code) or { panic("unable to write to file: ${target}") }
-		return
-	}
 	vweb.run_at(new_app(), vweb.RunParams{
 		port: resolve_port()
 	}) or { panic(err) }

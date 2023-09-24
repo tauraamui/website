@@ -4,6 +4,16 @@ import os
 import markdown
 import strings
 
+fn main() {
+	compile_markdown_blogs_into_html_files()
+	target := "./src/resolve_blogs.v"
+	code := generate_blog_embeds_code()
+	os.rm(target) or { println("unable to remove ${target}: ${err}") }
+	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
+	defer { wfd.close() }
+	wfd.write_string(code) or { panic("unable to write to file: ${target}") }
+}
+
 fn compile_markdown_blogs_into_html_files() {
 	if !os.is_dir("./blog") { panic("source blogs directory './blog' is missing") }
 	if !os.is_dir("./src/blog") { panic("target blogs directory './src/blog' is missing") }
