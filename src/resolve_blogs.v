@@ -1,7 +1,7 @@
 module main
 
 const (
-	how_to_wash_up_correctly = $embed_file('./src/blogs/how-to-wash-up-correctly.html', .zlib)
+	how_to_wash_up_correctly = $embed_file('./src/blog/how-to-wash-up-correctly.html', .zlib)
 )
 
 fn resolve_blog(name string) !string {
