@@ -1,3 +1,11 @@
+* {
+    font-family: "Iosevka Aile Iaso", Menlo, monospace
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #f781b4;
+}
+
 .root {
     padding: 20px 10px;
     font-size: 1.2rem;
@@ -14,6 +22,7 @@ nav {
 .hack h2, .hack h3 {
     font-size: 1.8rem;
     margin-bottom: 0;
+    padding-top: 1.5rem;
 }
 
 .hack h4 {
@@ -24,6 +33,6 @@ nav {
     font-size: 2.2rem;
 }
 
-.hack h1::after, h2::after {
+.hack h1::after, .hack h2::after, .hack h3::after, .hack h1::before, .hack h2::before, .hack h3::before {
     content: none;
 }

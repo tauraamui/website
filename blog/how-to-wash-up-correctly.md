@@ -1,3 +1,6 @@
+---
+Date: 23/12/2023
+---
 # How to correctly wash up
 
 There are methods people use to wash up their dishes. However generally I'd say that they all involve:
@@ -17,6 +20,7 @@ This should go without saying, but clearing your crockery of as much solid food 
 
 Start the actual washing process by gently soaking your pot/pan/crockery/cutlery etc., in a short stream of water direct from the tap.
 
+![frying-pan](/static/rinsed-frying-pan.png)
 ### Step 2.
 
 Drizzle a small amount of washing up liquid onto your now damp crockery item, hopefully you've left a small amount of surface water for this to mix with a little bit.

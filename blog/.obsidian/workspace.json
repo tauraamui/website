@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "how-to-wash-up-correctly.md",
-                "mode": "source",
+                "mode": "preview",
                 "source": false
               }
             }
@@ -148,6 +148,7 @@
   },
   "active": "29b3f40666a022e0",
   "lastOpenFiles": [
+    "static/rinsed-frying-pan.png",
     "static/Screenshot 2023-09-23 17.27.35.png"
   ]
 }
