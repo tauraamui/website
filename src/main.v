@@ -48,6 +48,7 @@ fn main() {
 fn new_app() &App {
 	shared views := map[string]int{}
 	mut app := &App{ views: views }
+	app.mount_static_folder_at("./blog/static", "/static")
 	return app
 }
 

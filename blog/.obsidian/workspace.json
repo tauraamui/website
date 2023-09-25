@@ -14,7 +14,7 @@
               "type": "markdown",
               "state": {
                 "file": "how-to-wash-up-correctly.md",
-                "mode": "preview",
+                "mode": "source",
                 "source": false
               }
             }
@@ -148,7 +148,18 @@
   },
   "active": "29b3f40666a022e0",
   "lastOpenFiles": [
-    "static/rinsed-frying-pan.png",
-    "static/Screenshot 2023-09-23 17.27.35.png"
+    "static/dirty-pan.jpg",
+    "static/rinsed-and-soaped-pan.jpg",
+    "static/scrubbed-up-pan.jpg",
+    "static/clean-pan.jpg",
+    "static/result-PXL_20230925_135651471.jpg",
+    "static/result-PXL_20230925_135546879.jpg",
+    "static/result-PXL_20230925_135508801.MP.jpg",
+    "static/result-PXL_20230925_135403841.jpg",
+    "static/PXL_20230925_135546879.jpg",
+    "static/PXL_20230925_135403841.jpg",
+    "static/PXL_20230925_135508801.MP.jpg",
+    "static/-0",
+    "static/result.png.crswap"
   ]
 }
