@@ -3,7 +3,7 @@ Date: 23/12/2023
 ---
 # How to correctly wash up
 
-There are methods people use to wash up their dishes. However generally I'd say that they all involve:
+There are different methods people use to wash up their dishes. However generally I'd say that they all involve:
 
 - Hot water
 - A basin or some kind, likely a sink
