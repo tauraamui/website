@@ -2,5 +2,6 @@
   "attachmentFolderPath": "static",
   "vimMode": true,
   "strictLineBreaks": true,
-  "newLinkFormat": "relative"
+  "newLinkFormat": "relative",
+  "alwaysUpdateLinks": true
 }

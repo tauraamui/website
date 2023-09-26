@@ -20,7 +20,19 @@ There is a slight caveat to this system, in that at this point of the blog autho
 ## Compiling/building
 Once a blog post has been created, edited etc., the next step is to run `just compile-blogs`. This is a `justfile` command which runs this: `v run compile_blogs.v` in the root of the website repository. `compile_blogs.v` is a discrete V program which is responsible for parsing all existing markdown files within the `./blogs` directory and generating required output.
 
-### The code
+The next step is to run `just compile`, which invokes this command: `v ./src -o website.bin -prod`. This is an instruction to the V compiler to produce a production release version build of the website. Pretty much all of the website contents, including CSS, HTML, custom fonts etc., are all packed, or "embedded" into this binary. The only resources which are not are the images referenced by blog posts, they are served from the server.
+
+## Deploying
+This website is currently deployed on a VPS server running Debian Linux. Deploying new changes to the server is pretty straightforward:
+1. Using SCP the binary is transferred to the server's home directory
+2. Similarly SCP is then used to copy the whole contents of the `./blog/static` directory to one of the same name on the server (this contains all of the blogs image assets)
+3. SSH into the server, and attach to the running tmux session with `tmux a`
+4. Open a secondary split below the single running pane which is attached to the server process
+5. Kill the running server process in the first split with `<C>-c`, and very quickly remove the old build from the deployment directory, and copy the new one into its place using the second tmux split.
+6. Swap back to the first tmux split, press up to resolve the run command, and hit return
+7. Detach from the tmux session using `<C>-b d` and exist out of the SSH connection
+
+## The code
 This is the entry point function to `compile_blogs.v`:
 ![compile blogs entrypoint](/static/compile-blogs-entrypoint.png)
 You can see here that the first function invoked is called `compile_markdown_blogs_into_html_files`. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.
@@ -76,7 +88,7 @@ For branch 2. we didn't fill up the whole buffer before returning, and so we mus
 The final line at the end of this function just writes the previously read HTML footer to the end of the new HTML file.
 
 ### The attachment caveat
-I mentioned earlier that images needed to be lowercased and delimited by `-` instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.
+I mentioned earlier that images needed to be lower-cased and delimited by `-` instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.
 
 ### Embedding
 We're not done yet. The second function invoked in `main` is `generate_blog_embeds_code`.
@@ -87,4 +99,36 @@ The first thing this function does is build a list of the all the just created H
 
 ### Step 2. Generate embed directive line per HTML file in list
 ![define embed per entry](static/define-embed-per-entry.png)
-Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to directly embed these files into the resulting output binary.
+Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to (at compile time) directly embed these files into the resulting output binary.
+
+### Step 3. Generate function to return list of blogs
+![resolve blogs list](/static/resolve-blogs-list.png)
+Generating another function which contains a human readable list is useful for the website to be able to present this to the user on the blog homepage/index page.
+
+### Step 4.
+![access embedded blogs by name](/static/access-embedded-blogs-by-name.png)
+Finally we generate _another_ function, this one is probably the most important one, in that it's called from the blog view handler to resolve the request blog with the contents of the embedded file data, which is then returned back to the user.
+
+## Conclusion
+This was hopefully a clear and interesting overview of exactly how I decided to solve this "problem" of being able to produce an entire website and most of it's required assets as a single distributable binary with no front end framework, or annoying restrictive runtime required.
+
+There are some things which need work. For example, when converting the Markdown to HTML, there's a problem with multiple lined code blocks, stemming from the fact that we only feed the data to be converted line by line, and so when the converter encounters an open code block signifier, it doesn't know to not treat all the lines of code in-between this and the close code block.
+
+I will have to consider maybe it is worth just passing the entire file into the converter in one go rather than line by line, even though doing this feels kind of nasty to me.
+
+Anyway, I hope this was useful/interesting/of note/whatever. Thanks for reading!
+
+⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻
+⣿⣿⣿⠀⣿⣶⣕⣈⠹⠿⠿⠿⠿⠟⠛⣛⢋⣰⠣⣿⣿⠀⣿
+⣿⣿⣿⡀⣿⣿⣿⣧⢻⣿⣶⣷⣿⣿⣿⣿⣿⣿⠿⠶⡝⠀⣿
+⣿⣿⣿⣷⠘⣿⣿⣿⢏⣿⣿⣋⣀⣈⣻⣿⣿⣷⣤⣤⣿⡐⢿
+⣿⣿⣿⣿⣆⢩⣝⣫⣾⣿⣿⣿⣿⡟⠿⠿⠦⠀⠸⠿⣻⣿⡄⢻
+⣿⣿⣿⣿⣿⡄⢻⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⠇⣼
+⣿⣿⣿⣿⣿⣿⡄⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⣰
+⣿⣿⣿⣿⣿⣿⠇⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢀⣿
+⣿⣿⣿⣿⣿⠏⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢸⣿
+⣿⣿⣿⣿⠟⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣿
+⣿⣿⣿⠋⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⣿
+⣿⣿⠋⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⢸
+⣿⠏⣼⣿⣿⣿⣿⣿⣿⣿⣿
+
