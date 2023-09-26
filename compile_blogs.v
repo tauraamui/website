@@ -82,6 +82,16 @@ fn generate_blog_embeds_code() string {
 	code.writeln(")")
 	code.writeln("")
 
+	code.writeln("fn blogs_listing() []string {")
+	code.writeln("\treturn [")
+	for f in generated_files {
+		code.writeln("\t\t\"${os.base(f).replace("-", " ").replace(".html", "")}\"")
+	}
+	code.writeln("\t]")
+	code.writeln("}")
+
+	code.writeln("")
+
 	code.writeln("fn resolve_blog(name string) !string {")
 	code.writeln("\treturn match name {")
 	for f in generated_files {

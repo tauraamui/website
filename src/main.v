@@ -130,6 +130,7 @@ pub fn (mut app App) blog() vweb.Result {
 			app.views["blog"] += 1
 		}
 	}
+	posts := blogs_listing()
 	title := "Blog - tauraamui's website"
 	existing_site := "https://tauraamui.substack.com/"
 	return $vweb.html()
