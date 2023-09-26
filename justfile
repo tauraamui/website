@@ -1,6 +1,9 @@
 run:
     v run ./src
 
+compile:
+    v ./src -o website.bin -prod
+
 compile-blogs:
     v run compile_blogs.v
 
