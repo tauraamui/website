@@ -47,6 +47,10 @@ img {
                 0 0 0 8px #141414;
 }
 
+code {
+    background: #474747;
+}
+
 h1, h2, h3, h4, h5, h6 {
     color: #f781b4;
 }
@@ -66,18 +70,22 @@ nav {
     font-size: 1.275rem;
 }
 
-.hack h2, .hack h3 {
-    font-size: 1.8rem;
+.hack h1 {
+    font-size: 2.2rem;
+}
+
+.hack h2 {
+    font-size: 1.9rem;
+}
+
+.hack h3 {
+    font-size: 1.6rem;
     margin-bottom: 0;
     padding-top: 1.5rem;
 }
 
 .hack h4 {
     font-size: 1.6rem;
-}
-
-.hack h1 {
-    font-size: 2.2rem;
 }
 
 .hack h1::after, .hack h2::after, .hack h3::after, .hack h1::before, .hack h2::before, .hack h3::before {
