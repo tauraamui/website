@@ -148,6 +148,10 @@
   },
   "active": "29b3f40666a022e0",
   "lastOpenFiles": [
+    "static/define-embed-per-entry.png",
+    "static/define-embed-per-entry-out.png",
+    "static/generate-embeds-entry.png",
+    "static/generate-embeds-entry-out.png",
     "static/convert-line-by-line.png",
     "static/convert-line-by-line-out.png",
     "static/cmbihf-first-few-lines.png",
@@ -155,13 +159,9 @@
     "static/compile-blogs-entrypoint.png",
     "static/compile-blogs-entrypoint-out.png",
     "static/for-each-blog-entry.png",
-    "static/old.png",
-    "static/out.png",
-    "static/std-lib-doc.png",
     "static/convert-line-by-line.png.md",
     "how-i-write-and-publish-blogs.md",
     "how-to-wash-up-correctly.md",
-    "static/obsidian-settings.png",
     "static/-0",
     "static/result.png.crswap"
   ]

@@ -45,3 +45,46 @@ The last line (which incidentally seems to be incorrectly worded) is of most int
 1. The buffer is filled up before a newline is encountered
 2. A newline is encountered
 3. The file's EOF is reached
+
+That's the reason for the following branches, after we invoke this read method:
+
+#### Branch 1.
+`if read_bytes == 1024 {`
+`        input_line := buffer.bytestr()`
+`        output_line := markdown.to_html(input_line)`
+`        wfd.write_string(output_line) or { println("unable to write to file: ${target}"); return }`
+`        return`
+`}`
+
+and
+
+#### Branch 2.
+`if read_bytes < 1024 {`
+`    mut output_line := "<br/>"`
+`    if read_bytes > 1 {`
+`    input_line := buffer[..read_bytes - 1].bytestr()`
+`    output_line = markdown.to_html(input_line)`
+`}`
+`wfd.writeln(output_line) or { println("unable to write to file: ${target}"); return }`
+`}`
+
+For branch 1. it basically takes the fact that the whole buffer was filled to mean that the line it just read has yet to finish, so it must be just a really long line. We don't really care, and we therefore just convert all of the line we've read so far into HTML from Markdown.
+
+For branch 2. we didn't fill up the whole buffer before returning, and so we must have encountered a newline (or EOF). In this situation, we want to check if the line is more than one character long, if it is we convert this line, excluding it's newline (we assume it has one, as of yet we're not handling the EOF case! 😮) If the line is only one character long, we assume it's a newline character on its own, and we convert that into padding.
+
+#### Finally
+The final line at the end of this function just writes the previously read HTML footer to the end of the new HTML file.
+
+### The attachment caveat
+I mentioned earlier that images needed to be lowercased and delimited by `-` instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.
+
+### Embedding
+We're not done yet. The second function invoked in `main` is `generate_blog_embeds_code`.
+
+### Step 1. Acquire blog HTML files list
+![generate embeds entry](/static/generate-embeds-entry.png)
+The first thing this function does is build a list of the all the just created HTML versions of all the blog posts. It could be derived perhaps from the generation function, but for now this will do.
+
+### Step 2. Generate embed directive line per HTML file in list
+![define embed per entry](static/define-embed-per-entry.png)
+Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to directly embed these files into the resulting output binary.

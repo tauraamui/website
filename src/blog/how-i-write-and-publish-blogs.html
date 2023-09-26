@@ -109,6 +109,37 @@ wtf are you looking at
 <li>The file's EOF is reached</li>
 </ol>
          <br/>
+         <p>That's the reason for the following branches, after we invoke this read method:</p>
+         <br/>
+         <h4>Branch 1.</h4>
+         <p><code>if read_bytes == 1024 {</code></p>
+         <p><code>        input_line := buffer.bytestr()</code></p>
+         <p><code>        output_line := markdown.to_html(input_line)</code></p>
+         <p><code>        wfd.write_string(output_line) or { println(&quot;unable to write to file: ${target}&quot;); return }</code></p>
+         <p><code>        return</code></p>
+         <p><code>}</code></p>
+         <br/>
+         <p>and</p>
+         <br/>
+         <h4>Branch 2.</h4>
+         <p><code>if read_bytes &lt; 1024 {</code></p>
+         <p><code>    mut output_line := &quot;&lt;br/&gt;&quot;</code></p>
+         <p><code>    if read_bytes &gt; 1 {</code></p>
+         <p><code>    input_line := buffer[..read_bytes - 1].bytestr()</code></p>
+         <p><code>    output_line = markdown.to_html(input_line)</code></p>
+         <p><code>}</code></p>
+         <p><code>wfd.writeln(output_line) or { println(&quot;unable to write to file: ${target}&quot;); return }</code></p>
+         <p><code>}</code></p>
+         <br/>
+         <p>For branch 1. it basically takes the fact that the whole buffer was filled to mean that the line it just read has yet to finish, so it must be just a really long line. We don't really care, and we therefore just convert all of the line we've read so far into HTML from Markdown.</p>
+         <br/>
+         <p>For branch 2. we didn't fill up the whole buffer before returning, and so we must have encountered a newline (or EOF). In this situation, we want to check if the line is more than one character long, if it is we convert this line, excluding it's newline (we assume it has one, as of yet we're not handling the EOF case! 😮) If the line is only one character long, we assume it's a newline character on its own, and we convert that into padding.</p>
+         <br/>
+         <h4>Finally</h4>
+         <p>The final line at the end of this function just writes the previously read HTML footer to the end of the new HTML file.</p>
+         <br/>
+         <br/>
+         <br/>
       </div>
     </body>
 </html>
