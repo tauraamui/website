@@ -82,15 +82,33 @@ wtf are you looking at
          <p><img src="/static/compile-blogs-entrypoint.png" alt="compile blogs entrypoint"></p>
          <p>You can see here that the first function invoked is called <code>compile_markdown_blogs_into_html_files</code>. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.</p>
          <br/>
+         <h3>Step 1a.</h3>
          <p><img src="/static/cmbihf-first-few-lines.png" alt="cmbihf first few lines"></p>
          <p>The first few lines are ensuring that the directory which we want to read from (the blog Markdown files directory), and the directory which we would like to write to both exist already. I could just create them if they do not exist, but for now I'd rather now. I don't really know why exactly, but I think it's because they shouldn't ever not be there anyways, and if they are indeed missing, something else is probably wrong.</p>
-         <br/>
-         <p>Then this line:</p>
-         <p><code>os.walk(&quot;./src/blog&quot;, fn (path string) { os.rm(path) or { ... } })</code></p>
-         <p>ensures that the target directory is empty. When we run this compile process, each blog is &quot;rebuilt&quot; each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.</p>
-         <br/>
+         <h3>Step 1b.</h3>
+         <p>Then this: <code>os.walk(&quot;./src/blog&quot;, fn (path string) { os.rm(path) or { ... } })</code> ensures that the target directory is empty. When we run this compile process, each blog is &quot;rebuilt&quot; each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.</p>
+         <h3>Step 2.</h3>
          <p><img src="/static/for-each-blog-entry.png" alt="for each blog entry"></p>
-         <p>Next up, for every file which exists with an extension of <code>.md</code> within the blogs directory, we create and write to a new file with the same name, but one which has a <code>.html</code> extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file</p>
+         <p>Next up, for every file which exists with an extension of <code>.md</code> within the blogs directory, we create and write to a new file with the same name, but one which has a <code>.html</code> extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file.</p>
+         <br/>
+         <h3>Step 3.</h3>
+         <p><img src="/static/convert-line-by-line.png" alt="convert line by line"></p>
+         <p>The rest of this function is then an iteration over each line of the current Markdown file we are working on. First we allocate a list of bytes 1024 (or 1kb) in size called <code>buffer</code>. We then call the V std library method on our open file descriptor to read as many bytes as available into our buffer.</p>
+         <br/>
+         <h4>What does <code>read_bytes_into_newline</code> mean/do?</h4>
+         <p>If we check the V std lib documentation for this method, we find the following:</p>
+         <p><img src="/static/std-lib-doc.png" alt="std lib doc"></p>
+         <p>The last line (which incidentally seems to be incorrectly worded) is of most interest in the case of the above code. What it means is simply that the function will return if:</p>
+         <ol>
+<li>The buffer is filled up before a newline is encountered</li>
+</ol>
+         <ol start="2">
+<li>A newline is encountered</li>
+</ol>
+         <ol start="3">
+<li>The file's EOF is reached</li>
+</ol>
+         <br/>
       </div>
     </body>
 </html>

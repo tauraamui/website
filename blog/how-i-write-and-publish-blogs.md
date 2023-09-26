@@ -25,12 +25,23 @@ This is the entry point function to `compile_blogs.v`:
 ![compile blogs entrypoint](/static/compile-blogs-entrypoint.png)
 You can see here that the first function invoked is called `compile_markdown_blogs_into_html_files`. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.
 
+### Step 1a.
 ![cmbihf first few lines](/static/cmbihf-first-few-lines.png)
 The first few lines are ensuring that the directory which we want to read from (the blog Markdown files directory), and the directory which we would like to write to both exist already. I could just create them if they do not exist, but for now I'd rather now. I don't really know why exactly, but I think it's because they shouldn't ever not be there anyways, and if they are indeed missing, something else is probably wrong.
-
-Then this line:
-`os.walk("./src/blog", fn (path string) { os.rm(path) or { ... } })`
-ensures that the target directory is empty. When we run this compile process, each blog is "rebuilt" each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.
-
+### Step 1b.
+Then this: `os.walk("./src/blog", fn (path string) { os.rm(path) or { ... } })` ensures that the target directory is empty. When we run this compile process, each blog is "rebuilt" each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.
+### Step 2.
 ![for each blog entry](/static/for-each-blog-entry.png)
 Next up, for every file which exists with an extension of `.md` within the blogs directory, we create and write to a new file with the same name, but one which has a `.html` extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file.
+
+### Step 3.
+![convert line by line](/static/convert-line-by-line.png)
+The rest of this function is then an iteration over each line of the current Markdown file we are working on. First we allocate a list of bytes 1024 (or 1kb) in size called `buffer`. We then call the V std library method on our open file descriptor to read as many bytes as available into our buffer.
+
+#### What does `read_bytes_into_newline` mean/do?
+If we check the V std lib documentation for this method, we find the following:
+![std lib doc](/static/std-lib-doc.png)
+The last line (which incidentally seems to be incorrectly worded) is of most interest in the case of the above code. What it means is simply that the function will return if:
+1. The buffer is filled up before a newline is encountered
+2. A newline is encountered
+3. The file's EOF is reached

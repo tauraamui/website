@@ -13,26 +13,13 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "how-to-wash-up-correctly.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "1c3f6cf7c1fa9550",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
                 "file": "how-i-write-and-publish-blogs.md",
                 "mode": "source",
                 "source": false
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -159,21 +146,22 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "1c3f6cf7c1fa9550",
+  "active": "29b3f40666a022e0",
   "lastOpenFiles": [
-    "static/for-each-blog-entry.png",
-    "how-to-wash-up-correctly.md",
-    "how-i-write-and-publish-blogs.md",
+    "static/convert-line-by-line.png",
+    "static/convert-line-by-line-out.png",
     "static/cmbihf-first-few-lines.png",
+    "static/cmbihf-first-few-lines-out.png",
     "static/compile-blogs-entrypoint.png",
+    "static/compile-blogs-entrypoint-out.png",
+    "static/for-each-blog-entry.png",
+    "static/old.png",
+    "static/out.png",
+    "static/std-lib-doc.png",
+    "static/convert-line-by-line.png.md",
+    "how-i-write-and-publish-blogs.md",
+    "how-to-wash-up-correctly.md",
     "static/obsidian-settings.png",
-    "static/dirty-pan.jpg",
-    "static/rinsed-and-soaped-pan.jpg",
-    "static/scrubbed-up-pan.jpg",
-    "static/clean-pan.jpg",
-    "static/result-PXL_20230925_135651471.jpg",
-    "static/result-PXL_20230925_135546879.jpg",
-    "static/result-PXL_20230925_135508801.MP.jpg",
     "static/-0",
     "static/result.png.crswap"
   ]

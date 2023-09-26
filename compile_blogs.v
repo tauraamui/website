@@ -35,8 +35,8 @@ fn compile_markdown_blogs_into_html_files() {
 
 		wfd.write_string(header_content) or { println("unable to prepend header to file: ${err}"); return }
 
+		mut buffer := []u8{ len: 1024 }
 		for !fd.eof() {
-			mut buffer := []u8{ len: 1024 }
 			read_bytes := fd.read_bytes_into_newline(mut &buffer) or { panic(err) }
 
 			wfd.write_string(" ".repeat(9)) or { println("unable to write to file: ${target}"); return }
