@@ -77,7 +77,33 @@ wtf are you looking at
          <h2>Compiling/building</h2>
          <p>Once a blog post has been created, edited etc., the next step is to run <code>just compile-blogs</code>. This is a <code>justfile</code> command which runs this: <code>v run compile_blogs.v</code> in the root of the website repository. <code>compile_blogs.v</code> is a discrete V program which is responsible for parsing all existing markdown files within the <code>./blogs</code> directory and generating required output.</p>
          <br/>
-         <h3>The code</h3>
+         <p>The next step is to run <code>just compile</code>, which invokes this command: <code>v ./src -o website.bin -prod</code>. This is an instruction to the V compiler to produce a production release version build of the website. Pretty much all of the website contents, including CSS, HTML, custom fonts etc., are all packed, or &quot;embedded&quot; into this binary. The only resources which are not are the images referenced by blog posts, they are served from the server.</p>
+         <br/>
+         <h2>Deploying</h2>
+         <p>This website is currently deployed on a VPS server running Debian Linux. Deploying new changes to the server is pretty straightforward:</p>
+         <ol>
+<li>Using SCP the binary is transferred to the server's home directory</li>
+</ol>
+         <ol start="2">
+<li>Similarly SCP is then used to copy the whole contents of the <code>./blog/static</code> directory to one of the same name on the server (this contains all of the blogs image assets)</li>
+</ol>
+         <ol start="3">
+<li>SSH into the server, and attach to the running tmux session with <code>tmux a</code></li>
+</ol>
+         <ol start="4">
+<li>Open a secondary split below the single running pane which is attached to the server process</li>
+</ol>
+         <ol start="5">
+<li>Kill the running server process in the first split with <code>&lt;C&gt;-c</code>, and very quickly remove the old build from the deployment directory, and copy the new one into its place using the second tmux split.</li>
+</ol>
+         <ol start="6">
+<li>Swap back to the first tmux split, press up to resolve the run command, and hit return</li>
+</ol>
+         <ol start="7">
+<li>Detach from the tmux session using <code>&lt;C&gt;-b d</code> and exist out of the SSH connection</li>
+</ol>
+         <br/>
+         <h2>The code</h2>
          <p>This is the entry point function to <code>compile_blogs.v</code>:</p>
          <p><img src="/static/compile-blogs-entrypoint.png" alt="compile blogs entrypoint"></p>
          <p>You can see here that the first function invoked is called <code>compile_markdown_blogs_into_html_files</code>. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.</p>
@@ -138,6 +164,50 @@ wtf are you looking at
          <h4>Finally</h4>
          <p>The final line at the end of this function just writes the previously read HTML footer to the end of the new HTML file.</p>
          <br/>
+         <h3>The attachment caveat</h3>
+         <p>I mentioned earlier that images needed to be lower-cased and delimited by <code>-</code> instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.</p>
+         <br/>
+         <h3>Embedding</h3>
+         <p>We're not done yet. The second function invoked in <code>main</code> is <code>generate_blog_embeds_code</code>.</p>
+         <br/>
+         <h3>Step 1. Acquire blog HTML files list</h3>
+         <p><img src="/static/generate-embeds-entry.png" alt="generate embeds entry"></p>
+         <p>The first thing this function does is build a list of the all the just created HTML versions of all the blog posts. It could be derived perhaps from the generation function, but for now this will do.</p>
+         <br/>
+         <h3>Step 2. Generate embed directive line per HTML file in list</h3>
+         <p><img src="static/define-embed-per-entry.png" alt="define embed per entry"></p>
+         <p>Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to (at compile time) directly embed these files into the resulting output binary.</p>
+         <br/>
+         <h3>Step 3. Generate function to return list of blogs</h3>
+         <p><img src="/static/resolve-blogs-list.png" alt="resolve blogs list"></p>
+         <p>Generating another function which contains a human readable list is useful for the website to be able to present this to the user on the blog homepage/index page.</p>
+         <br/>
+         <h3>Step 4.</h3>
+         <p><img src="/static/access-embedded-blogs-by-name.png" alt="access embedded blogs by name"></p>
+         <p>Finally we generate <em>another</em> function, this one is probably the most important one, in that it's called from the blog view handler to resolve the request blog with the contents of the embedded file data, which is then returned back to the user.</p>
+         <br/>
+         <h2>Conclusion</h2>
+         <p>This was hopefully a clear and interesting overview of exactly how I decided to solve this &quot;problem&quot; of being able to produce an entire website and most of it's required assets as a single distributable binary with no front end framework, or annoying restrictive runtime required.</p>
+         <br/>
+         <p>There are some things which need work. For example, when converting the Markdown to HTML, there's a problem with multiple lined code blocks, stemming from the fact that we only feed the data to be converted line by line, and so when the converter encounters an open code block signifier, it doesn't know to not treat all the lines of code in-between this and the close code block.</p>
+         <br/>
+         <p>I will have to consider maybe it is worth just passing the entire file into the converter in one go rather than line by line, even though doing this feels kind of nasty to me.</p>
+         <br/>
+         <p>Anyway, I hope this was useful/interesting/of note/whatever. Thanks for reading!</p>
+         <br/>
+         <p>⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻</p>
+         <p>⣿⣿⣿⠀⣿⣶⣕⣈⠹⠿⠿⠿⠿⠟⠛⣛⢋⣰⠣⣿⣿⠀⣿</p>
+         <p>⣿⣿⣿⡀⣿⣿⣿⣧⢻⣿⣶⣷⣿⣿⣿⣿⣿⣿⠿⠶⡝⠀⣿</p>
+         <p>⣿⣿⣿⣷⠘⣿⣿⣿⢏⣿⣿⣋⣀⣈⣻⣿⣿⣷⣤⣤⣿⡐⢿</p>
+         <p>⣿⣿⣿⣿⣆⢩⣝⣫⣾⣿⣿⣿⣿⡟⠿⠿⠦⠀⠸⠿⣻⣿⡄⢻</p>
+         <p>⣿⣿⣿⣿⣿⡄⢻⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⠇⣼</p>
+         <p>⣿⣿⣿⣿⣿⣿⡄⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⣰</p>
+         <p>⣿⣿⣿⣿⣿⣿⠇⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢀⣿</p>
+         <p>⣿⣿⣿⣿⣿⠏⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢸⣿</p>
+         <p>⣿⣿⣿⣿⠟⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣿</p>
+         <p>⣿⣿⣿⠋⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⣿</p>
+         <p>⣿⣿⠋⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⢸</p>
+         <p>⣿⠏⣼⣿⣿⣿⣿⣿⣿⣿⣿</p>
          <br/>
          <br/>
       </div>
