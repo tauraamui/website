@@ -89,6 +89,8 @@ wtf are you looking at
          <p><code>os.walk(&quot;./src/blog&quot;, fn (path string) { os.rm(path) or { ... } })</code></p>
          <p>ensures that the target directory is empty. When we run this compile process, each blog is &quot;rebuilt&quot; each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.</p>
          <br/>
+         <p><img src="/static/for-each-blog-entry.png" alt="for each blog entry"></p>
+         <p>Next up, for every file which exists with an extension of <code>.md</code> within the blogs directory, we create and write to a new file with the same name, but one which has a <code>.html</code> extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file</p>
       </div>
     </body>
 </html>

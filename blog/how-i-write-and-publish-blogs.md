@@ -31,3 +31,6 @@ The first few lines are ensuring that the directory which we want to read from (
 Then this line:
 `os.walk("./src/blog", fn (path string) { os.rm(path) or { ... } })`
 ensures that the target directory is empty. When we run this compile process, each blog is "rebuilt" each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.
+
+![for each blog entry](/static/for-each-blog-entry.png)
+Next up, for every file which exists with an extension of `.md` within the blogs directory, we create and write to a new file with the same name, but one which has a `.html` extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file.
