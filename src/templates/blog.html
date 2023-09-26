@@ -7,7 +7,7 @@
       @for post in posts
          <li>
             <span>
-               <a href="/blog/${post.replace(" ", "-")}" target="_blank">${post.capitalize()}</a>
+               <a href="/blog/${post.replace(" ", "-")}" target="_blank">${post.capitalize().replace(" i ", " I ")}</a>
             </span>
          </li>
       @end

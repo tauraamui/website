@@ -56,56 +56,36 @@ wtf are you looking at
          <br/>
          <br/>
          <hr>
-         <p>Date: 24/09/2023</p>
+         <p>Date: 26/09/2023</p>
          <hr>
-         <h1>How to correctly wash up</h1>
+         <h1>How I write and publish blogs</h1>
+         <p>The following post will attempt to go through the step by step process which I take when I would like to author and publish new blogs to this website.</p>
          <br/>
-         <p>There are different methods people use to wash up their dishes. However generally I'd say that they all involve:</p>
+         <h3>Obsidian</h3>
+         <p>The blog content themselves is written using Markdown (if you don't know what Markdown (<code>.md</code>) files are somehow, you can read more about them <a href="https://www.markdownguide.org/">here</a>). Obsidian is, amongst other things, great as a Markdown editor. It has native support for VIM bindings, and provides immediate feedback by rendering the document as you work on it.</p>
          <br/>
-         <ul>
-<li>Hot water</li>
-</ul>
-         <ul>
-<li>A basin or some kind, likely a sink</li>
-</ul>
-         <ul>
-<li>Washing up liquid</li>
-</ul>
-         <ul>
-<li>A scrubbing brush or sponge</li>
-</ul>
+         <p>I already use Obsidian as my &quot;second brain&quot; day to day to collect notes, snippets/quotes from other media and works, and so I can also take advantage of all of the plugins I already use to do stuff, including planning blog posts in advance using &quot;daily notes&quot;.</p>
          <br/>
-         <p>I have a strong feeling that most people simply don't know how to wash up correctly, and will either use up much more water or washing up liquid than necessary, or worse, end up with unclean crockery and utensils as a result.</p>
+         <p>Obsidian also renders externally referenced assets such as images in place, which is very useful. When I open Obsidian to edit the blogs, I open the directory <code>./site/blogs</code> as the &quot;vault&quot; to use. Within this directory are all of the Markdown files which each represent an individual blog post, and another sub directory <code>static</code>, which is where all images and other referenced assets live.</p>
          <br/>
-         <h3>Prepare</h3>
+         <p>As the below screenshot shows, I have set up Obsidian (for this vault, settings are stored per vault which is also very useful) to always place new assets which are &quot;pasted&quot; into the document in this location, and reference them using a relative path, such as <code>![obsidian settings](/static/obsidian-settings.png)</code>, which comes in handy later on as we will see.</p>
          <br/>
-         <p>This should go without saying, but clearing your crockery of as much solid food residue as possible before you begin is essential to doing adulting correctly.</p>
+         <p><img src="/static/obsidian-settings.png" alt="obsidian settings"></p>
+         <h3>Attachment file names</h3>
+         <p>There is a slight caveat to this system, in that at this point of the blog authoring process it doesn't matter/makes no difference, but I do have to make sure the names of these are all lowercased and delimited by <code>-</code> rather than whitespace. Something like <code>Screenshot 2023-09-26 at 10.52.39</code> for example is not going to work later on.</p>
          <br/>
-         <h3>Step 1.</h3>
+         <h1>Compiling/building</h1>
+         <p>Once a blog post has been created, edited etc., the next step is to run <code>just compile-blogs</code>. This is a <code>justfile</code> command which runs this: <code>v run compile_blogs.v</code> in the root of the website repository. <code>compile_blogs.v</code> is a discrete V program which is responsible for parsing all existing markdown files within the <code>./blogs</code> directory and generating required output.</p>
          <br/>
-         <p>Start the actual washing process by gently soaking your pot/pan/crockery/cutlery etc., in a short stream of water direct from the tap.</p>
+         <h4>The code</h4>
+         <p>This is the entry point function to <code>compile_blogs.v</code>:</p>
+         <p><img src="/static/compile-blogs-entrypoint.png" alt="compile blogs entrypoint"></p>
+         <p>You can see here that the first function invoked is called <code>compile_markdown_blogs_into_html_files</code>. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.</p>
          <br/>
-         <p><img src="/static/dirty-pan.jpg" alt="dirty frying pan"></p>
-         <h3>Step 2.</h3>
+         <p><img src="/static/cmbihf-first-few-lines.png" alt="cmbihf first few lines"></p>
+         <p>The first few lines are ensuring that the directory which we want to read from (the blog Markdown files directory), and the directory which we would like to write to both exist already. I could just create them if they do not exist, but for now I'd rather now. I don't really know why exactly, but I think it's because they shouldn't ever not be there anyways, and if they are indeed missing, something else is probably wrong.</p>
          <br/>
-         <p>Drizzle a small amount of washing up liquid onto your now damp crockery item, hopefully you've left a small amount of surface water for this to mix with a little bit.</p>
-         <br/>
-         <p><img src="/static/rinsed-and-soaped-pan.jpg" alt="rinsed pan"></p>
-         <h3>Step 3.</h3>
-         <br/>
-         <p>Scrub the surface of your crockery with your brush or sponge, starting with the area with the small amount of washing up liquid. Make small circle motions at first, but gradually widen these circular motions, until the whole item is covered in a layer of soap. Bear in the mind the soap will obviously mix up with any remaining mess residue and potentially make it look unappealing.</p>
-         <br/>
-         <p><img src="/static/scrubbed-up-pan.jpg" alt="scrubbed pan"></p>
-         <h3>Step 4.</h3>
-         <br/>
-         <p>Run the item under another small but steady stream of water from the tap to rinse off the soap scum and all of the grime and mess that has now come off with it.</p>
-         <br/>
-         <p><img src="/static/clean-pan.jpg" alt="clean pan"></p>
-         <br/>
-         <p>Tada! All done! 🎉 You probably (hopefully) didn't learn anything, and if so congratulations! In my experience, most people who come across this post will, in fact, learn something.</p>
-         <br/>
-         <p>For these people, I will be following up with a further post (or just an update to this one) which explains what <strong>not</strong> to do.</p>
-         <br/>
+         <p>Then this line <code>os.walk(&quot;./src/blog&quot;, fn (path string) { os.rm(path) or { println(&quot;unable to remove ${path}: ${err}&quot;); return } })</code> ensures that the target directory is empty. When we run this compile process, each blog is &quot;rebuilt&quot; each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain</p>
       </div>
     </body>
 </html>

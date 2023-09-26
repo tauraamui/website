@@ -18,8 +18,21 @@
                 "source": false
               }
             }
+          },
+          {
+            "id": "1c3f6cf7c1fa9550",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "how-i-write-and-publish-blogs.md",
+                "mode": "source",
+                "source": false
+              }
+            }
           }
-        ]
+        ],
+        "currentTab": 1
       }
     ],
     "direction": "vertical"
@@ -85,7 +98,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "how-to-wash-up-correctly.md",
+                "file": "how-i-write-and-publish-blogs.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +115,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "how-to-wash-up-correctly.md",
+                "file": "how-i-write-and-publish-blogs.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +138,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "how-to-wash-up-correctly.md"
+                "file": "how-i-write-and-publish-blogs.md"
               }
             }
           }
@@ -146,8 +159,13 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "29b3f40666a022e0",
+  "active": "1c3f6cf7c1fa9550",
   "lastOpenFiles": [
+    "how-to-wash-up-correctly.md",
+    "how-i-write-and-publish-blogs.md",
+    "static/cmbihf-first-few-lines.png",
+    "static/compile-blogs-entrypoint.png",
+    "static/obsidian-settings.png",
     "static/dirty-pan.jpg",
     "static/rinsed-and-soaped-pan.jpg",
     "static/scrubbed-up-pan.jpg",
@@ -155,10 +173,6 @@
     "static/result-PXL_20230925_135651471.jpg",
     "static/result-PXL_20230925_135546879.jpg",
     "static/result-PXL_20230925_135508801.MP.jpg",
-    "static/result-PXL_20230925_135403841.jpg",
-    "static/PXL_20230925_135546879.jpg",
-    "static/PXL_20230925_135403841.jpg",
-    "static/PXL_20230925_135508801.MP.jpg",
     "static/-0",
     "static/result.png.crswap"
   ]
