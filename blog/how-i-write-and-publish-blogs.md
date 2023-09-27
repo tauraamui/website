@@ -7,9 +7,7 @@ The following post will attempt to go through the step by step process which I t
 ### Obsidian
 The blogs themselves are written using Markdown (if you don't know what Markdown (`.md`) files are somehow, you can read more about them [here](https://www.markdownguide.org/)). Obsidian is, amongst other things, great as a Markdown editor. It has native support for VIM bindings, and provides immediate feedback by rendering the document as you work on it.
 
-
 I already use Obsidian as my "second brain" day to day to collect notes, snippets/quotes from other media and works, and so I can also take advantage of all of the plugins I already use to do stuff, including planning blog posts in advance using "daily notes".
-
 
 Obsidian also renders externally referenced assets such as images in place, which is very useful. When I open Obsidian to edit the blogs, I open the directory `./site/blogs` as the "vault" to use. Within this directory are all of the Markdown files which each represent an individual blog post, and another sub directory `static`, which is where all images and other referenced assets live.
 
@@ -99,7 +97,7 @@ The final line at the end of this function just writes the previously read HTML 
 ### The attachment caveat
 I mentioned earlier that images needed to be lower-cased and delimited by `-` instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.
 
-### Embedding
+## Embedding
 We're not done yet. The second function invoked in `main` is `generate_blog_embeds_code`.
 
 ### Step 1. Acquire blog HTML files list

@@ -130,7 +130,7 @@ The last line (which incidentally seems to be incorrectly worded) is of most int
 <p>The final line at the end of this function just writes the previously read HTML footer to the end of the new HTML file.</p>
 <h3>The attachment caveat</h3>
 <p>I mentioned earlier that images needed to be lower-cased and delimited by <code>-</code> instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.</p>
-<h3>Embedding</h3>
+<h2>Embedding</h2>
 <p>We're not done yet. The second function invoked in <code>main</code> is <code>generate_blog_embeds_code</code>.</p>
 <h3>Step 1. Acquire blog HTML files list</h3>
 <p><img src="/static/generate-embeds-entry.png" alt="generate embeds entry"></p>
