@@ -26,38 +26,15 @@ fn compile_markdown_blogs_into_html_files() {
 	os.walk("./blog", fn [header_content, footer_content] (path string) {
 		if path.starts_with(".obsidian") || os.file_ext(path) != ".md" { return }
 
-		mut fd := os.open(path) or { println("unable to open ${path} for conversion"); return }
-		defer { fd.close() }
+		contents := os.read_file(path) or { println("unable to read file ${path} for conversion: ${err}"); return }
+		converted_contents := markdown.to_html(contents)
 
 		target := "./src/blog/${os.base(path)}".replace(".md", ".html")
-		mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
+		mut wfd := os.open_file(target, 'w') or { println("unable to open writable file ${target}: ${err}"); return }
 		defer { wfd.close() }
 
 		wfd.write_string(header_content) or { println("unable to prepend header to file: ${err}"); return }
-
-		mut buffer := []u8{ len: 1024 }
-		for !fd.eof() {
-			read_bytes := fd.read_bytes_into_newline(mut &buffer) or { panic(err) }
-
-			wfd.write_string(" ".repeat(9)) or { println("unable to write to file: ${target}"); return }
-
-			if read_bytes == 1024 {
-				input_line := buffer.bytestr()
-				output_line := markdown.to_html(input_line)
-				wfd.write_string(output_line) or { println("unable to write to file: ${target}"); return }
-				return
-			}
-
-			if read_bytes < 1024 {
-				mut output_line := "<br/>"
-				if read_bytes > 1 {
-					input_line := buffer[..read_bytes - 1].bytestr()
-					output_line = markdown.to_html(input_line)
-				}
-				wfd.writeln(output_line) or { println("unable to write to file: ${target}"); return }
-			}
-		}
-
+		wfd.write_string(converted_contents) or { println("unable to write converted HTML body: ${err}"); return }
 		wfd.write_string("${" ".repeat(6)}</div>\n${footer_content}") or { println("unable to append footer to file: ${err}"); return }
 	})
 }
