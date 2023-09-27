@@ -55,161 +55,113 @@ wtf are you looking at
          </header>
          <br/>
          <br/>
-         <hr>
-         <p>Date: 26/09/2023</p>
-         <hr>
-         <h1>How I write and publish blogs</h1>
-         <p>The following post will attempt to go through the step by step process which I take when I would like to author and publish new blogs to this website.</p>
-         <br/>
-         <h3>Obsidian</h3>
-         <p>The blogs themselves are written using Markdown (if you don't know what Markdown (<code>.md</code>) files are somehow, you can read more about them <a href="https://www.markdownguide.org/">here</a>). Obsidian is, amongst other things, great as a Markdown editor. It has native support for VIM bindings, and provides immediate feedback by rendering the document as you work on it.</p>
-         <br/>
-         <p>I already use Obsidian as my &quot;second brain&quot; day to day to collect notes, snippets/quotes from other media and works, and so I can also take advantage of all of the plugins I already use to do stuff, including planning blog posts in advance using &quot;daily notes&quot;.</p>
-         <br/>
-         <p>Obsidian also renders externally referenced assets such as images in place, which is very useful. When I open Obsidian to edit the blogs, I open the directory <code>./site/blogs</code> as the &quot;vault&quot; to use. Within this directory are all of the Markdown files which each represent an individual blog post, and another sub directory <code>static</code>, which is where all images and other referenced assets live.</p>
-         <br/>
-         <p>As the below screenshot shows, I have set up Obsidian (for this vault, settings are stored per vault which is also very useful) to always place new assets which are &quot;pasted&quot; into the document in this location, and reference them using a relative path, such as <code>![obsidian settings](/static/obsidian-settings.png)</code>, which comes in handy later on as we will see.</p>
-         <br/>
-         <p><img src="/static/obsidian-settings.png" alt="obsidian settings"></p>
-         <h3>Attachment file names</h3>
-         <p>There is a slight caveat to this system, in that at this point of the blog authoring process it makes no difference, but I do have to make sure the names of these are all lowercased and delimited by <code>-</code> rather than whitespace. Something like <code>Screenshot 2023-09-26 at 10.52.39</code> for example is not going to work later on.</p>
-         <br/>
-         <h2>Compiling/building</h2>
-         <p>Once a blog post has been created, edited etc., the next step is to run <code>just compile-blogs</code>. This is a <code>justfile</code> command which runs this: <code>v run compile_blogs.v</code> in the root of the website repository. <code>compile_blogs.v</code> is a discrete V program which is responsible for parsing all existing markdown files within the <code>./blogs</code> directory and generating required output.</p>
-         <br/>
-         <p>The next step is to run <code>just compile</code>, which invokes this command: <code>v ./src -o website.bin -prod</code>. This is an instruction to the V compiler to produce a production release version build of the website. Pretty much all of the website contents, including CSS, HTML, custom fonts etc., are all packed, or &quot;embedded&quot; into this binary. The only resources which are not are the images referenced by blog posts, they are served from the server.</p>
-         <br/>
-         <h2>Deploying</h2>
-         <p>This website is currently deployed on a VPS server running Debian Linux. Deploying new changes to the server is pretty straightforward:</p>
-         <ol>
+<hr>
+<h2>Date: 26/09/2023</h2>
+<h1>How I write and publish blogs</h1>
+<p>The following post will attempt to go through the step by step process which I take when I would like to author and publish new blogs to this website.</p>
+<h3>Obsidian</h3>
+<p>The blogs themselves are written using Markdown (if you don't know what Markdown (<code>.md</code>) files are somehow, you can read more about them <a href="https://www.markdownguide.org/">here</a>). Obsidian is, amongst other things, great as a Markdown editor. It has native support for VIM bindings, and provides immediate feedback by rendering the document as you work on it.</p>
+<p>I already use Obsidian as my &quot;second brain&quot; day to day to collect notes, snippets/quotes from other media and works, and so I can also take advantage of all of the plugins I already use to do stuff, including planning blog posts in advance using &quot;daily notes&quot;.</p>
+<p>Obsidian also renders externally referenced assets such as images in place, which is very useful. When I open Obsidian to edit the blogs, I open the directory <code>./site/blogs</code> as the &quot;vault&quot; to use. Within this directory are all of the Markdown files which each represent an individual blog post, and another sub directory <code>static</code>, which is where all images and other referenced assets live.</p>
+<p>As the below screenshot shows, I have set up Obsidian (for this vault, settings are stored per vault which is also very useful) to always place new assets which are &quot;pasted&quot; into the document in this location, and reference them using a relative path, such as <code>![obsidian settings](/static/obsidian-settings.png)</code>, which comes in handy later on as we will see.</p>
+<p><img src="/static/obsidian-settings.png" alt="obsidian settings"></p>
+<h3>Attachment file names</h3>
+<p>There is a slight caveat to this system, in that at this point of the blog authoring process it makes no difference, but I do have to make sure the names of these are all lowercased and delimited by <code>-</code> rather than whitespace. Something like <code>Screenshot 2023-09-26 at 10.52.39</code> for example is not going to work later on.</p>
+<h2>Compiling/building</h2>
+<p>Once a blog post has been created, edited etc., the next step is to run <code>just compile-blogs</code>. This is a <code>justfile</code> command which runs this: <code>v run compile_blogs.v</code> in the root of the website repository. <code>compile_blogs.v</code> is a discrete V program which is responsible for parsing all existing markdown files within the <code>./blogs</code> directory and generating required output.</p>
+<p>The next step is to run <code>just compile</code>, which invokes this command: <code>v ./src -o website.bin -prod</code>. This is an instruction to the V compiler to produce a production release version build of the website. Pretty much all of the website contents, including CSS, HTML, custom fonts etc., are all packed, or &quot;embedded&quot; into this binary. The only resources which are not are the images referenced by blog posts, they are served from the server.</p>
+<h2>Deploying</h2>
+<p>This website is currently deployed on a VPS server running Debian Linux. Deploying new changes to the server is pretty straightforward:</p>
+<ol>
 <li>Using SCP the binary is transferred to the server's home directory</li>
-</ol>
-         <ol start="2">
 <li>Similarly SCP is then used to copy the whole contents of the <code>./blog/static</code> directory to one of the same name on the server (this contains all of the blogs image assets)</li>
-</ol>
-         <ol start="3">
 <li>SSH into the server, and attach to the running tmux session with <code>tmux a</code></li>
-</ol>
-         <ol start="4">
 <li>Open a secondary split below the single running pane which is attached to the server process</li>
-</ol>
-         <ol start="5">
 <li>Kill the running server process in the first split with <code>&lt;C&gt;-c</code>, and very quickly remove the old build from the deployment directory, and copy the new one into its place using the second tmux split.</li>
-</ol>
-         <ol start="6">
 <li>Swap back to the first tmux split, press up to resolve the run command, and hit return</li>
-</ol>
-         <ol start="7">
 <li>Detach from the tmux session using <code>&lt;C&gt;-b d</code> and exist out of the SSH connection</li>
 </ol>
-         <br/>
-         <h2>The code</h2>
-         <p>This is the entry point function to <code>compile_blogs.v</code>:</p>
-         <p><img src="/static/compile-blogs-entrypoint.png" alt="compile blogs entrypoint"></p>
-         <p>You can see here that the first function invoked is called <code>compile_markdown_blogs_into_html_files</code>. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.</p>
-         <br/>
-         <h3>Step 1a.</h3>
-         <p><img src="/static/cmbihf-first-few-lines.png" alt="cmbihf first few lines"></p>
-         <p>The first few lines are ensuring that the directory which we want to read from (the blog Markdown files directory), and the directory which we would like to write to both exist already. I could just create them if they do not exist, but for now I'd rather now. I don't really know why exactly, but I think it's because they shouldn't ever not be there anyways, and if they are indeed missing, something else is probably wrong.</p>
-         <h3>Step 1b.</h3>
-         <p>Then this: <code>os.walk(&quot;./src/blog&quot;, fn (path string) { os.rm(path) or { ... } })</code> ensures that the target directory is empty. When we run this compile process, each blog is &quot;rebuilt&quot; each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.</p>
-         <h3>Step 2.</h3>
-         <p><img src="/static/for-each-blog-entry.png" alt="for each blog entry"></p>
-         <p>Next up, for every file which exists with an extension of <code>.md</code> within the blogs directory, we create and write to a new file with the same name, but one which has a <code>.html</code> extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file.</p>
-         <br/>
-         <h3>Step 3.</h3>
-         <p><img src="/static/convert-line-by-line.png" alt="convert line by line"></p>
-         <p>The rest of this function is then an iteration over each line of the current Markdown file we are working on. First we allocate a list of bytes 1024 (or 1kb) in size called <code>buffer</code>. We then call the V std library method on our open file descriptor to read as many bytes as available into our buffer.</p>
-         <br/>
-         <h4>What does <code>read_bytes_into_newline</code> mean/do?</h4>
-         <p>If we check the V std lib documentation for this method, we find the following:</p>
-         <p><img src="/static/std-lib-doc.png" alt="std lib doc"></p>
-         <p>The last line (which incidentally seems to be incorrectly worded) is of most interest in the case of the above code. What it means is simply that the function will return if:</p>
-         <ol>
+<h2>The code</h2>
+<p>This is the entry point function to <code>compile_blogs.v</code>:
+<img src="/static/compile-blogs-entrypoint.png" alt="compile blogs entrypoint"></p>
+<p>You can see here that the first function invoked is called <code>compile_markdown_blogs_into_html_files</code>. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.</p>
+<h3>Step 1a.</h3>
+<p><img src="/static/cmbihf-first-few-lines.png" alt="cmbihf first few lines"></p>
+<p>The first few lines are ensuring that the directory which we want to read from (the blog Markdown files directory), and the directory which we would like to write to both exist already. I could just create them if they do not exist, but for now I'd rather now. I don't really know why exactly, but I think it's because they shouldn't ever not be there anyways, and if they are indeed missing, something else is probably wrong.</p>
+<h3>Step 1b.</h3>
+<p>Then this: <code>os.walk(&quot;./src/blog&quot;, fn (path string) { os.rm(path) or { ... } })</code> ensures that the target directory is empty. When we run this compile process, each blog is &quot;rebuilt&quot; each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.</p>
+<h3>Step 2.</h3>
+<p><img src="/static/for-each-blog-entry.png" alt="for each blog entry"></p>
+<p>Next up, for every file which exists with an extension of <code>.md</code> within the blogs directory, we create and write to a new file with the same name, but one which has a <code>.html</code> extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file.</p>
+<h3>Step 3.</h3>
+<p><img src="/static/convert-line-by-line.png" alt="convert line by line"></p>
+<p>The rest of this function is then an iteration over each line of the current Markdown file we are working on. First we allocate a list of bytes 1024 (or 1kb) in size called <code>buffer</code>. We then call the V std library method on our open file descriptor to read as many bytes as available into our buffer.</p>
+<h4>What does <code>read_bytes_into_newline</code> mean/do?</h4>
+<p>If we check the V std lib documentation for this method, we find the following:
+<img src="/static/std-lib-doc.png" alt="std lib doc">
+The last line (which incidentally seems to be incorrectly worded) is of most interest in the case of the above code. What it means is simply that the function will return if:</p>
+<ol>
 <li>The buffer is filled up before a newline is encountered</li>
-</ol>
-         <ol start="2">
 <li>A newline is encountered</li>
-</ol>
-         <ol start="3">
 <li>The file's EOF is reached</li>
 </ol>
-         <br/>
-         <p>That's the reason for the following branches, after we invoke this read method:</p>
-         <br/>
-         <h4>Branch 1.</h4>
-         <p><code>if read_bytes == 1024 {</code></p>
-         <p><code>        input_line := buffer.bytestr()</code></p>
-         <p><code>        output_line := markdown.to_html(input_line)</code></p>
-         <p><code>        wfd.write_string(output_line) or { println(&quot;unable to write to file: ${target}&quot;); return }</code></p>
-         <p><code>        return</code></p>
-         <p><code>}</code></p>
-         <br/>
-         <p>and</p>
-         <br/>
-         <h4>Branch 2.</h4>
-         <p><code>if read_bytes &lt; 1024 {</code></p>
-         <p><code>    mut output_line := &quot;&lt;br/&gt;&quot;</code></p>
-         <p><code>    if read_bytes &gt; 1 {</code></p>
-         <p><code>    input_line := buffer[..read_bytes - 1].bytestr()</code></p>
-         <p><code>    output_line = markdown.to_html(input_line)</code></p>
-         <p><code>}</code></p>
-         <p><code>wfd.writeln(output_line) or { println(&quot;unable to write to file: ${target}&quot;); return }</code></p>
-         <p><code>}</code></p>
-         <br/>
-         <p>For branch 1. it basically takes the fact that the whole buffer was filled to mean that the line it just read has yet to finish, so it must be just a really long line. We don't really care, and we therefore just convert all of the line we've read so far into HTML from Markdown.</p>
-         <br/>
-         <p>For branch 2. we didn't fill up the whole buffer before returning, and so we must have encountered a newline (or EOF). In this situation, we want to check if the line is more than one character long, if it is we convert this line, excluding it's newline (we assume it has one, as of yet we're not handling the EOF case! 😮) If the line is only one character long, we assume it's a newline character on its own, and we convert that into padding.</p>
-         <br/>
-         <h4>Finally</h4>
-         <p>The final line at the end of this function just writes the previously read HTML footer to the end of the new HTML file.</p>
-         <br/>
-         <h3>The attachment caveat</h3>
-         <p>I mentioned earlier that images needed to be lower-cased and delimited by <code>-</code> instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.</p>
-         <br/>
-         <h3>Embedding</h3>
-         <p>We're not done yet. The second function invoked in <code>main</code> is <code>generate_blog_embeds_code</code>.</p>
-         <br/>
-         <h3>Step 1. Acquire blog HTML files list</h3>
-         <p><img src="/static/generate-embeds-entry.png" alt="generate embeds entry"></p>
-         <p>The first thing this function does is build a list of the all the just created HTML versions of all the blog posts. It could be derived perhaps from the generation function, but for now this will do.</p>
-         <br/>
-         <h3>Step 2. Generate embed directive line per HTML file in list</h3>
-         <p><img src="/static/define-embed-per-entry.png" alt="define embed per entry"></p>
-         <p>Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to (at compile time) directly embed these files into the resulting output binary.</p>
-         <br/>
-         <h3>Step 3. Generate function to return list of blogs</h3>
-         <p><img src="/static/resolve-blogs-list.png" alt="resolve blogs list"></p>
-         <p>Generating another function which contains a human readable list is useful for the website to be able to present this to the user on the blog homepage/index page.</p>
-         <br/>
-         <h3>Step 4.</h3>
-         <p><img src="/static/access-embedded-blogs-by-name.png" alt="access embedded blogs by name"></p>
-         <p>Finally we generate <em>another</em> function, this one is probably the most important one, in that it's called from the blog view handler to resolve the request blog with the contents of the embedded file data, which is then returned back to the user.</p>
-         <br/>
-         <h2>Conclusion</h2>
-         <p>This was hopefully a clear and interesting overview of exactly how I decided to solve this &quot;problem&quot; of being able to produce an entire website and most of it's required assets as a single distributable binary with no front end framework, or annoying restrictive runtime required.</p>
-         <br/>
-         <p>There are some things which need work. For example, when converting the Markdown to HTML, there's a problem with multiple lined code blocks, stemming from the fact that we only feed the data to be converted line by line, and so when the converter encounters an open code block signifier, it doesn't know to not treat all the lines of code in-between this and the close code block.</p>
-         <br/>
-         <p>I will have to consider maybe it is worth just passing the entire file into the converter in one go rather than line by line, even though doing this feels kind of nasty to me.</p>
-         <br/>
-         <p>Anyway, I hope this was useful/interesting/of note/whatever. Thanks for reading!</p>
-         <br/>
-         <p>⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻</p>
-         <p>⣿⣿⣿⠀⣿⣶⣕⣈⠹⠿⠿⠿⠿⠟⠛⣛⢋⣰⠣⣿⣿⠀⣿</p>
-         <p>⣿⣿⣿⡀⣿⣿⣿⣧⢻⣿⣶⣷⣿⣿⣿⣿⣿⣿⠿⠶⡝⠀⣿</p>
-         <p>⣿⣿⣿⣷⠘⣿⣿⣿⢏⣿⣿⣋⣀⣈⣻⣿⣿⣷⣤⣤⣿⡐⢿</p>
-         <p>⣿⣿⣿⣿⣆⢩⣝⣫⣾⣿⣿⣿⣿⡟⠿⠿⠦⠀⠸⠿⣻⣿⡄⢻</p>
-         <p>⣿⣿⣿⣿⣿⡄⢻⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⠇⣼</p>
-         <p>⣿⣿⣿⣿⣿⣿⡄⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⣰</p>
-         <p>⣿⣿⣿⣿⣿⣿⠇⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢀⣿</p>
-         <p>⣿⣿⣿⣿⣿⠏⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢸⣿</p>
-         <p>⣿⣿⣿⣿⠟⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣿</p>
-         <p>⣿⣿⣿⠋⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⣿</p>
-         <p>⣿⣿⠋⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⢸</p>
-         <p>⣿⠏⣼⣿⣿⣿⣿⣿⣿⣿⣿</p>
-         <br/>
-         <br/>
-      </div>
+<p>That's the reason for the following branches, after we invoke this read method:</p>
+<h4>Branch 1.</h4>
+<pre><code class="language-v">if read_bytes == 1024 {
+    input_line := buffer.bytestr()
+    output_line := markdown.to_html(input_line)
+    wfd.write_string(output_line) or { println(&quot;unable to write to file: ${target}&quot;); return }
+    return
+}
+</code></pre>
+<p>and</p>
+<h4>Branch 2.</h4>
+<pre><code class="language-v">if read_bytes &lt; 1024 {`
+    mut output_line := &quot;&lt;br/&gt;&quot;`
+    if read_bytes &gt; 1 {`
+    input_line := buffer[..read_bytes - 1].bytestr()`
+    output_line = markdown.to_html(input_line)`
+    wfd.writeln(output_line) or { println(&quot;unable to write to file: ${target}&quot;); return }`
+}
+</code></pre>
+<p>For branch 1. it basically takes the fact that the whole buffer was filled to mean that the line it just read has yet to finish, so it must be just a really long line. We don't really care, and we therefore just convert all of the line we've read so far into HTML from Markdown.</p>
+<p>For branch 2. we didn't fill up the whole buffer before returning, and so we must have encountered a newline (or EOF). In this situation, we want to check if the line is more than one character long, if it is we convert this line, excluding it's newline (we assume it has one, as of yet we're not handling the EOF case! 😮) If the line is only one character long, we assume it's a newline character on its own, and we convert that into padding.</p>
+<h4>Finally</h4>
+<p>The final line at the end of this function just writes the previously read HTML footer to the end of the new HTML file.</p>
+<h3>The attachment caveat</h3>
+<p>I mentioned earlier that images needed to be lower-cased and delimited by <code>-</code> instead of spaces. That is because when the Markdown to HTML converter we need the resulting conversion to be a valid URL. The Markdown converter does not concern itself with doing escaping of illegal characters, so for our purposes it is just simpler to name these files with already valid/legal characters.</p>
+<h3>Embedding</h3>
+<p>We're not done yet. The second function invoked in <code>main</code> is <code>generate_blog_embeds_code</code>.</p>
+<h3>Step 1. Acquire blog HTML files list</h3>
+<p><img src="/static/generate-embeds-entry.png" alt="generate embeds entry"></p>
+<p>The first thing this function does is build a list of the all the just created HTML versions of all the blog posts. It could be derived perhaps from the generation function, but for now this will do.</p>
+<h3>Step 2. Generate embed directive line per HTML file in list</h3>
+<p><img src="/static/define-embed-per-entry.png" alt="define embed per entry"></p>
+<p>Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to (at compile time) directly embed these files into the resulting output binary.</p>
+<h3>Step 3. Generate function to return list of blogs</h3>
+<p><img src="/static/resolve-blogs-list.png" alt="resolve blogs list"></p>
+<p>Generating another function which contains a human readable list is useful for the website to be able to present this to the user on the blog homepage/index page.</p>
+<h3>Step 4.</h3>
+<p><img src="/static/access-embedded-blogs-by-name.png" alt="access embedded blogs by name"></p>
+<p>Finally we generate <em>another</em> function, this one is probably the most important one, in that it's called from the blog view handler to resolve the request blog with the contents of the embedded file data, which is then returned back to the user.</p>
+<h2>Conclusion</h2>
+<p>This was hopefully a clear and interesting overview of exactly how I decided to solve this &quot;problem&quot; of being able to produce an entire website and most of it's required assets as a single distributable binary with no front end framework, or annoying restrictive runtime required.</p>
+<p>There are some things which need work. For example, when converting the Markdown to HTML, there's a problem with multiple lined code blocks, stemming from the fact that we only feed the data to be converted line by line, and so when the converter encounters an open code block signifier, it doesn't know to not treat all the lines of code in-between this and the close code block.</p>
+<p>I will have to consider maybe it is worth just passing the entire file into the converter in one go rather than line by line, even though doing this feels kind of nasty to me.</p>
+<p>Anyway, I hope this was useful/interesting/of note/whatever. Thanks for reading!</p>
+<pre><code>⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻
+⣿⣿⣿⠀⣿⣶⣕⣈⠹⠿⠿⠿⠿⠟⠛⣛⢋⣰⠣⣿⣿⠀⣿
+⣿⣿⣿⡀⣿⣿⣿⣧⢻⣿⣶⣷⣿⣿⣿⣿⣿⣿⠿⠶⡝⠀⣿
+⣿⣿⣿⣷⠘⣿⣿⣿⢏⣿⣿⣋⣀⣈⣻⣿⣿⣷⣤⣤⣿⡐⢿
+⣿⣿⣿⣿⣆⢩⣝⣫⣾⣿⣿⣿⣿⡟⠿⠿⠦⠀⠸⠿⣻⣿⡄⢻
+⣿⣿⣿⣿⣿⡄⢻⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣾⣿⣿⣿⣿⠇⣼
+⣿⣿⣿⣿⣿⣿⡄⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⣰
+⣿⣿⣿⣿⣿⣿⠇⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢀⣿
+⣿⣿⣿⣿⣿⠏⢰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⢸⣿
+⣿⣿⣿⣿⠟⣰⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠀⣿
+⣿⣿⣿⠋⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⣿
+⣿⣿⠋⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⢸
+⣿⠏⣼⣿⣿⣿⣿⣿⣿⣿⣿
+</code></pre>      </div>
     </body>
 </html>
