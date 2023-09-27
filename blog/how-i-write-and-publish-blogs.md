@@ -98,7 +98,7 @@ We're not done yet. The second function invoked in `main` is `generate_blog_embe
 The first thing this function does is build a list of the all the just created HTML versions of all the blog posts. It could be derived perhaps from the generation function, but for now this will do.
 
 ### Step 2. Generate embed directive line per HTML file in list
-![define embed per entry](static/define-embed-per-entry.png)
+![define embed per entry](/static/define-embed-per-entry.png)
 Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to (at compile time) directly embed these files into the resulting output binary.
 
 ### Step 3. Generate function to return list of blogs
