@@ -61,24 +61,27 @@ The last line (which incidentally seems to be incorrectly worded) is of most int
 That's the reason for the following branches, after we invoke this read method:
 
 #### Branch 1.
-`if read_bytes == 1024 {`
-`        input_line := buffer.bytestr()`
-`        output_line := markdown.to_html(input_line)`
-`        wfd.write_string(output_line) or { println("unable to write to file: ${target}"); return }`
-`        return`
-`}`
+```v
+if read_bytes == 1024 {
+    input_line := buffer.bytestr()
+    output_line := markdown.to_html(input_line)
+    wfd.write_string(output_line) or { println("unable to write to file: ${target}"); return }
+    return
+}
+```
 
 and
 
 #### Branch 2.
-`if read_bytes < 1024 {`
-`    mut output_line := "<br/>"`
-`    if read_bytes > 1 {`
-`    input_line := buffer[..read_bytes - 1].bytestr()`
-`    output_line = markdown.to_html(input_line)`
-`}`
-`wfd.writeln(output_line) or { println("unable to write to file: ${target}"); return }`
-`}`
+```v
+if read_bytes < 1024 {`
+    mut output_line := "<br/>"`
+    if read_bytes > 1 {`
+    input_line := buffer[..read_bytes - 1].bytestr()`
+    output_line = markdown.to_html(input_line)`
+    wfd.writeln(output_line) or { println("unable to write to file: ${target}"); return }`
+}
+```
 
 For branch 1. it basically takes the fact that the whole buffer was filled to mean that the line it just read has yet to finish, so it must be just a really long line. We don't really care, and we therefore just convert all of the line we've read so far into HTML from Markdown.
 

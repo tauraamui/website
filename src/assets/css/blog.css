@@ -40,7 +40,7 @@
 
 img {
     margin: 8px;
-    max-width: 100%;
+    width: 100%;
     padding: 3px;
     border: 1px solid #141414;
     box-shadow: 0 0 0 0px #141414,
@@ -53,6 +53,22 @@ code {
 
 h1, h2, h3, h4, h5, h6 {
     color: #f781b4;
+}
+
+.hack code {
+    font-size: inherit;
+}
+
+.dark-grey pre {
+    background-color: #3b3a3a;
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    padding-left: 1em;
+    padding-right: 1em;
+}
+
+.dark-grey code, .dark-grey pre code {
+    color: #d0c8c6;
 }
 
 .root {
