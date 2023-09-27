@@ -7,7 +7,9 @@ The following post will attempt to go through the step by step process which I t
 ### Obsidian
 The blogs themselves are written using Markdown (if you don't know what Markdown (`.md`) files are somehow, you can read more about them [here](https://www.markdownguide.org/)). Obsidian is, amongst other things, great as a Markdown editor. It has native support for VIM bindings, and provides immediate feedback by rendering the document as you work on it.
 
+
 I already use Obsidian as my "second brain" day to day to collect notes, snippets/quotes from other media and works, and so I can also take advantage of all of the plugins I already use to do stuff, including planning blog posts in advance using "daily notes".
+
 
 Obsidian also renders externally referenced assets such as images in place, which is very useful. When I open Obsidian to edit the blogs, I open the directory `./site/blogs` as the "vault" to use. Within this directory are all of the Markdown files which each represent an individual blog post, and another sub directory `static`, which is where all images and other referenced assets live.
 
@@ -35,19 +37,23 @@ This website is currently deployed on a VPS server running Debian Linux. Deployi
 ## The code
 This is the entry point function to `compile_blogs.v`:
 ![compile blogs entrypoint](/static/compile-blogs-entrypoint.png)
+
 You can see here that the first function invoked is called `compile_markdown_blogs_into_html_files`. Happily the function name is very clear and self documenting, but we might as well take a look to see what it is doing.
 
 ### Step 1a.
 ![cmbihf first few lines](/static/cmbihf-first-few-lines.png)
+
 The first few lines are ensuring that the directory which we want to read from (the blog Markdown files directory), and the directory which we would like to write to both exist already. I could just create them if they do not exist, but for now I'd rather now. I don't really know why exactly, but I think it's because they shouldn't ever not be there anyways, and if they are indeed missing, something else is probably wrong.
 ### Step 1b.
 Then this: `os.walk("./src/blog", fn (path string) { os.rm(path) or { ... } })` ensures that the target directory is empty. When we run this compile process, each blog is "rebuilt" each time, even if no changes have occurred. We could do better, but for now there's so little blog posts that there's no good reason to spend time optimising/making stuff more complicated for very little gain.
 ### Step 2.
 ![for each blog entry](/static/for-each-blog-entry.png)
+
 Next up, for every file which exists with an extension of `.md` within the blogs directory, we create and write to a new file with the same name, but one which has a `.html` extension. We then immediately write the previously extracted header template (which is shared across all site pages) to this file.
 
 ### Step 3.
 ![convert line by line](/static/convert-line-by-line.png)
+
 The rest of this function is then an iteration over each line of the current Markdown file we are working on. First we allocate a list of bytes 1024 (or 1kb) in size called `buffer`. We then call the V std library method on our open file descriptor to read as many bytes as available into our buffer.
 
 #### What does `read_bytes_into_newline` mean/do?
@@ -98,18 +104,22 @@ We're not done yet. The second function invoked in `main` is `generate_blog_embe
 
 ### Step 1. Acquire blog HTML files list
 ![generate embeds entry](/static/generate-embeds-entry.png)
+
 The first thing this function does is build a list of the all the just created HTML versions of all the blog posts. It could be derived perhaps from the generation function, but for now this will do.
 
 ### Step 2. Generate embed directive line per HTML file in list
 ![define embed per entry](/static/define-embed-per-entry.png)
+
 Next we write to the strings builder for each discovered file some V code which when compiled as part of the main program/server/website app, will instruct the compiler to (at compile time) directly embed these files into the resulting output binary.
 
 ### Step 3. Generate function to return list of blogs
 ![resolve blogs list](/static/resolve-blogs-list.png)
+
 Generating another function which contains a human readable list is useful for the website to be able to present this to the user on the blog homepage/index page.
 
 ### Step 4.
 ![access embedded blogs by name](/static/access-embedded-blogs-by-name.png)
+
 Finally we generate _another_ function, this one is probably the most important one, in that it's called from the blog view handler to resolve the request blog with the contents of the embedded file data, which is then returned back to the user.
 
 ## Conclusion
@@ -121,6 +131,7 @@ I will have to consider maybe it is worth just passing the entire file into the 
 
 Anyway, I hope this was useful/interesting/of note/whatever. Thanks for reading!
 
+```
 ⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻
 ⣿⣿⣿⠀⣿⣶⣕⣈⠹⠿⠿⠿⠿⠟⠛⣛⢋⣰⠣⣿⣿⠀⣿
 ⣿⣿⣿⡀⣿⣿⣿⣧⢻⣿⣶⣷⣿⣿⣿⣿⣿⣿⠿⠶⡝⠀⣿
@@ -134,4 +145,5 @@ Anyway, I hope this was useful/interesting/of note/whatever. Thanks for reading!
 ⣿⣿⣿⠋⣴⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡄⣿
 ⣿⣿⠋⣼⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⢸
 ⣿⠏⣼⣿⣿⣿⣿⣿⣿⣿⣿
+```
 
