@@ -1,5 +1,7 @@
 module main
 
+import read_time
+
 const (
 	how_i_write_and_publish_blogs = $embed_file('./src/blog/how-i-write-and-publish-blogs.html', .zlib)
 	how_to_wash_up_correctly = $embed_file('./src/blog/how-to-wash-up-correctly.html', .zlib)
@@ -10,6 +12,22 @@ fn blogs_listing() []string {
 		"how i write and publish blogs"
 		"how to wash up correctly"
 	]
+}
+
+pub struct Post {
+	name string
+	html_content string
+	readtime read_time.ReadTime
+}
+fn resolve_blogs() map[string]Post {
+	return {
+		"how-i-write-and-publish-blogs.html": Post {
+			html_content: how_i_write_and_publish_blogs.to_string()
+		}
+		"how-to-wash-up-correctly.html": Post {
+			html_content: how_to_wash_up_correctly.to_string()
+		}
+	}
 }
 
 fn resolve_blog(name string) !string {

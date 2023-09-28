@@ -50,6 +50,8 @@ fn generate_blog_embeds_code() string {
 
 	code.writeln("module main")
 	code.writeln("")
+	code.writeln("import read_time")
+	code.writeln("")
 	code.writeln("const (")
 
 	for f in generated_files {
@@ -65,6 +67,23 @@ fn generate_blog_embeds_code() string {
 		code.writeln("\t\t\"${os.base(f).replace("-", " ").replace(".html", "")}\"")
 	}
 	code.writeln("\t]")
+	code.writeln("}")
+
+	code.writeln("")
+
+	code.writeln("pub struct Post {")
+	code.writeln("\thtml_content string")
+	code.writeln("\treadtime read_time.ReadTime")
+	code.writeln("}")
+
+	code.writeln("fn resolve_blogs() map[string]Post {")
+	code.writeln("\treturn {")
+	for f in generated_files {
+		code.writeln("\t\t\"${os.base(f)}\": Post {")
+		code.writeln("\t\t\thtml_content: ${os.base(f).replace("-", "_").replace(".html", "")}.to_string()")
+		code.writeln("\t\t}")
+	}
+	code.writeln("\t}")
 	code.writeln("}")
 
 	code.writeln("")
