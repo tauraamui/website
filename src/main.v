@@ -6,6 +6,7 @@ import vweb
 import encoding.html
 import strconv
 import strings
+import read_time
 
 const (
 	wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
@@ -143,6 +144,9 @@ pub fn (mut app App) blog_view(name string) vweb.Result {
 		}
 	}
 	content := resolve_blog("${name}.html") or { return app.not_found() }
+	opts := read_time.Options.new()
+	time := read_time.text(content, opts)
+	println("${time}")
 	return app.html(content.replace("\$\{title\}", "${name.replace("-", " ").capitalize().replace(" i ", " I ")} - tauraamui's website").replace("site.css", "blog.css"))
 }
 
