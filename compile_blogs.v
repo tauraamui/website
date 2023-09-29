@@ -4,6 +4,7 @@ import os
 import markdown
 import strings
 import read_time
+import arrays
 
 struct Post {
 	meta FrontMatter
@@ -43,18 +44,23 @@ fn resolve_all_posts() []Post {
 		if i <= 1 {
 			println("-----------------------------")
 		}
-		raw_contents := os.read_file(path) or { panic("unable to read post ${os.base(path)} contents: ${err}") }
+
+		mut raw_contents := os.read_file(path) or { panic("unable to read post ${os.base(path)} contents: ${err}") }
 		println("found post: ${path}")
 
 		front_matter := extract_front_matter(raw_contents)
 		if front_matter.start_pos < front_matter.end_pos {
-			println("START ${front_matter.start_pos}, END ${front_matter.end_pos}")
+			if front_matter.start_pos == 0 {
+				println(">   removing front matter from read body [${front_matter.start_pos}] to [${front_matter.end_pos}]")
+				raw_contents = arrays.join_to_string(raw_contents.split("\n")[front_matter.end_pos..], "\n", fn (e string) string { return e })
+			}
 		}
+
 		post := Post {
 			meta: front_matter
 			path: path
 			raw_doc_content: raw_contents
-			html_content: markdown.to_html(raw_contents)
+			html_content: arrays.join_to_string(markdown.to_html(raw_contents).split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
 			readtime: read_time.text(raw_contents, read_time.Options.new())
 		}
 		ref << post
