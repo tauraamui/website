@@ -118,9 +118,16 @@ fn main() {
 	for _, p in posts {
 		p.write_html_post(header_content, footer_content)
 	}
+
+	target := "./src/resolve_blogs.v"
+	code := generate_blog_embeds_code(posts.map("${it.meta.date} - ${it.meta.title}"))
+	os.rm(target) or { println("unable to remove ${target}: ${err}") }
+	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
+	defer { wfd.close() }
+	wfd.write_string(code) or { panic("unable to write to file: ${target}") }
 }
 
-fn generate_blog_embeds_code() string {
+fn generate_blog_embeds_code(post_title_list []string) string {
 	mut generated_files := []string{}
 	mut ref := &generated_files
 
@@ -131,8 +138,6 @@ fn generate_blog_embeds_code() string {
 
 	code.writeln("module main")
 	code.writeln("")
-	code.writeln("import read_time")
-	code.writeln("")
 	code.writeln("const (")
 
 	for f in generated_files {
@@ -142,29 +147,19 @@ fn generate_blog_embeds_code() string {
 	code.writeln(")")
 	code.writeln("")
 
-	code.writeln("fn blogs_listing() []string {")
-	code.writeln("\treturn [")
-	for f in generated_files {
-		code.writeln("\t\t\"${os.base(f).replace("-", " ").replace(".html", "")}\"")
-	}
-	code.writeln("\t]")
+	code.writeln("struct Listing {")
+	code.writeln("\ttitle string")
+	code.writeln("\turl string")
 	code.writeln("}")
 
 	code.writeln("")
 
-	code.writeln("pub struct Post {")
-	code.writeln("\thtml_content string")
-	code.writeln("\treadtime read_time.ReadTime")
-	code.writeln("}")
-
-	code.writeln("fn resolve_blogs() map[string]Post {")
-	code.writeln("\treturn {")
-	for f in generated_files {
-		code.writeln("\t\t\"${os.base(f)}\": Post {")
-		code.writeln("\t\t\thtml_content: ${os.base(f).replace("-", "_").replace(".html", "")}.to_string()")
-		code.writeln("\t\t}")
+	code.writeln("fn blogs_listing() []Listing {")
+	code.writeln("\treturn [")
+	for post in post_title_list {
+		code.writeln("\t\tListing{title: \"${post}\"},")
 	}
-	code.writeln("\t}")
+	code.writeln("\t]")
 	code.writeln("}")
 
 	code.writeln("")
