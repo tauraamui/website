@@ -2,6 +2,7 @@
 Date: 26/09/2023
 ---
 # How I write and publish blogs
+#{read_time_seconds}
 The following post will attempt to go through the step by step process which I take when I would like to author and publish new blogs to this website.
 
 ### Obsidian

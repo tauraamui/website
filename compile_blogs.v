@@ -11,14 +11,12 @@ struct Post {
 	path string
 	raw_doc_content string
 	html_content string
-	readtime read_time.ReadTime
 }
 
 struct FrontMatter {
 mut:
-	start_pos int
-	end_pos int
 	date string
+	readtime read_time.ReadTime
 }
 
 fn (post Post) write_html_post(header_content string, footer_content string) {
@@ -51,20 +49,14 @@ fn resolve_all_posts() []Post {
 		mut raw_contents := os.read_file(path) or { panic("unable to read post ${os.base(path)} contents: ${err}") }
 		println("found post: ${path}")
 
-		front_matter := extract_front_matter(raw_contents)
-		if front_matter.start_pos < front_matter.end_pos {
-			if front_matter.start_pos == 0 {
-				println(">   removing front matter from read body [${front_matter.start_pos}] to [${front_matter.end_pos}]")
-				raw_contents = arrays.join_to_string(raw_contents.split("\n")[front_matter.end_pos..], "\n", fn (e string) string { return e })
-			}
-		}
+		front_matter, mut contents := extract_front_matter(raw_contents)
+		contents = contents.replace("#{read_time_seconds}", "${front_matter.readtime.seconds}")
 
 		post := Post {
 			meta: front_matter
 			path: path
-			raw_doc_content: raw_contents
-			html_content: arrays.join_to_string(markdown.to_html(raw_contents).split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
-			readtime: read_time.text(raw_contents, read_time.Options.new())
+			raw_doc_content: contents
+			html_content: arrays.join_to_string(markdown.to_html(contents).split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
 		}
 		ref << post
 		println("-----------------------------")
@@ -72,7 +64,7 @@ fn resolve_all_posts() []Post {
 	return posts
 }
 
-fn extract_front_matter(content string) FrontMatter {
+fn extract_front_matter(content string) (FrontMatter, string) {
 	mut matter := FrontMatter{}
 	println(">   extracting front matter")
 	mut occurence_count := 0
@@ -95,12 +87,19 @@ fn extract_front_matter(content string) FrontMatter {
 			else {}
 		}
 	}
-	matter.start_pos = start_pos
-	matter.end_pos = if occurence_count == 2 { end_pos } else { 0 }
 	if occurence_count != 2 {
 		println(">   missing close/end line for front matter block")
 	}
-	return matter
+
+	mut cut_contents := ""
+	if start_pos < end_pos {
+		if start_pos == 0 {
+			println(">   removing front matter from read body [${start_pos}] to [${end_pos}]")
+			cut_contents = arrays.join_to_string(content.split("\n")[end_pos..], "\n", fn (e string) string { return e })
+		}
+	}
+	matter.readtime = read_time.text(cut_contents, read_time.Options.new())
+	return matter, cut_contents
 }
 
 fn main() {

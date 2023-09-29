@@ -18,19 +18,8 @@
                 "source": false
               }
             }
-          },
-          {
-            "id": "572d606d5488c202",
-            "type": "leaf",
-            "state": {
-              "type": "release-notes",
-              "state": {
-                "currentVersion": "1.4.14"
-              }
-            }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -157,7 +146,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "572d606d5488c202",
+  "active": "29b3f40666a022e0",
   "lastOpenFiles": [
     "static/access-embedded-blogs-by-name.png",
     "how-i-write-and-publish-blogs.md",
