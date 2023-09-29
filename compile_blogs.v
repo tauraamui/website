@@ -21,12 +21,15 @@ mut:
 	date string
 }
 
-fn (post Post) write_html_post(header_content string, front_matter_content string, footer_content string) {
+fn (post Post) write_html_post(header_content string, footer_content string) {
 	target := "./src/blog/${os.base(post.path)}".replace(".md", ".html")
 	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file ${target}: ${err}"); return }
 	defer { wfd.close() }
 
+	// fm_content = fm_content.replace("\${date}", post.meta.date)
+	// fm_content = fm_content.replace("\${read_time_seconds}", post.readtime.seconds.str())
 	wfd.write_string(header_content) or { println("unable to prepend header to file: ${err}"); return }
+	//wfd.write_string(fm_content) or { println("unable to prepend front matter to file: ${err}"); return }
 	wfd.write_string(post.html_content) or { println("unable to write converted HTML body: ${err}"); return }
 	wfd.write_string("${" ".repeat(6)}</div>\n${footer_content}") or { println("unable to append footer to file: ${err}"); return }
 }
@@ -105,13 +108,12 @@ fn main() {
 	posts := resolve_all_posts()
 
 	header_content := os.read_file("./src/templates/header.html") or { panic("unable to extract header content") }
-	front_matter_content := os.read_file("./src/templates/post_front_matter.html") or { panic("unable to extract front matter template") }
 	footer_content := os.read_file("./src/templates/footer.html") or { panic("unable to extract footer content") }
 
 	os.walk("./src/blog", fn (path string) { os.rm(path) or { println("unable to remove ${path}: ${err}"); return } })
 
 	for _, p in posts {
-		p.write_html_post(header_content, front_matter_content, footer_content)
+		p.write_html_post(header_content, footer_content)
 	}
 }
 
