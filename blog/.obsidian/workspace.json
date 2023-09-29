@@ -13,7 +13,7 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "how-i-write-and-publish-blogs.md",
+                "file": "how-to-wash-up-correctly.md",
                 "mode": "source",
                 "source": false
               }
@@ -85,7 +85,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "how-i-write-and-publish-blogs.md",
+                "file": "how-to-wash-up-correctly.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -102,7 +102,7 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "how-i-write-and-publish-blogs.md",
+                "file": "how-to-wash-up-correctly.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               }
@@ -125,7 +125,7 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "how-i-write-and-publish-blogs.md"
+                "file": "how-to-wash-up-correctly.md"
               }
             }
           }
@@ -148,8 +148,9 @@
   },
   "active": "29b3f40666a022e0",
   "lastOpenFiles": [
-    "static/access-embedded-blogs-by-name.png",
     "how-i-write-and-publish-blogs.md",
+    "how-to-wash-up-correctly.md",
+    "static/access-embedded-blogs-by-name.png",
     "static/resolve-blogs-list.png",
     "static/define-embed-per-entry.png",
     "static/define-embed-per-entry-out.png",
@@ -160,7 +161,6 @@
     "static/cmbihf-first-few-lines.png",
     "static/cmbihf-first-few-lines-out.png",
     "static/convert-line-by-line.png.md",
-    "how-to-wash-up-correctly.md",
     "static/-0",
     "static/result.png.crswap"
   ]

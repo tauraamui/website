@@ -1,7 +1,9 @@
 ---
-Date: 24/09/2023
+date: 24/09/2023
+title: How to correctly wash up
 ---
 # How to correctly wash up
+#{read_time_seconds}
 
 There are different methods people use to wash up their dishes. However generally I'd say that they all involve:
 

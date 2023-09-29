@@ -1,5 +1,6 @@
 ---
-Date: 26/09/2023
+date: 26/09/2023
+title: How I write and publish blogs
 ---
 # How I write and publish blogs
 #{read_time_seconds}

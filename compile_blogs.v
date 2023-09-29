@@ -16,6 +16,7 @@ struct Post {
 struct FrontMatter {
 mut:
 	date string
+	title string
 	readtime read_time.ReadTime
 }
 
@@ -50,7 +51,8 @@ fn resolve_all_posts() []Post {
 		println("found post: ${path}")
 
 		front_matter, mut contents := extract_front_matter(raw_contents)
-		contents = contents.replace("#{read_time_seconds}", "${front_matter.readtime.seconds}")
+		read_time_minutes := front_matter.readtime.seconds / 60
+		contents = contents.replace("#{read_time_seconds}", "\n ### Read time: ${read_time_minutes} minute${if read_time_minutes > 1 { "s" } else { "" }}")
 
 		post := Post {
 			meta: front_matter
@@ -80,10 +82,11 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 			continue
 		}
 
-		parts := line.to_lower().replace(" ", "").split(":")
+		parts := line.split(":")
 		if parts.len != 2 { continue }
-		match parts[0] {
-			"date" { matter.date = parts[1]; println("     |> date: ${matter.date}") }
+		match parts[0].to_lower() {
+			"title" { matter.title = parts[1]; println("     |> title: ${matter.title}") }
+			"date" { matter.date = parts[1].replace(" ", ""); println("     |> date: ${matter.date}") }
 			else {}
 		}
 	}
@@ -91,14 +94,15 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 		println(">   missing close/end line for front matter block")
 	}
 
+
 	mut cut_contents := ""
 	if start_pos < end_pos {
 		if start_pos == 0 {
-			println(">   removing front matter from read body [${start_pos}] to [${end_pos}]")
 			cut_contents = arrays.join_to_string(content.split("\n")[end_pos..], "\n", fn (e string) string { return e })
 		}
 	}
 	matter.readtime = read_time.text(cut_contents, read_time.Options.new())
+	println("     |> ${matter.readtime.seconds} seconds read time")
 	return matter, cut_contents
 }
 
