@@ -7,10 +7,12 @@ import read_time
 import arrays
 
 struct Post {
-	meta FrontMatter
 	path string
+	meta FrontMatter
 	raw_doc_content string
 	html_content string
+mut:
+	html_path string
 }
 
 struct FrontMatter {
@@ -20,8 +22,10 @@ mut:
 	readtime read_time.ReadTime
 }
 
-fn (post Post) write_html_post(header_content string, footer_content string) {
+fn (mut post Post) write_html_post(header_content string, footer_content string) {
 	target := "./src/blog/${os.base(post.path)}".replace(".md", ".html")
+	post.html_path = target
+
 	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file ${target}: ${err}"); return }
 	defer { wfd.close() }
 
@@ -85,8 +89,8 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 		parts := line.split(":")
 		if parts.len != 2 { continue }
 		match parts[0].to_lower() {
-			"title" { matter.title = parts[1]; println("     |> title: ${matter.title}") }
-			"date" { matter.date = parts[1].replace(" ", ""); println("     |> date: ${matter.date}") }
+			"title" { matter.title = parts[1]; println("     -> title: ${matter.title}") }
+			"date" { matter.date = parts[1].replace(" ", ""); println("     -> date: ${matter.date}") }
 			else {}
 		}
 	}
@@ -102,29 +106,42 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 		}
 	}
 	matter.readtime = read_time.text(cut_contents, read_time.Options.new())
-	println("     |> ${matter.readtime.seconds} seconds read time")
+	println("     -> read time: ${matter.readtime.seconds} seconds")
 	return matter, cut_contents
 }
 
 fn main() {
-	println("WEBSITE COMPILING ALL BLOG POSTS\n")
-	posts := resolve_all_posts()
+	println("\nWebsite compiler\n")
+	mut posts := resolve_all_posts()
 
 	header_content := os.read_file("./src/templates/header.html") or { panic("unable to extract header content") }
 	footer_content := os.read_file("./src/templates/footer.html") or { panic("unable to extract footer content") }
 
 	os.walk("./src/blog", fn (path string) { os.rm(path) or { println("unable to remove ${path}: ${err}"); return } })
 
-	for _, p in posts {
+	for _, mut p in posts {
 		p.write_html_post(header_content, footer_content)
 	}
 
+	code := generate_embedding_code(posts)
+	println(code)
+
+	// code2 := generate_blog_embeds_code(posts.map("${it.meta.date} - ${it.meta.title}"))
+
+	/*
 	target := "./src/resolve_blogs.v"
-	code := generate_blog_embeds_code(posts.map("${it.meta.date} - ${it.meta.title}"))
 	os.rm(target) or { println("unable to remove ${target}: ${err}") }
 	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
 	defer { wfd.close() }
 	wfd.write_string(code) or { panic("unable to write to file: ${target}") }
+	*/
+}
+
+fn generate_embedding_code(posts []Post) string {
+	for _, p in posts {
+		println("${p.html_path}")
+	}
+	return ""
 }
 
 fn generate_blog_embeds_code(post_title_list []string) string {

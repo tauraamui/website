@@ -7,7 +7,7 @@ const (
 
 struct Listing {
 	title string
-	url string
+	file_name string
 }
 
 fn blogs_listing() []Listing {
