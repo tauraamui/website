@@ -9,6 +9,7 @@ struct Listing {
 	title string
 	url string
 }
+
 fn blogs_listing() []Listing {
 	return [
 		Listing{title: "26/09/2023 -  How I write and publish blogs"},
