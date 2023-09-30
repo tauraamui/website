@@ -143,7 +143,7 @@ pub fn (mut app App) blog_view(name string) vweb.Result {
 			app.views["blog: ${name}"] += 1
 		}
 	}
-	content := resolve_blog("${name}.html") or { return app.not_found() }
+	content := resolve_blog(name) or { return app.not_found() }
 	opts := read_time.Options.new()
 	time := read_time.text(content, opts)
 	println("${time}")

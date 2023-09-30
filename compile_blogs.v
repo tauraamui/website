@@ -124,57 +124,36 @@ fn main() {
 	}
 
 	code := generate_embedding_code(posts)
-	println(code)
 
-	// code2 := generate_blog_embeds_code(posts.map("${it.meta.date} - ${it.meta.title}"))
-
-	/*
 	target := "./src/resolve_blogs.v"
 	os.rm(target) or { println("unable to remove ${target}: ${err}") }
 	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
 	defer { wfd.close() }
+	println("writing generated embed code to ${target}")
 	wfd.write_string(code) or { panic("unable to write to file: ${target}") }
-	*/
 }
 
 fn generate_embedding_code(posts []Post) string {
-	for _, p in posts {
-		println("${p.html_path}")
-	}
-	return ""
-}
-
-fn generate_blog_embeds_code(post_title_list []string) string {
-	mut generated_files := []string{}
-	mut ref := &generated_files
-
-	os.walk("./src/blog", fn [mut ref] (path string) {
-		ref << path
-	})
 	mut code := strings.new_builder(1024)
 
 	code.writeln("module main")
 	code.writeln("")
 	code.writeln("const (")
-
-	for f in generated_files {
-		code.writeln("\t${os.base(f).replace("-", "_").replace(".html", "")} = \$embed_file('${f}', .zlib)")
+	for _, p in posts {
+		code.writeln("\t${os.base(p.html_path).replace("-", "_").replace(".html", "")} = \$embed_file('${p.html_path}', .zlib)")
 	}
-
 	code.writeln(")")
 	code.writeln("")
 
 	code.writeln("struct Listing {")
 	code.writeln("\ttitle string")
-	code.writeln("\turl string")
+	code.writeln("\tfile_name string")
 	code.writeln("}")
-
-	code.writeln("")
 
 	code.writeln("fn blogs_listing() []Listing {")
 	code.writeln("\treturn [")
-	for post in post_title_list {
-		code.writeln("\t\tListing{title: \"${post}\"},")
+	for _, p in posts {
+		code.writeln("\t\tListing { title: \"${p.meta.date} - ${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
 	}
 	code.writeln("\t]")
 	code.writeln("}")
@@ -183,9 +162,10 @@ fn generate_blog_embeds_code(post_title_list []string) string {
 
 	code.writeln("fn resolve_blog(name string) !string {")
 	code.writeln("\treturn match name {")
-	for f in generated_files {
-		code.writeln("\t\t\"${os.base(f)}\" {")
-		code.writeln("\t\t\t${os.base(f).replace("-", "_").replace(".html", "")}.to_string()")
+	for _, p in posts {
+		name := os.base(p.html_path)
+		code.writeln("\t\t\"${name.replace(".html", "")}\" {")
+		code.writeln("\t\t\t${name.replace("-", "_").replace(".html", "")}.to_string()")
 		code.writeln("\t\t}")
 	}
 	code.writeln("\t\telse { error(\"unable to resolve blog\") }")
@@ -195,14 +175,3 @@ fn generate_blog_embeds_code(post_title_list []string) string {
 	return code.str()
 }
 
-/*
-fn main() {
-	compile_markdown_blogs_into_html_files()
-	target := "./src/resolve_blogs.v"
-	code := generate_blog_embeds_code()
-	os.rm(target) or { println("unable to remove ${target}: ${err}") }
-	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
-	defer { wfd.close() }
-	wfd.write_string(code) or { panic("unable to write to file: ${target}") }
-}
-*/
