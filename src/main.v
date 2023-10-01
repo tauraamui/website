@@ -137,13 +137,13 @@ pub fn (mut app App) blog() vweb.Result {
 
 ['/blog/:name']
 pub fn (mut app App) blog_view(name string) vweb.Result {
+	post := resolve_blog(name) or { return app.not_found() }
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["blog: ${name}"] += 1
 		}
 	}
-	content := resolve_blog(name) or { return app.not_found() }
-	return app.html(content.replace("\$\{title\}", "${name.replace("-", " ").capitalize().replace(" i ", " I ")} - tauraamui's website").replace("site.css", "blog.css"))
+	return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
 }
 
 

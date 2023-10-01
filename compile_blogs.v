@@ -146,6 +146,7 @@ fn generate_embedding_code(posts []Post) string {
 	code.writeln("")
 
 	code.writeln("struct Listing {")
+	code.writeln("\tdate string")
 	code.writeln("\ttitle string")
 	code.writeln("\tfile_name string")
 	code.writeln("}")
@@ -153,19 +154,26 @@ fn generate_embedding_code(posts []Post) string {
 	code.writeln("fn blogs_listing() []Listing {")
 	code.writeln("\treturn [")
 	for _, p in posts {
-		code.writeln("\t\tListing { title: \"${p.meta.date} - ${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
+		code.writeln("\t\tListing { date: \"${p.meta.date}\" title: \"${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
 	}
 	code.writeln("\t]")
 	code.writeln("}")
 
 	code.writeln("")
 
-	code.writeln("fn resolve_blog(name string) !string {")
+	code.writeln("struct Post {")
+	code.writeln("\ttitle string")
+	code.writeln("\tcontent string")
+	code.writeln("}")
+
+	code.writeln("")
+
+	code.writeln("fn resolve_blog(name string) !Post {")
 	code.writeln("\treturn match name {")
 	for _, p in posts {
 		name := os.base(p.html_path)
 		code.writeln("\t\t\"${name.replace(".html", "")}\" {")
-		code.writeln("\t\t\t${name.replace("-", "_").replace(".html", "")}.to_string()")
+		code.writeln("\t\t\tPost { title: \"${p.meta.title}\", content: ${name.replace("-", "_").replace(".html", "")}.to_string() }")
 		code.writeln("\t\t}")
 	}
 	code.writeln("\t\telse { error(\"unable to resolve blog\") }")
