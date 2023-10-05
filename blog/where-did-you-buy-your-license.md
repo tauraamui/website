@@ -14,3 +14,5 @@ This is less about the actual skill or technique involved in the literal driving
 - Using the "overtaking lane" as one's personal race track
 
 Whether or not a motorist will decide to indicate seems to be completely arbitrary and random, but there does seem to be some level of decision making taking place as to whether they will indicate before moving in their desired direction.
+
+Based on observations I will summarise what I think is possibly an accurate checklist of situations where someone (whom this article is about) will make the decision either way:
