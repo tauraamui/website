@@ -4,23 +4,11 @@
     "type": "split",
     "children": [
       {
-        "id": "75a6fb646c5ebdb9",
+        "id": "a86a86070731c342",
         "type": "tabs",
         "children": [
           {
-            "id": "29b3f40666a022e0",
-            "type": "leaf",
-            "state": {
-              "type": "markdown",
-              "state": {
-                "file": "how-to-wash-up-correctly.md",
-                "mode": "source",
-                "source": false
-              }
-            }
-          },
-          {
-            "id": "7cd47aa61152d4d2",
+            "id": "38db98c81247d736",
             "type": "leaf",
             "state": {
               "type": "markdown",
@@ -31,8 +19,7 @@
               }
             }
           }
-        ],
-        "currentTab": 1
+        ]
       }
     ],
     "direction": "vertical"
@@ -159,7 +146,7 @@
       "command-palette:Open command palette": false
     }
   },
-  "active": "67ff499bb63436c1",
+  "active": "38db98c81247d736",
   "lastOpenFiles": [
     "how-to-wash-up-correctly.md",
     "where-did-you-buy-your-license.md",

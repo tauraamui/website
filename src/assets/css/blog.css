@@ -55,6 +55,10 @@ h1, h2, h3, h4, h5, h6 {
     color: #f781b4;
 }
 
+.hack strong {
+    font-size: inherit;
+}
+
 .hack code {
     font-size: inherit;
 }

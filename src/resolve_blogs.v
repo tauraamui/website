@@ -15,7 +15,7 @@ fn blogs_listing() []Listing {
 	return [
 		Listing { date: "26/09/2023" title: " How I write and publish blogs", file_name: "how-i-write-and-publish-blogs" }
 		Listing { date: "24/09/2023" title: " How to correctly wash up", file_name: "how-to-wash-up-correctly" }
-		Listing { date: "05/10/2023" title: " You can't drive (yes you.)", file_name: "where-did-you-buy-your-license" }
+		Listing { date: "05/10/2023" title: " You can't drive (yes you)", file_name: "where-did-you-buy-your-license" }
 	]
 }
 
@@ -33,7 +33,7 @@ fn resolve_blog(name string) !Post {
 			Post { title: " How to correctly wash up", content: how_to_wash_up_correctly.to_string() }
 		}
 		"where-did-you-buy-your-license" {
-			Post { title: " You can't drive (yes you.)", content: where_did_you_buy_your_license.to_string() }
+			Post { title: " You can't drive (yes you)", content: where_did_you_buy_your_license.to_string() }
 		}
 		else { error("unable to resolve blog") }
 	}
