@@ -56,7 +56,7 @@ fn resolve_all_posts() []Post {
 
 		front_matter, mut contents := extract_front_matter(raw_contents)
 		read_time_minutes := front_matter.readtime.seconds / 60
-		contents = contents.replace("#{read_time_seconds}", "\n ### Read time: ${read_time_minutes} minute${if read_time_minutes > 1 { "s" } else { "" }}")
+		contents = contents.replace("#{read_time_seconds}", "\n ### Read time: ${read_time_minutes} minute${if read_time_minutes > 1 || read_time_minutes == 0 { "s" } else { "" }}")
 
 		post := Post {
 			meta: front_matter
