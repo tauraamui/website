@@ -59,6 +59,31 @@ h1, h2, h3, h4, h5, h6 {
     font-size: inherit;
 }
 
+.hack blockquote {
+    position: relative;
+    padding-left: 1em;
+    border-left: 0.2em solid #039be5;
+    font-family: 'Roboto', serif;
+    font-size: 2.4em;
+    font-weight: 100;
+}
+
+.hack blockquote p {
+    display: inline;
+}
+
+.hack blockquote:before, .hack blockquote:after {
+    font-family: Calibri;
+    color: #039be5;
+    font-size: 34px;
+    position: inherit;
+}
+
+.hack blockquote:before { content: '\201c'; top: .6rem; }
+.hack blockquote:after { content: '\201e'; }
+.hack blockquote cite { font-size: 90%; text-align:center; top:50%; }
+.hack blockquote cite:before { content: ' \2015 '; }
+
 .hack code {
     font-size: inherit;
 }
