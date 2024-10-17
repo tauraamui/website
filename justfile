@@ -10,12 +10,12 @@ compile-blogs:
     v run compile_blogs.v
 
 transfer-to-server:
-    scp -r ./blog/ tauraamui@tauraamui.website:~/site
+    scp -r ./blog/ tauraamui@tauraamui.website:~/
     scp ./website.bin tauraamui@tauraamui.website:~/
 
 run-watch:
     v -d vweb_livereload watch run .
 
 install-deps:
-    npm install -S hackcss-ext
+    pnpm install -S hackcss-ext
     v install markdown

@@ -1,10 +1,8 @@
 module main
 
-const (
-	how_i_write_and_publish_blogs = $embed_file('./src/blog/how-i-write-and-publish-blogs.html', .zlib)
-	how_to_wash_up_correctly = $embed_file('./src/blog/how-to-wash-up-correctly.html', .zlib)
-	where_did_you_buy_your_license = $embed_file('./src/blog/where-did-you-buy-your-license.html', .zlib)
-)
+const how_i_write_and_publish_blogs = $embed_file('./src/blog/how-i-write-and-publish-blogs.html', .zlib)
+const how_to_wash_up_correctly = $embed_file('./src/blog/how-to-wash-up-correctly.html', .zlib)
+const where_did_you_buy_your_license = $embed_file('./src/blog/where-did-you-buy-your-license.html', .zlib)
 
 struct Listing {
 	date string

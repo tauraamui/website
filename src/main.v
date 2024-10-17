@@ -7,23 +7,21 @@ import encoding.html
 import strconv
 import strings
 
-const (
-	wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
-	hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
-	dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
-	site_css = $embed_file('./src/assets/css/site.css', .zlib)
-	blog_css = $embed_file('./src/assets/css/blog.css', .zlib)
+const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
+const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
+const dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
+const site_css = $embed_file('./src/assets/css/site.css', .zlib)
+const blog_css = $embed_file('./src/assets/css/blog.css', .zlib)
 
-	rubik_font = $embed_file('./src/assets/css/fonts/latin-rubik.woff2', .zlib)
-	rubik_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-rubik.woff2', .zlib)
-	// pending potential removal
-	/*
-	spectral_font = $embed_file('./src/assets/css/fonts/latin-spectral.woff2', .zlib)
-	spectral_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-spectral.woff2', .zlib)
-	*/
+const rubik_font = $embed_file('./src/assets/css/fonts/latin-rubik.woff2', .zlib)
+const rubik_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-rubik.woff2', .zlib)
+// pending potential removal
+/*
+spectral_font = $embed_file('./src/assets/css/fonts/latin-spectral.woff2', .zlib)
+spectral_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-spectral.woff2', .zlib)
+*/
 
-	port = 8082
-)
+const port = 8082
 
 struct App {
 	vweb.Context
@@ -32,7 +30,7 @@ mut:
 }
 
 fn resolve_port() int {
-	port_arg := cmdline.option(os.args_after(""), "-port", "8082")
+	port_arg := cmdline.option(os.args_after(""), "-port", "8080")
 	return strconv.atoi(port_arg) or {
 		println("invalid port ${port_arg} (must be digits)")
 		exit(1)
@@ -52,7 +50,7 @@ fn new_app() &App {
 	return app
 }
 
-['/assets/css/:name']
+@['/assets/css/:name']
 pub fn (mut app App) css(name string) vweb.Result {
 	match name {
 		"hack.css" {
@@ -77,7 +75,7 @@ pub fn (mut app App) css(name string) vweb.Result {
 	}
 }
 
-['/assets/css/fonts/:name']
+@['/assets/css/fonts/:name']
 pub fn (mut app App) fonts(name string) vweb.Result {
 	match name {
 		"latin-rubik.woff2" {
@@ -106,13 +104,13 @@ pub fn (mut app App) fonts(name string) vweb.Result {
 }
 
 
-['/assets/black_wolf_face.png']
+@['/assets/black_wolf_face.png']
 pub fn (mut app App) face() vweb.Result {
 	app.set_content_type(vweb.mime_types[".png"] or { "" })
 	return app.ok(wolf_face_png.to_string())
 }
 
-['/']
+@['/']
 pub fn (mut app App) home() vweb.Result {
 	lock app.views {
 		if !request_is_me(app) {
@@ -123,7 +121,7 @@ pub fn (mut app App) home() vweb.Result {
 	return $vweb.html()
 }
 
-['/blog']
+@['/blog']
 pub fn (mut app App) blog() vweb.Result {
 	lock app.views {
 		if !request_is_me(app) {
@@ -135,7 +133,7 @@ pub fn (mut app App) blog() vweb.Result {
 	return $vweb.html()
 }
 
-['/blog/:name']
+@['/blog/:name']
 pub fn (mut app App) blog_view(name string) vweb.Result {
 	post := resolve_blog(name) or { return app.not_found() }
 	lock app.views {
@@ -147,7 +145,7 @@ pub fn (mut app App) blog_view(name string) vweb.Result {
 }
 
 
-['/contact']
+@['/contact']
 pub fn (mut app App) contact() vweb.Result {
 	lock app.views {
 		if !request_is_me(app) {
@@ -162,7 +160,7 @@ pub fn (mut app App) contact() vweb.Result {
 	return $vweb.html()
 }
 
-['/metrics']
+@['/metrics']
 pub fn (mut app App) metrics() vweb.Result {
 	mut result := strings.new_builder(1024)
 	lock app.views {
@@ -179,7 +177,6 @@ pub fn (mut app App) metrics() vweb.Result {
 }
 
 fn request_is_me(app App) bool {
-	remote_ip := app.get_header("X-Real-IP")
-	return remote_ip == "2a02:c7c:b415:9900:d228:9473:7550:5957" || remote_ip == "90.216.170.192"
+	return false
 }
 

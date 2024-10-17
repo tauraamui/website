@@ -138,11 +138,9 @@ fn generate_embedding_code(posts []Post) string {
 
 	code.writeln("module main")
 	code.writeln("")
-	code.writeln("const (")
 	for _, p in posts {
-		code.writeln("\t${os.base(p.html_path).replace("-", "_").replace(".html", "")} = \$embed_file('${p.html_path}', .zlib)")
+		code.writeln("const ${os.base(p.html_path).replace("-", "_").replace(".html", "")} = \$embed_file('${p.html_path}', .zlib)")
 	}
-	code.writeln(")")
 	code.writeln("")
 
 	code.writeln("struct Listing {")
