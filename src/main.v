@@ -3,6 +3,7 @@ module main
 import os
 import os.cmdline
 import vweb
+import net.http
 import encoding.html
 import strconv
 import strings
@@ -27,6 +28,7 @@ struct App {
 	vweb.Context
 mut:
 	views shared map[string]int
+	theme_mode string
 }
 
 fn resolve_port() int {
@@ -110,6 +112,10 @@ pub fn (mut app App) face() vweb.Result {
 	return app.ok(wolf_face_png.to_string())
 }
 
+pub fn (mut app App) before_request() {
+	app.theme_mode = app.get_cookie(theme_cookie_name) or { "dark" }
+}
+
 @['/']
 pub fn (mut app App) home() vweb.Result {
 	lock app.views {
@@ -117,6 +123,7 @@ pub fn (mut app App) home() vweb.Result {
 			app.views["home"] += 1
 		}
 	}
+
 	title := "tauraamui's website"
 	return $vweb.html()
 }
@@ -158,6 +165,27 @@ pub fn (mut app App) contact() vweb.Result {
 	telegram := html.escape("https://t.me/tauraamui")
 	discord := html.escape("https://discordapp.com/users/753689188213194862")
 	return $vweb.html()
+}
+
+const theme_cookie_name := "theme"
+const valid_themes = ["dark", "light"]
+
+@['/theme/:mode'; post]
+pub fn (mut app App) set_theme(mode string) vweb.Result {
+	lock app.views {
+		if !request_is_me(app) {
+			app.views["set-theme"] += 1
+		}
+	}
+
+	theme_index := valid_themes.index(mode)
+	if theme_index < 0 {
+		app.set_status(http.Status.bad_request.int(), '')
+		return app.text('error: unexpected theme mode: ${mode}')
+	}
+
+	app.set_cookie(name: theme_cookie_name, value: valid_themes[theme_index])
+	return app.text('Response Headers\n$app.header')
 }
 
 @['/metrics']
