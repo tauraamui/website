@@ -4,6 +4,7 @@ import os
 import os.cmdline
 import vweb
 import net.http
+import net.urllib
 import encoding.html
 import strconv
 import strings
@@ -178,14 +179,17 @@ pub fn (mut app App) set_theme(mode string) vweb.Result {
 		}
 	}
 
+	url := urllib.parse(app.req.url) or { app.set_status(http.Status.internal_server_error.int(), ''); return app.text('error: invalid redirect url') }
+	origin_url := url.query().get("redirect") or { "/" }
+
 	theme_index := valid_themes.index(mode)
 	if theme_index < 0 {
 		app.set_status(http.Status.bad_request.int(), '')
 		return app.text('error: unexpected theme mode: ${mode}')
 	}
 
-	app.set_cookie(name: theme_cookie_name, value: valid_themes[theme_index])
-	return app.text('Response Headers\n$app.header')
+	app.set_cookie(http.Cookie{ name: theme_cookie_name, value: valid_themes[theme_index], path: '/' })
+	return app.redirect(origin_url)
 }
 
 @['/metrics']
