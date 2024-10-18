@@ -149,7 +149,10 @@ pub fn (mut app App) blog_view(name string) vweb.Result {
 			app.views["blog: ${name}"] += 1
 		}
 	}
-	return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
+	title := post.title
+	header_content := $tmpl("./templates/header.html")
+	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
+	return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("\$<\{header\}>", header_content).replace("site.css", "blog.css"))
 }
 
 

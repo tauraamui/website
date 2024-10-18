@@ -22,7 +22,7 @@ mut:
 	readtime read_time.ReadTime
 }
 
-fn (mut post Post) write_html_post(header_content string, footer_content string) {
+fn (mut post Post) write_html_post(footer_content string) {
 	target := "./src/blog/${os.base(post.path)}".replace(".md", ".html")
 	post.html_path = target
 
@@ -31,7 +31,8 @@ fn (mut post Post) write_html_post(header_content string, footer_content string)
 
 	// fm_content = fm_content.replace("\${date}", post.meta.date)
 	// fm_content = fm_content.replace("\${read_time_seconds}", post.readtime.seconds.str())
-	wfd.write_string(header_content) or { println("unable to prepend header to file: ${err}"); return }
+	// wfd.write_string(header_content) or { println("unable to prepend header to file: ${err}"); return }
+	wfd.write_string("$<{header}>") or { println("unable to write header placeholder: ${err}"); return }
 	//wfd.write_string(fm_content) or { println("unable to prepend front matter to file: ${err}"); return }
 	wfd.write_string(post.html_content) or { println("unable to write converted HTML body: ${err}"); return }
 	wfd.write_string("${" ".repeat(6)}</div>\n${footer_content}") or { println("unable to append footer to file: ${err}"); return }
@@ -114,13 +115,13 @@ fn main() {
 	println("\nWebsite compiler\n")
 	mut posts := resolve_all_posts()
 
-	header_content := os.read_file("./src/templates/header.html") or { panic("unable to extract header content") }
+	// header_content := os.read_file("./src/templates/header.html") or { panic("unable to extract header content") }
 	footer_content := os.read_file("./src/templates/footer.html") or { panic("unable to extract footer content") }
 
 	os.walk("./src/blog", fn (path string) { os.rm(path) or { println("unable to remove ${path}: ${err}"); return } })
 
 	for _, mut p in posts {
-		p.write_html_post(header_content, footer_content)
+		p.write_html_post(footer_content)
 	}
 
 	code := generate_embedding_code(posts)
