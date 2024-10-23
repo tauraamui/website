@@ -8,6 +8,7 @@ import net.urllib
 import encoding.html
 import strconv
 import strings
+import time
 
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
@@ -191,7 +192,7 @@ pub fn (mut app App) set_theme(mode string) vweb.Result {
 		return app.text('error: unexpected theme mode: ${mode}')
 	}
 
-	app.set_cookie(http.Cookie{ name: theme_cookie_name, value: valid_themes[theme_index], path: '/' })
+	app.set_cookie(http.Cookie{ name: theme_cookie_name, value: valid_themes[theme_index], path: '/', expires: time.now().add_days(30) })
 	return app.redirect(origin_url)
 }
 
