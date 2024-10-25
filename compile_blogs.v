@@ -17,9 +17,10 @@ mut:
 
 struct FrontMatter {
 mut:
-	date string
-	title string
-	readtime read_time.ReadTime
+	date      string
+	title     string
+	published bool
+	readtime  read_time.ReadTime
 }
 
 fn (mut post Post) write_html_post(footer_content string) {
@@ -63,7 +64,7 @@ fn resolve_all_posts() []Post {
 			meta: front_matter
 			path: path
 			raw_doc_content: contents
-			html_content: arrays.join_to_string(markdown.to_html(contents).split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
+			html_content: arrays.join_to_string(markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
 		}
 		ref << post
 		println("-----------------------------")
@@ -89,9 +90,19 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 
 		parts := line.split(":")
 		if parts.len != 2 { continue }
+		if parts[0].to_lower() == "published" {
+			println(parts[1].trim_space())
+		}
 		match parts[0].to_lower() {
-			"title" { matter.title = parts[1]; println("     -> title: ${matter.title}") }
-			"date" { matter.date = parts[1].replace(" ", ""); println("     -> date: ${matter.date}") }
+			"title" { matter.title = parts[1]; println("\t-> title: ${matter.title}") }
+			"date" { matter.date = parts[1].replace(" ", ""); println("\t-> date: ${matter.date}") }
+			"published" {
+				matter.published = match parts[1].trim_space() {
+					"yes" { true }
+					"no" { false }
+					else { false }
+				}
+				println("\t-> published: ${matter.published}") }
 			else {}
 		}
 	}
@@ -107,7 +118,7 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 		}
 	}
 	matter.readtime = read_time.text(cut_contents, read_time.Options.new())
-	println("     -> read time: ${matter.readtime.seconds} seconds")
+	println("\t-> read time: ${matter.readtime.seconds} seconds")
 	return matter, cut_contents
 }
 
@@ -153,7 +164,12 @@ fn generate_embedding_code(posts []Post) string {
 	code.writeln("fn blogs_listing() []Listing {")
 	code.writeln("\treturn [")
 	for _, p in posts {
-		code.writeln("\t\tListing { date: \"${p.meta.date}\" title: \"${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
+		if !p.meta.published {
+			println("skipping adding \"${p.meta.title.trim_left(' ')}\" to listing page, as its unpublished...")
+		}
+		if p.meta.published {
+			code.writeln("\t\tListing { date: \"${p.meta.date}\" title: \"${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
+		}
 	}
 	code.writeln("\t]")
 	code.writeln("}")
