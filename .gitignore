@@ -26,3 +26,4 @@ node_modules
 package-lock.json
 website.bin
 blog/.obsidian
+lilly.panic.log
