@@ -1,6 +1,7 @@
 ---
 date: 24/09/2023
 title: How to correctly wash up
+published: yes
 ---
 # How to correctly wash up
 #{read_time_seconds}
