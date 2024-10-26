@@ -90,19 +90,17 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 
 		parts := line.split(":")
 		if parts.len != 2 { continue }
-		if parts[0].to_lower() == "published" {
-			println(parts[1].trim_space())
-		}
 		match parts[0].to_lower() {
-			"title" { matter.title = parts[1]; println("\t-> title: ${matter.title}") }
-			"date" { matter.date = parts[1].replace(" ", ""); println("\t-> date: ${matter.date}") }
+			"title" { matter.title = parts[1].trim_left(" "); println("\t-> title: ${matter.title}") }
+			"date" { matter.date = parts[1].trim_space(); println("\t-> date: ${matter.date}") }
 			"published" {
 				matter.published = match parts[1].trim_space() {
 					"yes" { true }
 					"no" { false }
 					else { false }
 				}
-				println("\t-> published: ${matter.published}") }
+				println("\t-> published: ${matter.published}")
+			}
 			else {}
 		}
 	}
