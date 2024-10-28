@@ -48,7 +48,7 @@ wtf are you looking at
     </head>
    <body class="hack dark-grey">
       <div style="max-width: fit-content; margin: .5em .5em 0 auto; display: flex; flex-direction: row; gap: .5em">
-         <form action="/theme/light?redirect=${app.req.url}" method="post">
+         <form action="/theme/light?redirect=${ctx.req.url}" method="post">
 <button
     type="submit"
     @if app.theme_mode != 'dark'
@@ -78,7 +78,7 @@ wtf are you looking at
     </svg>
 </button>
 	     </form>
-         <form action="/theme/dark?redirect=${app.req.url}" method="post">
+         <form action="/theme/dark?redirect=${ctx.req.url}" method="post">
 <button
     type="submit"
     @if app.theme_mode == 'dark'

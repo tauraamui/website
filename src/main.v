@@ -2,7 +2,7 @@ module main
 
 import os
 import os.cmdline
-import vweb
+import veb
 import net.http
 import net.urllib
 import encoding.html
@@ -26,8 +26,11 @@ spectral_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-spectral.woff2
 
 const port = 8082
 
-struct App {
-	vweb.Context
+pub struct Context {
+	veb.Context
+}
+
+pub struct App {
 mut:
 	views shared map[string]int
 	theme_mode string
@@ -42,84 +45,84 @@ fn resolve_port() int {
 }
 
 fn main() {
-	vweb.run_at(new_app(), vweb.RunParams{
-		port: resolve_port()
-	}) or { panic(err) }
+	mut app := new_app()
+	veb.run[App, Context](mut app, resolve_port())
 }
 
-fn new_app() &App {
+fn new_app() App {
 	shared views := map[string]int{}
-	mut app := &App{ views: views }
-	app.mount_static_folder_at("./blog/static", "/static")
+	mut app := App{ views: views }
+	// app.mount_static_folder_at("./blog/static", "/static")
 	return app
 }
 
 @['/assets/css/:name']
-pub fn (mut app App) css(name string) vweb.Result {
+pub fn (mut app App) css(mut ctx Context, name string) veb.Result {
 	match name {
 		"hack.css" {
-			app.set_content_type(vweb.mime_types[".css"] or { "" })
-			return app.ok(hack_css.to_string())
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(hack_css.to_string())
 		}
 		"dark-grey.css" {
-			app.set_content_type(vweb.mime_types[".css"] or { "" })
-			return app.ok(dark_grey_css.to_string())
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(dark_grey_css.to_string())
 		}
 		"site.css" {
-			app.set_content_type(vweb.mime_types[".css"] or { "" })
-			return app.ok(site_css.to_string())
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(site_css.to_string())
 		}
 		"blog.css" {
-			app.set_content_type(vweb.mime_types[".css"] or { "" })
-			return app.ok(blog_css.to_string())
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(blog_css.to_string())
 		}
 		else {
-			return app.not_found()
+			return ctx.not_found()
 		}
 	}
 }
 
 @['/assets/css/fonts/:name']
-pub fn (mut app App) fonts(name string) vweb.Result {
+pub fn (mut app App) fonts(mut ctx Context, name string) veb.Result {
 	match name {
 		"latin-rubik.woff2" {
-			app.set_content_type(vweb.mime_types[".woff2"] or { "" })
-			return app.ok(rubik_font.to_string())
+			ctx.set_content_type(veb.mime_types[".woff2"] or { "" })
+			return ctx.ok(rubik_font.to_string())
 		}
 		"latin-ext-rubik.woff2" {
-			app.set_content_type(vweb.mime_types[".woff2"] or { "" })
-			return app.ok(rubik_ext_font.to_string())
+			ctx.set_content_type(veb.mime_types[".woff2"] or { "" })
+			return ctx.ok(rubik_ext_font.to_string())
 		}
 		// pending potential removal
 		/*
 		"latin-spectral.woff2" {
-			app.set_content_type(vweb.mime_types[".woff2"] or { "" })
-			return app.ok(spectral_font.to_string())
+			ctx.set_content_type(veb.mime_types[".woff2"] or { "" })
+			return ctx.ok(spectral_font.to_string())
 		}
 		"latin-ext-spectral.woff2" {
-			app.set_content_type(vweb.mime_types[".woff2"] or { "" })
-			return app.ok(spectral_ext_font.to_string())
+			ctx.set_content_type(veb.mime_types[".woff2"] or { "" })
+			return ctx.ok(spectral_ext_font.to_string())
 		}
 		*/
 		else {
-			return app.not_found()
+			return ctx.not_found()
 		}
 	}
 }
 
-
 @['/assets/black_wolf_face.png']
-pub fn (mut app App) face() vweb.Result {
-	app.set_content_type(vweb.mime_types[".png"] or { "" })
-	return app.ok(wolf_face_png.to_string())
+pub fn (mut app App) face(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".png"] or { "" })
+	return ctx.ok(wolf_face_png.to_string())
 }
 
+/*
 pub fn (mut app App) before_request() {
 	app.theme_mode = app.get_cookie(theme_cookie_name) or { "dark" }
 }
+*/
 
 @['/']
-pub fn (mut app App) home() vweb.Result {
+pub fn (mut app App) home(mut ctx veb.Context) veb.Result {
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["home"] += 1
@@ -127,11 +130,11 @@ pub fn (mut app App) home() vweb.Result {
 	}
 
 	title := "tauraamui's website"
-	return $vweb.html()
+	return $veb.html()
 }
 
 @['/blog']
-pub fn (mut app App) blog() vweb.Result {
+pub fn (mut app App) blog(mut ctx veb.Context) veb.Result {
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["blog"] += 1
@@ -139,12 +142,12 @@ pub fn (mut app App) blog() vweb.Result {
 	}
 	posts := blogs_listing()
 	title := "Blog - tauraamui's website"
-	return $vweb.html()
+	return $veb.html()
 }
 
 @['/blog/:name']
-pub fn (mut app App) blog_view(name string) vweb.Result {
-	post := resolve_blog(name) or { return app.not_found() }
+pub fn (mut app App) blog_view(mut ctx veb.Context, name string) veb.Result {
+	post := resolve_blog(name) or { return ctx.not_found() }
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["blog: ${name}"] += 1
@@ -153,10 +156,10 @@ pub fn (mut app App) blog_view(name string) vweb.Result {
 	title := post.title
 	header_content := $tmpl("./templates/header.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
-	return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("\$<\{header\}>", header_content).replace("site.css", "blog.css"))
+	return ctx.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("\$<\{header\}>", header_content).replace("site.css", "blog.css"))
 }
 
-
+/*
 @['/contact']
 pub fn (mut app App) contact() vweb.Result {
 	lock app.views {
@@ -211,6 +214,7 @@ pub fn (mut app App) metrics() vweb.Result {
 	}
 	return app.text(result.str())
 }
+*/
 
 fn request_is_me(app App) bool {
 	return false
