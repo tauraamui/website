@@ -30,4 +30,8 @@ This is slightly off topic for this article, but as a point of interest in case 
 
 According to others research I found online, SDC is better optimised for sets of strings which are lengthy, or vary wildly in length from each other, and sets where there is a greater chance of more errors than matches.
 
+NOTE: Here explain how a list of file names matches this scenario well, since file paths/names often vary wildly in length from each other, and when you're using it to search you're often looking to find a specific file, most files don't have very similar names to each other either
+
+Also mention here how the V compiler itself uses LD to suggest alternative function names in case of a compile error, and why using LD makes sense in that case.
+
 https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux
