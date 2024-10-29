@@ -38,6 +38,7 @@ pub fn before_request(mut ctx Context) bool {
 
 pub struct App {
 	veb.Middleware[Context]
+	veb.StaticHandler
 mut:
 	views shared map[string]int
 }
@@ -60,7 +61,7 @@ fn main() {
 fn new_app() App {
 	shared views := map[string]int{}
 	mut app := App{ views: views }
-	// app.mount_static_folder_at("./blog/static", "/static")
+	app.mount_static_folder_at("./blog/static", "/static") or { panic(err) }
 	return app
 }
 
