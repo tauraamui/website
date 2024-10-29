@@ -7,7 +7,6 @@ import net.http
 import net.urllib
 import encoding.html
 import strconv
-import strings
 import time
 
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
@@ -28,13 +27,21 @@ const port = 8082
 
 pub struct Context {
 	veb.Context
+mut:
+	theme_mode string
+}
+
+pub fn before_request(mut ctx Context) bool {
+	ctx.theme_mode = ctx.get_cookie(theme_cookie_name) or { "dark" }
+	return true
 }
 
 pub struct App {
+	veb.Middleware[Context]
 mut:
 	views shared map[string]int
-	theme_mode string
 }
+
 
 fn resolve_port() int {
 	port_arg := cmdline.option(os.args_after(""), "-port", "8080")
@@ -46,6 +53,7 @@ fn resolve_port() int {
 
 fn main() {
 	mut app := new_app()
+	app.use(handler: before_request)
 	veb.run[App, Context](mut app, resolve_port())
 }
 
@@ -115,14 +123,8 @@ pub fn (mut app App) face(mut ctx Context) veb.Result {
 	return ctx.ok(wolf_face_png.to_string())
 }
 
-/*
-pub fn (mut app App) before_request() {
-	app.theme_mode = app.get_cookie(theme_cookie_name) or { "dark" }
-}
-*/
-
 @['/']
-pub fn (mut app App) home(mut ctx veb.Context) veb.Result {
+pub fn (mut app App) home(mut ctx Context) veb.Result {
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["home"] += 1
@@ -134,7 +136,7 @@ pub fn (mut app App) home(mut ctx veb.Context) veb.Result {
 }
 
 @['/blog']
-pub fn (mut app App) blog(mut ctx veb.Context) veb.Result {
+pub fn (mut app App) blog(mut ctx Context) veb.Result {
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["blog"] += 1
@@ -146,7 +148,7 @@ pub fn (mut app App) blog(mut ctx veb.Context) veb.Result {
 }
 
 @['/blog/:name']
-pub fn (mut app App) blog_view(mut ctx veb.Context, name string) veb.Result {
+pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 	post := resolve_blog(name) or { return ctx.not_found() }
 	lock app.views {
 		if !request_is_me(app) {
@@ -159,9 +161,8 @@ pub fn (mut app App) blog_view(mut ctx veb.Context, name string) veb.Result {
 	return ctx.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("\$<\{header\}>", header_content).replace("site.css", "blog.css"))
 }
 
-/*
 @['/contact']
-pub fn (mut app App) contact() vweb.Result {
+pub fn (mut app App) contact(mut ctx Context) veb.Result {
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["contact"] += 1
@@ -172,33 +173,34 @@ pub fn (mut app App) contact() vweb.Result {
 	github := html.escape("https://github.com/tauraamui")
 	telegram := html.escape("https://t.me/tauraamui")
 	discord := html.escape("https://discordapp.com/users/753689188213194862")
-	return $vweb.html()
+	return $veb.html()
 }
 
 const theme_cookie_name := "theme"
 const valid_themes = ["dark", "light"]
 
 @['/theme/:mode'; post]
-pub fn (mut app App) set_theme(mode string) vweb.Result {
+pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
 	lock app.views {
 		if !request_is_me(app) {
 			app.views["set-theme"] += 1
 		}
 	}
 
-	url := urllib.parse(app.req.url) or { app.set_status(http.Status.internal_server_error.int(), ''); return app.text('error: invalid redirect url') }
+	url := urllib.parse(ctx.req.url) or { ctx.res.set_status(http.Status.internal_server_error); return ctx.text('error: invalid redirect url') }
 	origin_url := url.query().get("redirect") or { "/" }
 
 	theme_index := valid_themes.index(mode)
 	if theme_index < 0 {
-		app.set_status(http.Status.bad_request.int(), '')
-		return app.text('error: unexpected theme mode: ${mode}')
+		ctx.res.set_status(http.Status.bad_request)
+		return ctx.text('error: unexpected theme mode: ${mode}')
 	}
 
-	app.set_cookie(http.Cookie{ name: theme_cookie_name, value: valid_themes[theme_index], path: '/', expires: time.now().add_days(30) })
-	return app.redirect(origin_url)
+	ctx.set_cookie(http.Cookie{ name: theme_cookie_name, value: valid_themes[theme_index], path: '/', expires: time.now().add_days(30) })
+	return ctx.redirect(origin_url)
 }
 
+/*
 @['/metrics']
 pub fn (mut app App) metrics() vweb.Result {
 	mut result := strings.new_builder(1024)
