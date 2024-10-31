@@ -50,4 +50,8 @@ This is an optimal use of the (LD) algorithm over (SDC), as its only matching at
 
 </details>
 
+Being able to score each file path against the query is the first piece of the puzzle but it is not sufficient to provide us the ability to actually order a list of file paths in score order. In order to do sorting we need a sorting algorithm.
+
+![quicksort-anim.gif](/static/quicksort-anim.gif)
+
 https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux
