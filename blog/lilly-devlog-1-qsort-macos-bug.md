@@ -26,11 +26,28 @@ The V(lang) modules documentation has this note regarding this function:
 
 Therefore the full name of the underlying algorithm the LE uses to compare one string of text with another is "Sørensen–Dice coefficient" (SDC).
 
+<details> <summary>Slightly off topic </summary>
+
+### Sørensen–Dice coefficient vs Levenshtein Distance
 This is slightly off topic for this article, but as a point of interest in case you were wondering, yes, there are also functions to calculate the "Levenshtein Distance" (LD) between two strings available within the V(lang) standard library. I have some intuitive sense that of the two options, LD is more well known and more "popular", and you may be wondering why LD wasn't chosen as the algorithm instead of SDC.
 
 According to others research I found online, SDC is better optimised for sets of strings which are lengthy, or vary wildly in length from each other, and sets where there is a greater chance of more errors than matches.
 
-NOTE: Here explain how a list of file names matches this scenario well, since file paths/names often vary wildly in length from each other, and when you're using it to search you're often looking to find a specific file, most files don't have very similar names to each other either
+Lists of file paths of an arbitrary length, which are all being compared to a single very specific lookup "query" matches the kind of situation that SDC is better suited for, as its optimised for this, compared to something like (LD).
+
+Incidentally the V compiler uses (LD) to try and provide alternative function or type names in the case of a function reference or invocation being undefined, as its highly likely that the intended function has been simply misspelt.
+
+For example:
+
+```
+src/view.v:35:12: error: unknown type `Cursorx`.
+Did you mean `Cursor`?
+   33 | }
+   34 |
+   35 | fn (cursor Cursorx) line_is_within_selection(line_y int) bool {
+```
+
+</details>
 
 Also mention here how the V compiler itself uses LD to suggest alternative function names in case of a compile error, and why using LD makes sense in that case.
 
