@@ -40,7 +40,7 @@ wtf are you looking at
     <head>
        <meta charset='UTF-8' name='viewport' content='width=device-width, initial-scale=1.0'>
        <link href="/assets/css/hack.css" rel="stylesheet" type="text/css">
-       @if app.theme_mode == 'dark'
+       @if ctx.theme_mode == 'dark'
        <link href="/assets/css/dark-grey.css" rel="stylesheet" type="text/css">
        @end
        <link href="/assets/css/site.css" rel="stylesheet" type="text/css">
@@ -48,19 +48,19 @@ wtf are you looking at
     </head>
    <body class="hack dark-grey">
       <div style="max-width: fit-content; margin: .5em .5em 0 auto; display: flex; flex-direction: row; gap: .5em">
-         <form action="/theme/light?redirect=${app.req.url}" method="post">
+         <form action="/theme/light?redirect=${ctx.req.url}" method="post">
 <button
     type="submit"
-    @if app.theme_mode != 'dark'
+    @if ctx.theme_mode != 'dark'
     disabled
     @end
     style="display: flex; align-items: center; padding: 8px; border: 1px solid #ccc; border-radius: 4px; background: none;
-    @if app.theme_mode == 'dark'
+    @if ctx.theme_mode == 'dark'
     cursor: pointer
     @end
     ">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        @if app.theme_mode == 'dark'
+        @if ctx.theme_mode == 'dark'
         stroke="#e8e8e8"
         @else
         stroke="#666666"
@@ -78,19 +78,19 @@ wtf are you looking at
     </svg>
 </button>
 	     </form>
-         <form action="/theme/dark?redirect=${app.req.url}" method="post">
+         <form action="/theme/dark?redirect=${ctx.req.url}" method="post">
 <button
     type="submit"
-    @if app.theme_mode == 'dark'
+    @if ctx.theme_mode == 'dark'
     disabled
     @end
     style="display: flex; align-items: center; padding: 8px; border: 1px solid #2f2f2f; border-radius: 4px; background: #242424;
-    @if app.theme_mode != 'dark'
+    @if ctx.theme_mode != 'dark'
     cursor: pointer
     @end
     ">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none"
-        @if app.theme_mode == 'dark'
+        @if ctx.theme_mode == 'dark'
         stroke="#666666"
         @else
         stroke="#e8e8e8"
