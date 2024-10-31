@@ -1,5 +1,5 @@
 $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/lilly">Lilly</a> Devlog # 1</h1>
-         <h3>Read time: 2 minutes</h3>
+         <h3>Read time: 3 minutes</h3>
          <p>I have been working on a project for nearly a year which I see as my (and perhaps others?) alternative or entire replacement of Neovim for day to day work. This editor is in the pre-alpha release stage of the project. As such there is currently no commitment to provide frequent or consistent dev logs or change log summaries. With that being said, I recently encountered for the first time a bug which I feel is worth writing an article about.</p>
          <p>I will hopefully provide useful insight in this post into what the bug was, how it manifested in Lilly, and what the journey to fix it looked like.</p>
          <h2>What bug?</h2>
@@ -13,9 +13,20 @@ $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/li
          <p><code>dice_coefficient</code> implements the Sørensen–Dice coefficient. It finds the similarity between two strings, and returns a coefficient between 0.0 (not similar) and 1.0 (exact match). <a target='_blank' href="https://modules.vlang.io/strings.html#dice_coefficient">module documentation</a></p>
          </blockquote>
          <p>Therefore the full name of the underlying algorithm the LE uses to compare one string of text with another is &quot;Sørensen–Dice coefficient&quot; (SDC).</p>
+         <details> <summary>Slightly off topic </summary>
+         <h3>Sørensen–Dice coefficient vs Levenshtein Distance</h3>
          <p>This is slightly off topic for this article, but as a point of interest in case you were wondering, yes, there are also functions to calculate the &quot;Levenshtein Distance&quot; (LD) between two strings available within the V(lang) standard library. I have some intuitive sense that of the two options, LD is more well known and more &quot;popular&quot;, and you may be wondering why LD wasn't chosen as the algorithm instead of SDC.</p>
          <p>According to others research I found online, SDC is better optimised for sets of strings which are lengthy, or vary wildly in length from each other, and sets where there is a greater chance of more errors than matches.</p>
-         <p>NOTE: Here explain how a list of file names matches this scenario well, since file paths/names often vary wildly in length from each other, and when you're using it to search you're often looking to find a specific file, most files don't have very similar names to each other either</p>
+         <p>Lists of file paths of an arbitrary length, which are all being compared to a single very specific lookup &quot;query&quot; matches the kind of situation that SDC is better suited for, as its optimised for this, compared to something like (LD).</p>
+         <p>Incidentally the V compiler uses (LD) to try and provide alternative function or type names in the case of a function reference or invocation being undefined, as its highly likely that the intended function has been simply misspelt.</p>
+         <p>For example:</p>
+         <pre><code>src/view.v:35:12: error: unknown type `Cursorx`.
+         Did you mean `Cursor`?
+            33 | }
+            34 |
+            35 | fn (cursor Cursorx) line_is_within_selection(line_y int) bool {
+         </code></pre>
+         </details>
          <p>Also mention here how the V compiler itself uses LD to suggest alternative function names in case of a compile error, and why using LD makes sense in that case.</p>
          <p><a target='_blank' href="https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux">https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux</a></p>      </div>
     </body>
