@@ -24,7 +24,7 @@ A standard library function called `dice_coefficient` within the V(lang) module 
 The V(lang) modules documentation has this note regarding this function:
 > `dice_coefficient` implements the Sørensen–Dice coefficient. It finds the similarity between two strings, and returns a coefficient between 0.0 (not similar) and 1.0 (exact match). [module documentation](https://modules.vlang.io/strings.html#dice_coefficient)
 
-Therefore the full name of the underlying algorithm the LE uses to compare one string of text with another is "Sørensen–Dice coefficient" (SDC).
+Therefore the full name of the underlying algorithm Lilly uses to compare one string of text with another is "Sørensen–Dice coefficient" (SDC).
 
 <details> <summary>Slightly off topic </summary>
 
@@ -46,9 +46,8 @@ Did you mean `Cursor`?
    34 |
    35 | fn (cursor Cursorx) line_is_within_selection(line_y int) bool {
 ```
+This is an optimal use of the (LD) algorithm over (SDC), as its only matching at most a couple of verbs/strings, they're very likely to be fairly short and there's a good chance that in the case of a misspelling there's probably only a few incorrect or missing characters.
 
 </details>
-
-Also mention here how the V compiler itself uses LD to suggest alternative function names in case of a compile error, and why using LD makes sense in that case.
 
 https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux
