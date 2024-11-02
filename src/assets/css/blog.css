@@ -64,6 +64,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .hack blockquote {
+	text-wrap: wrap;
     position: relative;
     padding-left: 1em;
     border-left: 0.2em solid #039be5;
@@ -124,10 +125,12 @@ nav {
 
 .hack h2 {
     font-size: 1.9rem;
+    word-spacing: -.3em;
 }
 
 .hack h3 {
     font-size: 1.6rem;
+    word-spacing: -.3em;
     margin-bottom: 0;
     padding-top: 1.5rem;
 }
