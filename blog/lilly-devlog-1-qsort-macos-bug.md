@@ -81,6 +81,17 @@ fn main() {
 }
 ~~~
 
+### What we have so far:
+
+The steps:
+
+1. The file list is loaded as is from the raw list contained within the `workspace` instance in Lilly.
+2. Each file path is scored against the current searched for query
+3. `sort_with_compare` is called on the file list
+
+https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173
+
+
 ![quicksort-anim.gif](/static/quicksort-anim.gif)
 
 https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux
