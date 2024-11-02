@@ -49,7 +49,8 @@ $<{header}>         <h1>How I write and publish blogs</h1>
          </ol>
          <p>That's the reason for the following branches, after we invoke this read method:</p>
          <h4>Branch 1.</h4>
-         <pre><code class="language-v">if read_bytes == 1024 {
+         <pre><code class="language-v">
+         if read_bytes == 1024 {
              input_line := buffer.bytestr()
              output_line := markdown.to_html(input_line)
              wfd.write_string(output_line) or { println(&quot;unable to write to file: ${target}&quot;); return }
@@ -58,7 +59,8 @@ $<{header}>         <h1>How I write and publish blogs</h1>
          </code></pre>
          <p>and</p>
          <h4>Branch 2.</h4>
-         <pre><code class="language-v">if read_bytes &lt; 1024 {`
+         <pre><code class="language-v">
+         if read_bytes &lt; 1024 {`
              mut output_line := &quot;&lt;br/&gt;&quot;`
              if read_bytes &gt; 1 {`
              input_line := buffer[..read_bytes - 1].bytestr()`
@@ -91,7 +93,8 @@ $<{header}>         <h1>How I write and publish blogs</h1>
          <p>There are some things which need work. For example, when converting the Markdown to HTML, there's a problem with multiple lined code blocks, stemming from the fact that we only feed the data to be converted line by line, and so when the converter encounters an open code block signifier, it doesn't know to not treat all the lines of code in-between this and the close code block as simple paragraph tags.</p>
          <p>I will have to consider maybe it is worth just passing the entire file into the converter in one go rather than line by line, even though doing this feels kind of nasty to me.</p>
          <p>Anyway, I hope this was useful/interesting/of note/whatever. Thanks for reading!</p>
-         <pre><code>⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻
+         <pre><code>
+         ⣿⣿⣿⠟⠛⠛⠻⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⢋⣩⣉⢻
          ⣿⣿⣿⠀⣿⣶⣕⣈⠹⠿⠿⠿⠿⠟⠛⣛⢋⣰⠣⣿⣿⠀⣿
          ⣿⣿⣿⡀⣿⣿⣿⣧⢻⣿⣶⣷⣿⣿⣿⣿⣿⣿⠿⠶⡝⠀⣿
          ⣿⣿⣿⣷⠘⣿⣿⣿⢏⣿⣿⣋⣀⣈⣻⣿⣿⣷⣤⣤⣿⡐⢿
