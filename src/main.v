@@ -14,6 +14,9 @@ const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
 const dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
 const site_css = $embed_file('./src/assets/css/site.css', .zlib)
 const blog_css = $embed_file('./src/assets/css/blog.css', .zlib)
+const prism_css = $embed_file('./src/assets/css/prism.css', .zlib)
+
+const prism_js = $embed_file('./src/assets/js/prism.js', .zlib)
 
 const rubik_font = $embed_file('./src/assets/css/fonts/latin-rubik.woff2', .zlib)
 const rubik_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-rubik.woff2', .zlib)
@@ -84,10 +87,20 @@ pub fn (mut app App) css(mut ctx Context, name string) veb.Result {
 			ctx.set_content_type(veb.mime_types[".css"] or { "" })
 			return ctx.ok(blog_css.to_string())
 		}
+		"prism.css" {
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(prism_css.to_string())
+		}
 		else {
 			return ctx.not_found()
 		}
 	}
+}
+
+@['/assets/js/prism.js']
+pub fn (mut app App) prism_js(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".js"] or { "" })
+	return ctx.ok(prism_js.to_string())
 }
 
 @['/assets/css/fonts/:name']
