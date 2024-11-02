@@ -39,18 +39,47 @@ Incidentally the V compiler uses (LD) to try and provide alternative function or
 
 For example:
 
-```
+~~~v
+
 src/view.v:35:12: error: unknown type `Cursorx`.
 Did you mean `Cursor`?
    33 | }
    34 |
    35 | fn (cursor Cursorx) line_is_within_selection(line_y int) bool {
-```
+~~~
+
 This is an optimal use of the (LD) algorithm over (SDC), as its only matching at most a couple of verbs/strings, they're very likely to be fairly short and there's a good chance that in the case of a misspelling there's probably only a few incorrect or missing characters.
 
 </details>
 
 Being able to score each file path against the query is the first piece of the puzzle but it is not sufficient to provide us the ability to actually order a list of file paths in score order. In order to do sorting we need a sorting algorithm.
+
+### The sorting algorithm
+
+Within the V(lang) programming language, native builtin types have utility methods available on them. The array type is the native list type of the language, and it has a method for sorting in-place, called `sort_with_compare`.
+
+The V(lang) modules documentation has this note regarding this method:
+
+> `sort_with_compare` sorts the array in-place using the results of the given function to determine sort order. The function should return one of three values:- `-1` when `a` should come before `b` ( `a < b`). Return should be `1` when `b` should come before `a` (`b < a`) or `0` when the order cannot be determined (`a == b`)
+
+It also provides an example (this will be important later):
+
+~~~v
+
+fn main() {
+	mut a := ['hi', '1', '5', '3']
+	a.sort_with_compare(fn (a &string, b &string) int {
+        if a < b {
+            return -1
+        }
+        if a > b {
+            return 1
+        }
+        return 0
+    })
+    assert a == ['1', '3', '5', 'hi']
+}
+~~~
 
 ![quicksort-anim.gif](/static/quicksort-anim.gif)
 
