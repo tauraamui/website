@@ -21,7 +21,6 @@ bin/
 
 # vweb and database
 *.db
-*.js
 node_modules
 package-lock.json
 website.bin

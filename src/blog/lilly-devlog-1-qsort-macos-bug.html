@@ -1,5 +1,5 @@
 $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/lilly">Lilly</a> Devlog # 1</h1>
-         <h3>Read time: 3 minutes</h3>
+         <h3>Read time: 4 minutes</h3>
          <p>I have been working on a project for nearly a year which I see as my (and perhaps others?) alternative or entire replacement of Neovim for day to day work. This editor is in the pre-alpha release stage of the project. As such there is currently no commitment to provide frequent or consistent dev logs or change log summaries. With that being said, I recently encountered for the first time a bug which I feel is worth writing an article about.</p>
          <p>I will hopefully provide useful insight in this post into what the bug was, how it manifested in Lilly, and what the journey to fix it looked like.</p>
          <h2>What bug?</h2>
@@ -12,7 +12,7 @@ $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/li
          <blockquote>
          <p><code>dice_coefficient</code> implements the Sørensen–Dice coefficient. It finds the similarity between two strings, and returns a coefficient between 0.0 (not similar) and 1.0 (exact match). <a target='_blank' href="https://modules.vlang.io/strings.html#dice_coefficient">module documentation</a></p>
          </blockquote>
-         <p>Therefore the full name of the underlying algorithm the LE uses to compare one string of text with another is &quot;Sørensen–Dice coefficient&quot; (SDC).</p>
+         <p>Therefore the full name of the underlying algorithm Lilly uses to compare one string of text with another is &quot;Sørensen–Dice coefficient&quot; (SDC).</p>
          <details> <summary>Slightly off topic </summary>
          <h3>Sørensen–Dice coefficient vs Levenshtein Distance</h3>
          <p>This is slightly off topic for this article, but as a point of interest in case you were wondering, yes, there are also functions to calculate the &quot;Levenshtein Distance&quot; (LD) between two strings available within the V(lang) standard library. I have some intuitive sense that of the two options, LD is more well known and more &quot;popular&quot;, and you may be wondering why LD wasn't chosen as the algorithm instead of SDC.</p>
@@ -20,14 +20,39 @@ $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/li
          <p>Lists of file paths of an arbitrary length, which are all being compared to a single very specific lookup &quot;query&quot; matches the kind of situation that SDC is better suited for, as its optimised for this, compared to something like (LD).</p>
          <p>Incidentally the V compiler uses (LD) to try and provide alternative function or type names in the case of a function reference or invocation being undefined, as its highly likely that the intended function has been simply misspelt.</p>
          <p>For example:</p>
-         <pre><code>src/view.v:35:12: error: unknown type `Cursorx`.
+         <pre><code class="language-v">
+         src/view.v:35:12: error: unknown type `Cursorx`.
          Did you mean `Cursor`?
             33 | }
             34 |
             35 | fn (cursor Cursorx) line_is_within_selection(line_y int) bool {
          </code></pre>
+         <p>This is an optimal use of the (LD) algorithm over (SDC), as its only matching at most a couple of verbs/strings, they're very likely to be fairly short and there's a good chance that in the case of a misspelling there's probably only a few incorrect or missing characters.</p>
          </details>
-         <p>Also mention here how the V compiler itself uses LD to suggest alternative function names in case of a compile error, and why using LD makes sense in that case.</p>
+         <p>Being able to score each file path against the query is the first piece of the puzzle but it is not sufficient to provide us the ability to actually order a list of file paths in score order. In order to do sorting we need a sorting algorithm.</p>
+         <h3>The sorting algorithm</h3>
+         <p>Within the V(lang) programming language, native builtin types have utility methods available on them. The array type is the native list type of the language, and it has a method for sorting in-place, called <code>sort_with_compare</code>.</p>
+         <p>The V(lang) modules documentation has this note regarding this method:</p>
+         <blockquote>
+         <p><code>sort_with_compare</code> sorts the array in-place using the results of the given function to determine sort order. The function should return one of three values:- <code>-1</code> when <code>a</code> should come before <code>b</code> ( <code>a &lt; b</code>). Return should be <code>1</code> when <code>b</code> should come before <code>a</code> (<code>b &lt; a</code>) or <code>0</code> when the order cannot be determined (<code>a == b</code>)</p>
+         </blockquote>
+         <p>It also provides an example (this will be important later):</p>
+         <pre><code class="language-v">
+         fn main() {
+             mut a := ['hi', '1', '5', '3']
+             a.sort_with_compare(fn (a &amp;string, b &amp;string) int {
+                 if a &lt; b {
+                     return -1
+                 }
+                 if a &gt; b {
+                     return 1
+                 }
+                 return 0
+             })
+             assert a == ['1', '3', '5', 'hi']
+         }
+         </code></pre>
+         <p><img src="/static/quicksort-anim.gif" alt="quicksort-anim.gif"></p>
          <p><a target='_blank' href="https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux">https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux</a></p>      </div>
     </body>
 </html>
