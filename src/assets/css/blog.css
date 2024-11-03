@@ -93,6 +93,10 @@ h1, h2, h3, h4, h5, h6 {
     font-size: inherit;
 }
 
+.hack code:after, .hack code:before {
+	content: ""
+}
+
 .dark-grey pre {
     background-color: #3b3a3a;
     padding-top: 0.75rem;
@@ -140,6 +144,6 @@ nav {
     font-size: 1.6rem;
 }
 
-.hack h1::after, .hack h2::after, .hack h3::after, .hack h1::before, .hack h2::before, .hack h3::before {
+.hack h1:after, .hack h2:after, .hack h3:after, .hack h1:before, .hack h2:before, .hack h3:before {
     content: none;
 }

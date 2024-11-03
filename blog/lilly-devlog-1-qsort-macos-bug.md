@@ -102,7 +102,7 @@ The steps:
 		return 0
 	})
 	~~~
-3. Each file path is scored against the current searched for query
+3. The list contents is then sorted into descending order, with the closest query match at the top, with the more distant matches below that.
 
 https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173
 
