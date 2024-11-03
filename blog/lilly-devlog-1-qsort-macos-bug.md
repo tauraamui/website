@@ -104,6 +104,19 @@ The steps:
 	~~~
 3. The list contents is then sorted into descending order, with the closest query match at the top, with the more distant matches below that.
 
+## Discovery of the bug on macOS
+
+The file picker works! At least it does on Windows and Linux, but on macOS, not so much... Instead of behaving as we expect, this is how the file picker behaves on macOS _exclusively_.
+
+![lilly-mac-file-picker-broken.gif](lilly-mac-file-picker-broken.gif)
+
+
+
+
+
+
+
+misc notes
 https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173
 
 
