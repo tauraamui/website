@@ -1,5 +1,5 @@
 $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/lilly">Lilly</a> Devlog # 1</h1>
-         <h3>Read time: 4 minutes</h3>
+         <h3>Read time: 5 minutes</h3>
          <p>I have been working on a project for nearly a year which I see as my (and perhaps others?) alternative or entire replacement of Neovim for day to day work. This editor is in the pre-alpha release stage of the project. As such there is currently no commitment to provide frequent or consistent dev logs or change log summaries. With that being said, I recently encountered for the first time a bug which I feel is worth writing an article about.</p>
          <p>I will hopefully provide useful insight in this post into what the bug was, how it manifested in Lilly, and what the journey to fix it looked like.</p>
          <h2>What bug?</h2>
@@ -53,6 +53,26 @@ $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/li
          }
          </code></pre>
          <h3>What we have so far:</h3>
+         <p>The steps:</p>
+         <ol>
+         <li>The file list is loaded as is from the raw list contained within the <code>workspace</code> instance in Lilly.<pre><code class="language-v">files := [&quot;./src/main.v&quot;, &quot;./src/lib/clipboard/clipboard.v&quot;, &quot;./src/editor.v&quot;]
+         </code></pre>
+         </li>
+         <li>We invoke <code>sort_with_compare</code> on the file list directly. This will order the entries in the list based on the <code>1</code> or <code>0</code> or <code>-1</code> return value from the callback passed in this step<pre><code class="language-v">
+         query := &quot;clip&quot;
+         files.sort_with_compare(fn [query] (a &amp;string, b &amp;string) int {
+             a_score := dice_coefficient(query, a)
+             b_score := dice_coefficient(query, b)
+         
+             if a_score &lt; b_score { return 1 }
+             if b_score &gt; a_score { return -1 }
+             return 0
+         })
+         </code></pre>
+         </li>
+         <li>Each file path is scored against the current searched for query</li>
+         </ol>
+         <p><a target='_blank' href="https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173">https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173</a></p>
          <p><img src="/static/quicksort-anim.gif" alt="quicksort-anim.gif"></p>
          <p><a target='_blank' href="https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux">https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux</a></p>      </div>
     </body>
