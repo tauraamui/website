@@ -86,8 +86,23 @@ fn main() {
 The steps:
 
 1. The file list is loaded as is from the raw list contained within the `workspace` instance in Lilly.
-2. Each file path is scored against the current searched for query
-3. `sort_with_compare` is called on the file list
+	~~~v
+	files := ["./src/main.v", "./src/lib/clipboard/clipboard.v", "./src/editor.v"]
+	~~~
+2. We invoke `sort_with_compare` on the file list directly. This will order the entries in the list based on the `1` or `0` or `-1` return value from the callback passed in this step
+	~~~v
+
+	query := "clip"
+	files.sort_with_compare(fn [query] (a &string, b &string) int {
+		a_score := dice_coefficient(query, a)
+		b_score := dice_coefficient(query, b)
+
+		if a_score < b_score { return 1 }
+		if b_score > a_score { return -1 }
+		return 0
+	})
+	~~~
+3. Each file path is scored against the current searched for query
 
 https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173
 
