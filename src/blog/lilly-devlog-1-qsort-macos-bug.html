@@ -1,5 +1,5 @@
 $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/lilly">Lilly</a> Devlog # 1</h1>
-         <h3>Read time: 5 minutes</h3>
+         <h3>Read time: 6 minutes</h3>
          <p>I have been working on a project for nearly a year which I see as my (and perhaps others?) alternative or entire replacement of Neovim for day to day work. This editor is in the pre-alpha release stage of the project. As such there is currently no commitment to provide frequent or consistent dev logs or change log summaries. With that being said, I recently encountered for the first time a bug which I feel is worth writing an article about.</p>
          <p>I will hopefully provide useful insight in this post into what the bug was, how it manifested in Lilly, and what the journey to fix it looked like.</p>
          <h2>What bug?</h2>
@@ -12,7 +12,7 @@ $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/li
          <blockquote>
          <p><code>dice_coefficient</code> implements the Sørensen–Dice coefficient. It finds the similarity between two strings, and returns a coefficient between 0.0 (not similar) and 1.0 (exact match). <a target='_blank' href="https://modules.vlang.io/strings.html#dice_coefficient">module documentation</a></p>
          </blockquote>
-         <p>Therefore the full name of the underlying algorithm Lilly uses to compare one string of text with another is &quot;Sørensen–Dice coefficient&quot; (SDC).</p>
+         <p>Therefore, the full name of the underlying algorithm Lilly uses to compare one string of text with another is &quot;Sørensen–Dice coefficient&quot; (SDC).</p>
          <details> <summary>Slightly off topic </summary>
          <h3>Sørensen–Dice coefficient vs Levenshtein Distance</h3>
          <p>This is slightly off topic for this article, but as a point of interest in case you were wondering, yes, there are also functions to calculate the &quot;Levenshtein Distance&quot; (LD) between two strings available within the V(lang) standard library. I have some intuitive sense that of the two options, LD is more well known and more &quot;popular&quot;, and you may be wondering why LD wasn't chosen as the algorithm instead of SDC.</p>
@@ -29,9 +29,9 @@ $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/li
          </code></pre>
          <p>This is an optimal use of the (LD) algorithm over (SDC), as its only matching at most a couple of verbs/strings, they're very likely to be fairly short and there's a good chance that in the case of a misspelling there's probably only a few incorrect or missing characters.</p>
          </details>
-         <p>Being able to score each file path against the query is the first piece of the puzzle but it is not sufficient to provide us the ability to actually order a list of file paths in score order. In order to do sorting we need a sorting algorithm.</p>
+         <p>Being able to score each file path against the query is the first piece of the puzzle, but it is not sufficient to provide us the ability to actually order a list of file paths in score order. In order to do sorting we need a sorting algorithm.</p>
          <h3>The sorting algorithm</h3>
-         <p>Within the V(lang) programming language, native builtin types have utility methods available on them. The array type is the native list type of the language, and it has a method for sorting in-place, called <code>sort_with_compare</code>.</p>
+         <p>Within the V(lang) programming language, native built-in types have utility methods available on them. The array type is the native list type of the language, and it has a method for sorting in-place, called <code>sort_with_compare</code>.</p>
          <p>The V(lang) modules documentation has this note regarding this method:</p>
          <blockquote>
          <p><code>sort_with_compare</code> sorts the array in-place using the results of the given function to determine sort order. The function should return one of three values:- <code>-1</code> when <code>a</code> should come before <code>b</code> ( <code>a &lt; b</code>). Return should be <code>1</code> when <code>b</code> should come before <code>a</code> (<code>b &lt; a</code>) or <code>0</code> when the order cannot be determined (<code>a == b</code>)</p>
@@ -75,6 +75,20 @@ $<{header}>         <h1><a target='_blank' href="https://github.com/tauraamui/li
          <h2>Discovery of the bug on macOS</h2>
          <p>The file picker works! At least it does on Windows and Linux, but on macOS, not so much... Instead of behaving as we expect, this is how the file picker behaves on macOS <em>exclusively</em>.</p>
          <p><img src="/static/lilly-mac-file-picker-broken.gif" alt="lilly-mac-file-picker-broken.gif"></p>
+         <p>As you can see, instead of sorting the list of entries based on the query as it's being entered, it seems that just the top entry is being randomly swapped back and forth between two specific paths, and the two paths are nowhere near close to the search query contents either.</p>
+         <p>This is particularly unexpected as a bug, because the V(lang) programming language and the standard library is designed to provide platform-agnostic functionality. If this is a bug on macOS, then this same behaviour should be manifesting on Windows and Linux respectfully.</p>
+         <p>So what could be happening here?</p>
+         <h1>Debugging</h1>
+         <p>There were a couple of immediate avenues of what to investigate that occurred to me at this point, and what I thought were unlikely to be the cause based on existing functionality and logic tests.</p>
+         <h3>Suspect list</h3>
+         <ol>
+         <li><p>Unique file path structure</p>
+         <p>Perhaps this issue is manifesting on macOS (when opened on the Lilly project) due to file paths containing repeated instances of <code>.</code> and a frequency of CAPITAL letter directories?</p>
+         </li>
+         <li><p>Rendering broken</p>
+         <p>In the past a subtle V(lang) compiler change resulted in some unexpected pointer reference behaviour, so perhaps the file list is sorting correctly, but the rendering is malformed, or otherwise broken in some way.</p>
+         </li>
+         </ol>
          <p>misc notes
          <a target='_blank' href="https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173">https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173</a></p>
          <p><img src="/static/quicksort-anim.gif" alt="quicksort-anim.gif"></p>

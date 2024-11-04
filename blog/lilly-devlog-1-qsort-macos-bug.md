@@ -24,7 +24,7 @@ A standard library function called `dice_coefficient` within the V(lang) module 
 The V(lang) modules documentation has this note regarding this function:
 > `dice_coefficient` implements the Sørensen–Dice coefficient. It finds the similarity between two strings, and returns a coefficient between 0.0 (not similar) and 1.0 (exact match). [module documentation](https://modules.vlang.io/strings.html#dice_coefficient)
 
-Therefore the full name of the underlying algorithm Lilly uses to compare one string of text with another is "Sørensen–Dice coefficient" (SDC).
+Therefore, the full name of the underlying algorithm Lilly uses to compare one string of text with another is "Sørensen–Dice coefficient" (SDC).
 
 <details> <summary>Slightly off topic </summary>
 
@@ -52,11 +52,11 @@ This is an optimal use of the (LD) algorithm over (SDC), as its only matching at
 
 </details>
 
-Being able to score each file path against the query is the first piece of the puzzle but it is not sufficient to provide us the ability to actually order a list of file paths in score order. In order to do sorting we need a sorting algorithm.
+Being able to score each file path against the query is the first piece of the puzzle, but it is not sufficient to provide us the ability to actually order a list of file paths in score order. In order to do sorting we need a sorting algorithm.
 
 ### The sorting algorithm
 
-Within the V(lang) programming language, native builtin types have utility methods available on them. The array type is the native list type of the language, and it has a method for sorting in-place, called `sort_with_compare`.
+Within the V(lang) programming language, native built-in types have utility methods available on them. The array type is the native list type of the language, and it has a method for sorting in-place, called `sort_with_compare`.
 
 The V(lang) modules documentation has this note regarding this method:
 
@@ -111,11 +111,25 @@ The file picker works! At least it does on Windows and Linux, but on macOS, not 
 
 ![lilly-mac-file-picker-broken.gif](/static/lilly-mac-file-picker-broken.gif)
 
+As you can see, instead of sorting the list of entries based on the query as it's being entered, it seems that just the top entry is being randomly swapped back and forth between two specific paths, and the two paths are nowhere near close to the search query contents either.
 
+This is particularly unexpected as a bug, because the V(lang) programming language and the standard library is designed to provide platform-agnostic functionality. If this is a bug on macOS, then this same behaviour should be manifesting on Windows and Linux respectfully.
 
+So what could be happening here?
 
+# Debugging
 
+There were a couple of immediate avenues of what to investigate that occurred to me at this point, and what I thought were unlikely to be the cause based on existing functionality and logic tests.
 
+### Suspect list
+
+1. Unique file path structure
+
+	Perhaps this issue is manifesting on macOS (when opened on the Lilly project) due to file paths containing repeated instances of `.` and a frequency of CAPITAL letter directories?
+	
+2. Rendering broken
+	
+	In the past a subtle V(lang) compiler change resulted in some unexpected pointer reference behaviour, so perhaps the file list is sorting correctly, but the rendering is malformed, or otherwise broken in some way.
 
 misc notes
 https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173
