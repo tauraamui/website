@@ -5,17 +5,17 @@ task:compile = {
 }
 
 task:compile-blogs = {
-	help = 'Compile the entire website into a single binary'
+	help = 'Compile the blog markdown into HTML'
 	run = 'v run compile_blogs.v'
 }
 
 task:deploy = {
-	help = 'Compile the entire website into a single binary'
+	help = 'Compile markdown into HTML, build the executable and copy it all to the server'
 	depends = [ 'compile-blogs', 'compile', 'copy-to-server' ]
 }
 
 task:install-deps = {
-	help = 'Compile the entire website into a single binary'
+	help = 'Install dependencies for V and pnpm'
 	run = [
 		'pnpm install -S hackcss-ext',
 		'v install markdown'
@@ -28,7 +28,7 @@ task:run = {
 }
 
 task:run-watch = {
-	help = 'Compile the entire website into a single binary'
+	help = 'Run the website on a local port and restart automatically on changes to the source tree'
 	run = 'v -d veb_livereload watch run .'
 }
 
