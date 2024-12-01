@@ -1,0 +1,41 @@
+
+task:compile = {
+	help = 'Compile the entire website into a single binary'
+	run = 'v ./src -o website.bin -prod'
+}
+
+task:compile-blogs = {
+	help = 'Compile the entire website into a single binary'
+	run = 'v run compile_blogs.v'
+}
+
+task:deploy = {
+	help = 'Compile the entire website into a single binary'
+	depends = [ 'compile-blogs', 'compile', 'copy-to-server' ]
+}
+
+task:install-deps = {
+	help = 'Compile the entire website into a single binary'
+	run = [
+		'pnpm install -S hackcss-ext',
+		'v install markdown'
+	]
+}
+
+task:run = {
+	help = 'Run the website on a local port'
+	run = 'v -g run ./src'
+}
+
+task:run-watch = {
+	help = 'Compile the entire website into a single binary'
+	run = 'v -d veb_livereload watch run .'
+}
+
+task:copy-to-server = {
+	help = 'Copies the blog assets and website executable to the host server'
+	run = [
+		'scp -r ./blog/ tauraamui@tauraamui.website:~/',
+		'scp ./website.bin tauraamui@tauraamui.website:~/'
+	]
+}
