@@ -1,7 +1,7 @@
 
 task:compile = {
 	help = 'Compile the entire website into a single binary'
-	run = 'v ./src -o website.bin -prod'
+	run = 'v -os linux -prod ./src -o website.bin'
 }
 
 task:compile-blogs = {
