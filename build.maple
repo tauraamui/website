@@ -18,7 +18,8 @@ task:install-deps = {
 	help = 'Install dependencies for V and pnpm'
 	run = [
 		'pnpm install -S hackcss-ext',
-		'v install markdown'
+		'v install markdown',
+		'v install tauraamui.readtime'
 	]
 }
 
