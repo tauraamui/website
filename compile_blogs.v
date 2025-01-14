@@ -5,6 +5,7 @@ import markdown
 import strings
 import src.lib.read_time
 import arrays
+import time
 
 struct Post {
 	path string
@@ -17,10 +18,10 @@ mut:
 
 struct FrontMatter {
 mut:
-	date      string
-	title     string
-	published bool
-	readtime  read_time.ReadTime
+	date           time.Time
+	title          string
+	published      bool
+	readtime       read_time.ReadTime
 }
 
 fn (mut post Post) write_html_post(footer_content string) {
@@ -69,6 +70,7 @@ fn resolve_all_posts() []Post {
 		ref << post
 		println("-----------------------------")
 	})
+	posts.sort(a.meta.date > b.meta.date)
 	return posts
 }
 
@@ -92,7 +94,12 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 		if parts.len != 2 { continue }
 		match parts[0].to_lower() {
 			"title" { matter.title = parts[1].trim_left(" "); println("\t-> title: ${matter.title}") }
-			"date" { matter.date = parts[1].trim_space(); println("\t-> date: ${matter.date}") }
+			"date" {
+				date_str := parts[1].trim_space()
+				matter.date = time.parse_format(date_str, "DD/MM/YYYY") or { println("\t-> date: INVALID DATE/TIME '${date_str}'"); time.Time{} }
+				if matter.date == time.Time{} { continue }
+				println("\t-> date: ${matter.date}")
+			}
 			"published" {
 				matter.published = match parts[1].trim_space() {
 					"yes" { true }
@@ -161,12 +168,14 @@ fn generate_embedding_code(posts []Post) string {
 
 	code.writeln("fn blogs_listing() []Listing {")
 	code.writeln("\treturn [")
+	println("generating blog list:")
 	for _, p in posts {
 		if !p.meta.published {
 			println("skipping adding \"${p.meta.title.trim_left(' ')}\" to listing page, as its unpublished...")
 		}
 		if p.meta.published {
-			code.writeln("\t\tListing { date: \"${p.meta.date}\" title: \"${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
+			println(">\t writing blog ${p.meta.title}")
+			code.writeln("\t\tListing { date: \"${p.meta.date.custom_format('DD/MM/YYYY')}\" title: \"${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
 		}
 	}
 	code.writeln("\t]")
