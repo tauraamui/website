@@ -3,7 +3,7 @@ module main
 import os
 import markdown
 import strings
-import read_time
+import src.lib.read_time
 import arrays
 
 struct Post {

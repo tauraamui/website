@@ -28,3 +28,5 @@ How can I get it? The options:
 I figured out by frantically Google searching that Zig does technically have a native package manager these days, but it is completely undocumented from the official sources from what I could see. Some posts I can across implied this is deliberate due to it being in unsettled unstable stage of its creation.
 
 This post: https://ziggit.dev/t/how-to-add-a-dependency-to-build-zig-zon/6769 helped me learn that it is indeed possible (thank god) to install deps even if the repo that contains the desired code has no associated releases.
+
+To be continued...
