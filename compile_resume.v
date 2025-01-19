@@ -11,9 +11,6 @@ fn main() {
 	footer_content := os.read_file("./src/templates/footer.html") or { panic("unable to extract footer content") }
 	resume_contents_markdown := os.read_file("./src/resume.md") or { panic("unable to read resume ./resume.md content: ${err}") }
 
-	println(resume_contents_markdown)
-	println(markdown.to_html(resume_contents_markdown))
-
 	mut rfd := os.open_file("./src/templates/resume.html", "w") or { panic("unable to open writable file ./src/templates/resume.html: ${err}") }
 	defer { rfd.close() }
 

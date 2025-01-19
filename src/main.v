@@ -8,6 +8,8 @@ import net.urllib
 import encoding.html
 import strconv
 import time
+import json
+import db.pg
 
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
@@ -29,6 +31,23 @@ spectral_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-spectral.woff2
 
 const port = 8082
 
+struct Config {
+pub mut:
+	use_analytics bool
+	db_host string @[json: "host"]
+	db_port int    @[json: "port"]
+	db_user string @[json: "user"]
+	db_pass string @[json: "password"]
+	db_name string @[json: "dbname"]
+}
+
+fn resolve_db_config() !Config {
+	config_file_content := os.read_file("db.config") or { return error("unable to read config file: ${err}") }
+	mut parsed_config := json.decode(Config, config_file_content) or { return error("unable to decode config from JSON: ${err}") }
+	parsed_config.use_analytics = true
+	return parsed_config
+}
+
 pub struct Context {
 	veb.Context
 mut:
@@ -43,10 +62,22 @@ pub fn before_request(mut ctx Context) bool {
 pub struct App {
 	veb.Middleware[Context]
 	veb.StaticHandler
+	cfg Config
 mut:
 	views shared map[string]int
 }
 
+@[table: 'metrics']
+struct Metric {
+	id              string @[default: 'gen_random_uuid()'; primary; sql_type: 'uuid']
+	event_timestamp string @[default: 'CURRENT_TIMESTAMP'; sql_type: 'TIMESTAMP WITH TIME ZONE NOT NULL']
+	event_type      string
+	page_url        string
+	referrer_url    ?string
+	ip              ?string
+	browser         ?string
+	country         ?string
+}
 
 fn resolve_port() int {
 	port_arg := cmdline.option(os.args_after(""), "-port", "8080")
@@ -56,15 +87,49 @@ fn resolve_port() int {
 	}
 }
 
+fn create_tables(cfg Config) ! {
+	db := pg.connect(pg.Config{
+		host: cfg.db_host
+		port: cfg.db_port
+		user: cfg.db_user
+		password: cfg.db_pass
+		dbname: cfg.db_name
+	}) or { return error("unable to connect to DB: ${err}") }
+	defer { db.close() }
+
+	sql db {
+		create table Metric
+	}!
+}
+
+fn store_metric(cfg Config, metric Metric) {
+	db := pg.connect(pg.Config{
+		host: cfg.db_host
+		port: cfg.db_port
+		user: cfg.db_user
+		password: cfg.db_pass
+		dbname: cfg.db_name
+	}) or { println("unable to connect to DB: ${err}"); return }
+	defer { db.close() }
+	sql db {
+		insert metric into Metric
+	} or { println("failed to insert metric into table: ${err}") }
+}
+
 fn main() {
-	mut app := new_app()
+	mut config := resolve_db_config() or { println("failed to resolve DB config: ${err}"); Config{ use_analytics: false } }
+	if config.use_analytics {
+		println("ANALYTICS ENABLED -> SETTING UP DB")
+		create_tables(config) or { config.use_analytics = false; println("failed to setup DB: ${err}"); println("ANALYTICS FORCE DISABLED!") }
+	}
+	mut app := new_app(config)
 	app.use(handler: before_request)
 	veb.run[App, Context](mut app, resolve_port())
 }
 
-fn new_app() App {
+fn new_app(cfg Config) App {
 	shared views := map[string]int{}
-	mut app := App{ views: views }
+	mut app := App{ cfg: cfg, views: views }
 	app.mount_static_folder_at("./blog/static", "/static") or { panic(err) }
 	return app
 }
@@ -150,6 +215,13 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 		}
 	}
 
+	spawn store_metric(app.cfg, Metric{
+		event_type: "page_view"
+		page_url: "${ctx.req.host}${ctx.req.url}"
+		browser: ctx.req.user_agent
+		referrer_url: ctx.req.referer()
+	})
+
 	tab_title := "tauraamui's website"
 	return $veb.html()
 }
@@ -161,6 +233,12 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 			app.views["blog"] += 1
 		}
 	}
+	spawn store_metric(app.cfg, Metric{
+		event_type: "page_view"
+		page_url: "${ctx.req.host}${ctx.req.url}"
+		browser: ctx.req.user_agent
+		referrer_url: ctx.req.referer()
+	})
 	posts := blogs_listing()
 	tab_title := "Blog - tauraamui's website"
 	return $veb.html()
@@ -174,6 +252,12 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 			app.views["blog: ${name}"] += 1
 		}
 	}
+	spawn store_metric(app.cfg, Metric{
+		event_type: "page_view"
+		page_url: "${ctx.req.host}${ctx.req.url}"
+		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		referrer_url: ctx.req.referer()
+	})
 	tab_title := post.tab_title
 	header_content := $tmpl("./templates/header.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
@@ -191,6 +275,12 @@ pub fn (mut app App) resume(mut ctx Context) veb.Result {
 			app.views["resume"] += 1
 		}
 	}
+	spawn store_metric(app.cfg, Metric{
+		event_type: "page_view"
+		page_url: "${ctx.req.host}${ctx.req.url}"
+		browser: ctx.req.user_agent
+		referrer_url: ctx.req.referer()
+	})
 	tab_title := "Resume - tauraamui's website'"
 	return $veb.html()
 }
@@ -202,6 +292,12 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 			app.views["contact"] += 1
 		}
 	}
+	spawn store_metric(app.cfg, Metric{
+		event_type: "page_view"
+		page_url: "${ctx.req.host}${ctx.req.url}"
+		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		referrer_url: ctx.req.referer()
+	})
 	tab_title := "Contact Info - tauraamui's website"
 	email := html.escape("adamstringer@hey.com")
 	github := html.escape("https://github.com/tauraamui")
@@ -220,6 +316,13 @@ pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
 			app.views["set-theme"] += 1
 		}
 	}
+
+	spawn store_metric(app.cfg, Metric{
+		event_type: "page_view"
+		page_url: "${ctx.req.host}${ctx.req.url}"
+		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		referrer_url: ctx.req.referer()
+	})
 
 	url := urllib.parse(ctx.req.url) or { ctx.res.set_status(http.Status.internal_server_error); return ctx.text('error: invalid redirect url') }
 	origin_url := url.query().get("redirect") or { "/" }
