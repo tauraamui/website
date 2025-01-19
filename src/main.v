@@ -218,7 +218,7 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
-		browser: ctx.req.user_agent
+		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		referrer_url: ctx.req.referer()
 	})
 
@@ -236,7 +236,7 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
-		browser: ctx.req.user_agent
+		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		referrer_url: ctx.req.referer()
 	})
 	posts := blogs_listing()
@@ -278,7 +278,7 @@ pub fn (mut app App) resume(mut ctx Context) veb.Result {
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
-		browser: ctx.req.user_agent
+		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		referrer_url: ctx.req.referer()
 	})
 	tab_title := "Resume - tauraamui's website'"
