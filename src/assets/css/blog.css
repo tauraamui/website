@@ -114,6 +114,45 @@ h1, h2, h3, h4, h5, h6 {
     font-size: 1.2rem;
 }
 
+.header {
+	display: flex;
+	align-items: center;
+}
+
+.title {
+	padding-bottom: 2px !important;
+}
+
+.meta {
+	display: flex;
+	align-items: center;
+	color: #ff2e88;
+	padding-bottom: 15px;
+}
+
+.meta-separator {
+	display: inline-block;
+	position: relative;
+	top: -1px;
+	line-height: 1;
+	margin-left: 0.5em;
+	margin-right: 0.5em;
+}
+
+.readtime .posttime {
+	display: flex;
+	align-items: center;
+}
+
+.icon {
+	vertical-align: middle;
+	color: #ff2e88;
+}
+
+.icon:not(:last-child) {
+	margin-right: 5px;
+}
+
 nav {
     font-size: 1.8rem;
 }

@@ -56,13 +56,10 @@ fn resolve_all_posts() []Post {
 
 		front_matter, mut contents := extract_front_matter(raw_contents)
 		read_time_minutes := front_matter.readtime.seconds / 60
-		// contents = contents.replace("#{article_title}", "# ${front_matter.article_title}")
-		// contents = contents.replace("#{read_time_seconds}", "\n ### Read time: ${read_time_minutes} minute${if read_time_minutes > 1 || read_time_minutes == 0 { "s" } else { "" }}")
 
 		mut html_content := arrays.join_to_string(markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
 		html_content = html_content.replace("<p>#{article_title}</p>", "#{article_title}")
-		//html_content = html_content.replace("#{read_time_seconds}", "<div>${read_time_minutes} minutes</div>")
-		html_content = expand_article_header(html_content, front_matter.article_title, read_time_minutes)
+		html_content = expand_article_header(html_content, front_matter.date, front_matter.article_title, read_time_minutes)
 
 		post := Post {
 			meta: front_matter
@@ -77,13 +74,24 @@ fn resolve_all_posts() []Post {
 	return posts
 }
 
-fn expand_article_header(html_content string, article_title string, read_time_minutes u64) string {
+fn expand_article_header(
+	html_content      string,
+	date              time.Time,
+	article_title     string,
+	read_time_minutes u64
+) string {
 	read_time_text := "${read_time_minutes} minute${if read_time_minutes > 1 || read_time_minutes == 0 { "s" } else { "" }}"
 	mut sb := strings.new_builder(1024)
 	sb.writeln("<header>")
-	sb.writeln("<h1>${article_title}</h1>")
+	sb.writeln("<h1 class=\"title\">${article_title}</h1>")
+	sb.writeln("<div class=\"meta\">")
+	sb.writeln("<div class=\"postdate\">")
+	sb.writeln("<i class=\"icon feather icon-calendar\"></i><time>${date.ymmdd()}</time>")
+	sb.writeln("</div>")
+	sb.writeln("<span class=\"meta-separator\">|</span>")
 	sb.writeln("<div class=\"readtime\">")
-	sb.writeln("<time>${read_time_text}</time>")
+	sb.writeln("<i class=\"icon feather icon-clock\"></i><time>${read_time_text}</time>")
+	sb.writeln("</div>")
 	sb.writeln("</div>")
 	sb.writeln("</header>")
 	return html_content.replace("#{article_title}", sb.str())
