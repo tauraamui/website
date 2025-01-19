@@ -14,6 +14,7 @@ const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
 const dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
 const site_css = $embed_file('./src/assets/css/site.css', .zlib)
 const blog_css = $embed_file('./src/assets/css/blog.css', .zlib)
+const resume_css = $embed_file('./src/assets/css/resume.css', .zlib)
 const prism_css = $embed_file('./src/assets/css/prism.css', .zlib)
 
 const prism_js = $embed_file('./src/assets/js/prism.js', .zlib)
@@ -86,6 +87,10 @@ pub fn (mut app App) css(mut ctx Context, name string) veb.Result {
 		"blog.css" {
 			ctx.set_content_type(veb.mime_types[".css"] or { "" })
 			return ctx.ok(blog_css.to_string())
+		}
+		"resume.css" {
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(resume_css.to_string())
 		}
 		"prism.css" {
 			ctx.set_content_type(veb.mime_types[".css"] or { "" })
