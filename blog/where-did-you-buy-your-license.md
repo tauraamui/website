@@ -1,10 +1,10 @@
 ---
 date: 05/10/2023
-title: You can't drive (yes you)
+tab_title: Where did you buy your license?
+article_title: You can't drive (yes you)
 published: yes
 ---
-# You can't drive (yes, you)
-#{read_time_seconds}
+#{article_title}
 
 In the UK, more and more people seem to be driving incorrectly, especially where it matters most, such as on faster roads or duel carriageways.
 

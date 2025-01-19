@@ -1,12 +1,11 @@
 ---
 date: 06/12/2024
-title: Learning Zig (for the first time basically)
+tab_title: Learning Zig
+article_title: Learning Zig (for the first time basically)
 published: yes
 ---
+#{article_title}
 
-
-# Learning Zig (for the first time really)
-#{read_time_seconds}
 ### NOTE: This post is a WIP but I'm treating it as a public log of exploration
 
 So for various reasons I have not used Zig yet. The main reason being unclear documentation and (at the time) no official package management support. This has likely changed, and it felt like time to explore the language and the ecosystem once more.

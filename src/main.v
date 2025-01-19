@@ -145,7 +145,7 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 		}
 	}
 
-	title := "tauraamui's website"
+	tab_title := "tauraamui's website"
 	return $veb.html()
 }
 
@@ -157,7 +157,7 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 		}
 	}
 	posts := blogs_listing()
-	title := "Blog - tauraamui's website"
+	tab_title := "Blog - tauraamui's website"
 	return $veb.html()
 }
 
@@ -169,11 +169,11 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 			app.views["blog: ${name}"] += 1
 		}
 	}
-	title := post.title
+	tab_title := post.tab_title
 	header_content := $tmpl("./templates/header.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
 	return ctx.html(post.content.replace(
-		"\$\{title\}", "${post.title} - tauraamui's website"
+		"\$\{tab_title\}", "${post.tab_title} - tauraamui's website"
 		).replace("\$<\{header\}>", header_content
 		).replace("site.css", "blog.css"
 	))
@@ -186,7 +186,7 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 			app.views["contact"] += 1
 		}
 	}
-	title := "Contact Info - tauraamui's website"
+	tab_title := "Contact Info - tauraamui's website"
 	email := html.escape("adamstringer@hey.com")
 	github := html.escape("https://github.com/tauraamui")
 	telegram := html.escape("https://t.me/tauraamui")

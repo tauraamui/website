@@ -1,10 +1,10 @@
 ---
 date: 25/10/2024
-title: Lilly Devlog 1 - QSort macOS bug
+tab_title: Lilly Devlog 1 - QSort macOS bug
+article_title: Lilly Devlog #1
 published: no
 ---
-# [Lilly](https://github.com/tauraamui/lilly) Devlog # 1
-#{read_time_seconds}
+#{article_title}
 
 I have been working on a project for nearly a year which I see as my (and perhaps others?) alternative or entire replacement of Neovim for day to day work. This editor is in the pre-alpha release stage of the project. As such there is currently no commitment to provide frequent or consistent dev logs or change log summaries. With that being said, I recently encountered for the first time a bug which I feel is worth writing an article about.
 

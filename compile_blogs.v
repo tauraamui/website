@@ -19,7 +19,8 @@ mut:
 struct FrontMatter {
 mut:
 	date           time.Time
-	title          string
+	tab_title      string
+	article_title  string
 	published      bool
 	readtime       read_time.ReadTime
 }
@@ -55,26 +56,37 @@ fn resolve_all_posts() []Post {
 
 		front_matter, mut contents := extract_front_matter(raw_contents)
 		read_time_minutes := front_matter.readtime.seconds / 60
-		contents = contents.replace("#{read_time_seconds}", "\n ### Read time: ${read_time_minutes} minute${if read_time_minutes > 1 || read_time_minutes == 0 { "s" } else { "" }}")
+		// contents = contents.replace("#{article_title}", "# ${front_matter.article_title}")
+		// contents = contents.replace("#{read_time_seconds}", "\n ### Read time: ${read_time_minutes} minute${if read_time_minutes > 1 || read_time_minutes == 0 { "s" } else { "" }}")
 
-		html_content := arrays.join_to_string(markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
+		mut html_content := arrays.join_to_string(markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
+		html_content = html_content.replace("<p>#{article_title}</p>", "#{article_title}")
+		//html_content = html_content.replace("#{read_time_seconds}", "<div>${read_time_minutes} minutes</div>")
+		html_content = expand_article_header(html_content, front_matter.article_title, read_time_minutes)
 
 		post := Post {
 			meta: front_matter
 			path: path
 			raw_doc_content: contents
 			html_content: html_content
-			/*
-			html_content: arrays.join_to_string(
-				markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" }
-			)
-			*/
 		}
 		ref << post
 		println("-----------------------------")
 	})
 	posts.sort(a.meta.date > b.meta.date)
 	return posts
+}
+
+fn expand_article_header(html_content string, article_title string, read_time_minutes u64) string {
+	read_time_text := "${read_time_minutes} minute${if read_time_minutes > 1 || read_time_minutes == 0 { "s" } else { "" }}"
+	mut sb := strings.new_builder(1024)
+	sb.writeln("<header>")
+	sb.writeln("<h1>${article_title}</h1>")
+	sb.writeln("<div class=\"readtime\">")
+	sb.writeln("<time>${read_time_text}</time>")
+	sb.writeln("</div>")
+	sb.writeln("</header>")
+	return html_content.replace("#{article_title}", sb.str())
 }
 
 fn extract_front_matter(content string) (FrontMatter, string) {
@@ -96,7 +108,8 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 		parts := line.split(":")
 		if parts.len != 2 { continue }
 		match parts[0].to_lower() {
-			"title" { matter.title = parts[1].trim_left(" "); println("\t-> title: ${matter.title}") }
+			"tab_title" { matter.tab_title = parts[1].trim_left(" "); println("\t-> tab title: ${matter.tab_title}") }
+			"article_title" { matter.article_title = parts[1].trim_left(" "); println("\t-> article title: ${matter.article_title}") }
 			"date" {
 				date_str := parts[1].trim_space()
 				matter.date = time.parse_format(date_str, "DD/MM/YYYY") or { println("\t-> date: INVALID DATE/TIME '${date_str}'"); time.Time{} }
@@ -165,7 +178,8 @@ fn generate_embedding_code(posts []Post) string {
 
 	code.writeln("struct Listing {")
 	code.writeln("\tdate string")
-	code.writeln("\ttitle string")
+	code.writeln("\ttab_title string")
+	code.writeln("\tarticle_title string")
 	code.writeln("\tfile_name string")
 	code.writeln("}")
 
@@ -174,11 +188,11 @@ fn generate_embedding_code(posts []Post) string {
 	println("generating blog list:")
 	for _, p in posts {
 		if !p.meta.published {
-			println("skipping adding \"${p.meta.title.trim_left(' ')}\" to listing page, as its unpublished...")
+			println("skipping adding \"${p.meta.article_title.trim_left(' ')}\" to listing page, as its unpublished...")
 		}
 		if p.meta.published {
-			println(">\t writing blog ${p.meta.title}")
-			code.writeln("\t\tListing { date: \"${p.meta.date.custom_format('DD/MM/YYYY')}\" title: \"${p.meta.title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
+			println(">\t writing blog ${p.meta.article_title}")
+			code.writeln("\t\tListing { date: \"${p.meta.date.custom_format('DD/MM/YYYY')}\" tab_title: \"${p.meta.tab_title}\", article_title: \"${p.meta.article_title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
 		}
 	}
 	code.writeln("\t]")
@@ -187,7 +201,8 @@ fn generate_embedding_code(posts []Post) string {
 	code.writeln("")
 
 	code.writeln("struct Post {")
-	code.writeln("\ttitle string")
+	code.writeln("\ttab_title string")
+	code.writeln("\tarticle_title string")
 	code.writeln("\tcontent string")
 	code.writeln("}")
 
@@ -198,7 +213,7 @@ fn generate_embedding_code(posts []Post) string {
 	for _, p in posts {
 		name := os.base(p.html_path)
 		code.writeln("\t\t\"${name.replace(".html", "")}\" {")
-		code.writeln("\t\t\tPost { title: \"${p.meta.title}\", content: ${name.replace("-", "_").replace(".html", "")}.to_string() }")
+		code.writeln("\t\t\tPost { tab_title: \"${p.meta.tab_title}\", article_title: \"${p.meta.article_title}\", content: ${name.replace("-", "_").replace(".html", "")}.to_string() }")
 		code.writeln("\t\t}")
 	}
 	code.writeln("\t\telse { error(\"unable to resolve blog\") }")

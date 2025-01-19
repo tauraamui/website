@@ -1,10 +1,11 @@
 ---
 date: 26/09/2023
-title: How I write and publish blogs
+tab_title: How I write and publish blogs
+article_title: How I write and publish blogs
 published: yes
 ---
-# How I write and publish blogs
-#{read_time_seconds}
+#{article_title}
+
 The following post will attempt to go through the step by step process which I take when I would like to author and publish new blogs to this website.
 
 ### Obsidian
