@@ -24,7 +24,7 @@ $<{header}>         <header>
          <p><code>dice_coefficient</code> implements the Sørensen–Dice coefficient. It finds the similarity between two strings, and returns a coefficient between 0.0 (not similar) and 1.0 (exact match). <a target='_blank' href="https://modules.vlang.io/strings.html#dice_coefficient">module documentation</a></p>
          </blockquote>
          <p>Therefore, the full name of the underlying algorithm Lilly uses to compare one string of text with another is &quot;Sørensen–Dice coefficient&quot; (SDC).</p>
-         <details> <summary>Slightly off topic </summary>
+         <details> <summary>Slightly off topic (click to expand) </summary>
          <h3>Sørensen–Dice coefficient vs Levenshtein Distance</h3>
          <p>This is slightly off topic for this article, but as a point of interest in case you were wondering, yes, there are also functions to calculate the &quot;Levenshtein Distance&quot; (LD) between two strings available within the V(lang) standard library. I have some intuitive sense that of the two options, LD is more well known and more &quot;popular&quot;, and you may be wondering why LD wasn't chosen as the algorithm instead of SDC.</p>
          <p>According to others research I found online, SDC is better optimised for sets of strings which are lengthy, or vary wildly in length from each other, and sets where there is a greater chance of more errors than matches.</p>
