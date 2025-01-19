@@ -9,9 +9,19 @@ task:compile-blogs = {
 	run = 'v run compile_blogs.v'
 }
 
+task:compile-resume = {
+	help = 'Compile resume page markdown into HTML'
+	run = 'v run compile_resume.v'
+}
+
+task:release-build = {
+	help = 'Fully builds entire website'
+	depends = [ 'compile-blogs', 'compile-resume', 'compile' ]
+}
+
 task:deploy = {
 	help = 'Compile markdown into HTML, build the executable and copy it all to the server'
-	depends = [ 'compile-blogs', 'compile', 'copy-to-server' ]
+	depends = [ 'compile-blogs', 'compile-resume', 'compile', 'copy-to-server' ]
 }
 
 task:install-deps = {
@@ -25,6 +35,7 @@ task:install-deps = {
 
 task:run = {
 	help = 'Run the website on a local port'
+	depends = [ 'compile-blogs', 'compile-resume' ]
 	run = 'v -g run ./src'
 }
 

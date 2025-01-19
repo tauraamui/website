@@ -179,6 +179,17 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 	))
 }
 
+@['/resume']
+pub fn (mut app App) resume(mut ctx Context) veb.Result {
+	lock app.views {
+		if !request_is_me(app) {
+			app.views["resume"] += 1
+		}
+	}
+	tab_title := "Resume - tauraamui's website'"
+	return $veb.html()
+}
+
 @['/contact']
 pub fn (mut app App) contact(mut ctx Context) veb.Result {
 	lock app.views {

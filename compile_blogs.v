@@ -57,7 +57,9 @@ fn resolve_all_posts() []Post {
 		front_matter, mut contents := extract_front_matter(raw_contents)
 		read_time_minutes := front_matter.readtime.seconds / 60
 
-		mut html_content := arrays.join_to_string(markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
+		mut html_content := arrays.join_to_string(
+			markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" }
+		)
 		html_content = html_content.replace("<p>#{article_title}</p>", "#{article_title}")
 		html_content = expand_article_header(html_content, front_matter.date, front_matter.article_title, read_time_minutes)
 
@@ -152,7 +154,7 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 }
 
 fn main() {
-	println("\nWebsite compiler\n")
+	println("\nBlog compiler\n")
 	mut posts := resolve_all_posts()
 
 	// header_content := os.read_file("./src/templates/header.html") or { panic("unable to extract header content") }
