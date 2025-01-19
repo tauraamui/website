@@ -219,6 +219,7 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
 	})
 
@@ -237,6 +238,7 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
 	})
 	posts := blogs_listing()
@@ -256,6 +258,7 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
 	})
 	tab_title := post.tab_title
@@ -279,6 +282,7 @@ pub fn (mut app App) resume(mut ctx Context) veb.Result {
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
 	})
 	tab_title := "Resume - tauraamui's website'"
@@ -296,6 +300,7 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
 	})
 	tab_title := "Contact Info - tauraamui's website"
@@ -321,6 +326,7 @@ pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
+		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
 	})
 
