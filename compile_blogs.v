@@ -31,11 +31,7 @@ fn (mut post Post) write_html_post(footer_content string) {
 	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file ${target}: ${err}"); return }
 	defer { wfd.close() }
 
-	// fm_content = fm_content.replace("\${date}", post.meta.date)
-	// fm_content = fm_content.replace("\${read_time_seconds}", post.readtime.seconds.str())
-	// wfd.write_string(header_content) or { println("unable to prepend header to file: ${err}"); return }
 	wfd.write_string("$<{header}>") or { println("unable to write header placeholder: ${err}"); return }
-	//wfd.write_string(fm_content) or { println("unable to prepend front matter to file: ${err}"); return }
 	wfd.write_string(post.html_content) or { println("unable to write converted HTML body: ${err}"); return }
 	wfd.write_string("${" ".repeat(6)}</div>\n${footer_content}") or { println("unable to append footer to file: ${err}"); return }
 }
@@ -61,11 +57,18 @@ fn resolve_all_posts() []Post {
 		read_time_minutes := front_matter.readtime.seconds / 60
 		contents = contents.replace("#{read_time_seconds}", "\n ### Read time: ${read_time_minutes} minute${if read_time_minutes > 1 || read_time_minutes == 0 { "s" } else { "" }}")
 
+		html_content := arrays.join_to_string(markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
+
 		post := Post {
 			meta: front_matter
 			path: path
 			raw_doc_content: contents
-			html_content: arrays.join_to_string(markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" })
+			html_content: html_content
+			/*
+			html_content: arrays.join_to_string(
+				markdown.to_html(contents).replace("<a href", "<a target='_blank' href").split("\n"), "\n", fn (e string) string { return "${" ".repeat(9)}${e}" }
+			)
+			*/
 		}
 		ref << post
 		println("-----------------------------")

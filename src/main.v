@@ -172,7 +172,11 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 	title := post.title
 	header_content := $tmpl("./templates/header.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
-	return ctx.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("\$<\{header\}>", header_content).replace("site.css", "blog.css"))
+	return ctx.html(post.content.replace(
+		"\$\{title\}", "${post.title} - tauraamui's website"
+		).replace("\$<\{header\}>", header_content
+		).replace("site.css", "blog.css"
+	))
 }
 
 @['/contact']

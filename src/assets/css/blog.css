@@ -126,6 +126,7 @@ nav {
 .hack h1 {
     font-size: 2.2rem;
     word-spacing: -.25em;
+    padding: 0px;
 }
 
 .hack h2 {
