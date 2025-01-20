@@ -15,10 +15,33 @@ The current project homepage lives [here.](https://github.com/tauraamui/lilly)
 
 ## Jobs (Past/Present)
 
-**Novafutur (now Logispin/Logifuture) Software Engineer**
+**Novafutur (now Logispin/Logifuture) - Software Engineer**
 (October 2021 - Present)
 
 High performance data ingestion and processing using Docker, Golang, GCP, K8, Pubsub, Redis, Clickhouse DB, BigQuery, Postgres.
-We receive high volumes of data to a single entrypoint, the data providers service keys allow us to differentiate between the
-individual streams we're receiving, these then get passed through our ETL pipeline which is made up of a collection of Go services.
+
+**QMEE - Software Engineer**
+(March 2020 - October 2021)
+
+Online advertising and paid surveys platform development using Heroku, Docker, Ruby, Golang, React, Redis, and RabbitMQ.
+
+**Kudos - Software Engineer**
+(March 2019 - Feb 2020)
+
+Research publication platform development using Docker, Golang, Typescript, Angular, and Google Cloud Platform.
+
+**Bright Logic - Software Engineer**
+(2017 - Feb 2019)
+
+Estate agency software development using .NET and ASP.
+
+**Krome Technologies - Technical Consultant**
+(2015 - 2017)
+
+Technical support and IT solutions consulting.
+
+**Tech Shed - Technician**
+(2012 - 2015)
+
+Computer and mobile device repair services
 
