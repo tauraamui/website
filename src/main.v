@@ -221,6 +221,7 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
+		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
 	})
 
 	tab_title := "tauraamui's website"
@@ -234,13 +235,16 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 			app.views["blog"] += 1
 		}
 	}
+
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
+		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
 	})
+
 	posts := blogs_listing()
 	tab_title := "Blog - tauraamui's website"
 	return $veb.html()
@@ -254,13 +258,16 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 			app.views["blog: ${name}"] += 1
 		}
 	}
+
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
+		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
 	})
+
 	tab_title := post.tab_title
 	header_content := $tmpl("./templates/header.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
@@ -278,13 +285,16 @@ pub fn (mut app App) resume(mut ctx Context) veb.Result {
 			app.views["resume"] += 1
 		}
 	}
+
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
+		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
 	})
+
 	tab_title := "Resume - tauraamui's website'"
 	return $veb.html()
 }
@@ -296,13 +306,16 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 			app.views["contact"] += 1
 		}
 	}
+
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
+		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
 	})
+
 	tab_title := "Contact Info - tauraamui's website"
 	email := html.escape("adamstringer@hey.com")
 	github := html.escape("https://github.com/tauraamui")
@@ -328,6 +341,7 @@ pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		ip: ctx.ip()
 		referrer_url: ctx.req.referer()
+		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
 	})
 
 	url := urllib.parse(ctx.req.url) or { ctx.res.set_status(http.Status.internal_server_error); return ctx.text('error: invalid redirect url') }
