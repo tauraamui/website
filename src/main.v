@@ -6,10 +6,12 @@ import veb
 import net.http
 import net.urllib
 import encoding.html
+import encoding.base64
 import strconv
 import time
 import json
 import db.pg
+import strings
 
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
@@ -118,6 +120,23 @@ fn store_metric(cfg Config, metric Metric) {
 	sql db {
 		insert metric into Metric
 	} or { println("failed to insert metric into table: ${err}") }
+}
+
+fn query_metrics(cfg Config) ?[]Metric {
+	db := pg.connect(pg.Config{
+		host: cfg.db_host
+		port: cfg.db_port
+		user: cfg.db_user
+		password: cfg.db_pass
+		dbname: cfg.db_name
+	}) or { eprintln("unable to connect to DB: ${err}"); return none }
+	defer { db.close() }
+
+	last_30_days := time.now().add_days(-30)
+	metric_rows := sql db {
+		select from Metric where event_timestamp >= last_30_days.ymmdd()
+	} or { eprintln("failed to query metrics: ${err}"); return none }
+	return metric_rows
 }
 
 fn main() {
@@ -333,13 +352,36 @@ const valid_themes = ["dark", "light"]
 
 @['/analytics']
 pub fn (mut app App) analytics(mut ctx Context) veb.Result {
-	url := urllib.parse(ctx.req.url) or { ctx.res.set_status(http.Status.unauthorized); return ctx.text('unauthorized: missing password from request') }
-	password := url.query().get("password") or { ctx.res.set_status(http.Status.unauthorized); return ctx.text('unauthorized: missing password from request') }
+	url := urllib.parse(ctx.req.url) or { return ctx.not_found() }
+	password := url.query().get("password") or { return ctx.not_found() }
 	if app.cfg.analytics_password != password {
 		ctx.res.set_status(http.Status.unauthorized)
 		return ctx.text("unauthorized: invalid password")
 	}
-	return ctx.text("Analytics")
+	ctx.takeover_conn()
+	spawn app.serve_analytics(mut ctx)
+	return veb.no_result()
+}
+
+fn (mut app App) serve_analytics(mut ctx Context) {
+	defer { ctx.conn.close() or { eprintln("error occurred during closing connection: ${err}") } }
+	metrics := query_metrics(app.cfg) or {
+		ctx.res.set_status(http.Status.internal_server_error)
+		ctx.text("unable to load metric data")
+		return
+	}
+
+	mut sb := strings.new_builder(1024)
+
+	tab_title := "Analytics - tauraamui's website"
+
+	header_content := $tmpl("./templates/header.html")
+	footer_content := $tmpl("./templates/footer.html")
+	sb.write_string(header_content)
+	sb.write_string(base64.encode_str(json.encode(metrics)))
+	sb.write_string(footer_content)
+
+	ctx.html(sb.str())
 }
 
 @['/theme/:mode'; post]
