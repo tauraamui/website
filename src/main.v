@@ -39,10 +39,11 @@ pub mut:
 	db_user string @[json: "user"]
 	db_pass string @[json: "password"]
 	db_name string @[json: "dbname"]
+	analytics_password string @[json: "analytics-password"]
 }
 
 fn resolve_db_config() !Config {
-	config_file_content := os.read_file("db.config") or { return error("unable to read config file: ${err}") }
+	config_file_content := os.read_file("website.config") or { return error("unable to read config file: ${err}") }
 	mut parsed_config := json.decode(Config, config_file_content) or { return error("unable to decode config from JSON: ${err}") }
 	parsed_config.use_analytics = true
 	return parsed_config
@@ -99,10 +100,13 @@ fn create_tables(cfg Config) ! {
 
 	sql db {
 		create table Metric
-	}!
+	} or { println("failed to create table: ${err}") }
 }
 
 fn store_metric(cfg Config, metric Metric) {
+	if metric.page_url.contains("localhost") {
+		return
+	}
 	db := pg.connect(pg.Config{
 		host: cfg.db_host
 		port: cfg.db_port
@@ -120,7 +124,7 @@ fn main() {
 	mut config := resolve_db_config() or { println("failed to resolve DB config: ${err}"); Config{ use_analytics: false } }
 	if config.use_analytics {
 		println("ANALYTICS ENABLED -> SETTING UP DB")
-		create_tables(config) or { config.use_analytics = false; println("failed to setup DB: ${err}"); println("ANALYTICS FORCE DISABLED!") }
+		// create_tables(config) or { config.use_analytics = false; println("failed to setup DB: ${err}"); println("ANALYTICS FORCE DISABLED!") }
 	}
 	mut app := new_app(config)
 	app.use(handler: before_request)
@@ -326,6 +330,17 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 
 const theme_cookie_name := "theme"
 const valid_themes = ["dark", "light"]
+
+@['/analytics']
+pub fn (mut app App) analytics(mut ctx Context) veb.Result {
+	url := urllib.parse(ctx.req.url) or { ctx.res.set_status(http.Status.unauthorized); return ctx.text('unauthorized: missing password from request') }
+	password := url.query().get("password") or { ctx.res.set_status(http.Status.unauthorized); return ctx.text('unauthorized: missing password from request') }
+	if app.cfg.analytics_password != password {
+		ctx.res.set_status(http.Status.unauthorized)
+		return ctx.text("unauthorized: invalid password")
+	}
+	return ctx.text("Analytics")
+}
 
 @['/theme/:mode'; post]
 pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
