@@ -336,7 +336,7 @@ pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
 	}
 
 	spawn store_metric(app.cfg, Metric{
-		event_type: "page_view"
+		event_type: "theme_switch"
 		page_url: "${ctx.req.host}${ctx.req.url}"
 		browser: ctx.req.header.get(.user_agent) or { "empty" }
 		ip: ctx.ip()
@@ -356,24 +356,6 @@ pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
 	ctx.set_cookie(http.Cookie{ name: theme_cookie_name, value: valid_themes[theme_index], path: '/', expires: time.now().add_days(30) })
 	return ctx.redirect(origin_url)
 }
-
-/*
-@['/metrics']
-pub fn (mut app App) metrics() vweb.Result {
-	mut result := strings.new_builder(1024)
-	lock app.views {
-		if !request_is_me(app) {
-			app.views["metrics"] += 1
-		} else {
-			result.write_string("hello me!\n")
-		}
-		for k, v in app.views {
-			result.write_string("${k}: ${v}\n")
-		}
-	}
-	return app.text(result.str())
-}
-*/
 
 fn request_is_me(app App) bool {
 	return false
