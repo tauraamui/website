@@ -1,0 +1,15 @@
+
+#views-per-country {
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+#views-per-country td {
+  color: #1e1e1e;
+}
+
+#views-per-country caption {
+  padding-bottom: 1em;
+}
+

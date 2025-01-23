@@ -47,7 +47,8 @@ task:run-watch = {
 task:copy-to-server = {
 	help = 'Copies the blog assets and website executable to the host server'
 	run = [
-		'scp -r ./blog/ tauraamui@tauraamui.website:~/',
-		'scp ./website.bin tauraamui@tauraamui.website:~/'
+		'scp -r ./blog/ tauraamui@87.106.199.75:~/',
+		'scp -r ./assets/ tauraamui@87.106.199.75:~/',
+		'scp ./website.bin tauraamui@87.106.199.75:~/'
 	]
 }

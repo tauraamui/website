@@ -11,7 +11,6 @@ import strconv
 import time
 import json
 import db.pg
-import strings
 
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
@@ -20,8 +19,11 @@ const site_css = $embed_file('./src/assets/css/site.css', .zlib)
 const blog_css = $embed_file('./src/assets/css/blog.css', .zlib)
 const resume_css = $embed_file('./src/assets/css/resume.css', .zlib)
 const prism_css = $embed_file('./src/assets/css/prism.css', .zlib)
+const analytics_css = $embed_file('./src/assets/css/analytics.css', .zlib)
 
 const prism_js = $embed_file('./src/assets/js/prism.js', .zlib)
+const analytics_js = $embed_file('./src/assets/js/analytics.js', .zlib)
+// const alasqlv4_js = $embed_file('./src/assets/js/alasqlv4.js', .zlib)
 
 const rubik_font = $embed_file('./src/assets/css/fonts/latin-rubik.woff2', .zlib)
 const rubik_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-rubik.woff2', .zlib)
@@ -55,6 +57,7 @@ pub struct Context {
 	veb.Context
 mut:
 	theme_mode string
+	load_analytics bool
 }
 
 pub fn before_request(mut ctx Context) bool {
@@ -153,6 +156,7 @@ fn main() {
 fn new_app(cfg Config) App {
 	shared views := map[string]int{}
 	mut app := App{ cfg: cfg, views: views }
+	app.serve_static("/assets/js/alasqlv4.js", "./assets/js/alasqlv4.js") or { panic(err) }
 	app.mount_static_folder_at("./blog/static", "/static") or { panic(err) }
 	return app
 }
@@ -184,6 +188,10 @@ pub fn (mut app App) css(mut ctx Context, name string) veb.Result {
 			ctx.set_content_type(veb.mime_types[".css"] or { "" })
 			return ctx.ok(prism_css.to_string())
 		}
+		"analytics.css" {
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(analytics_css.to_string())
+		}
 		else {
 			return ctx.not_found()
 		}
@@ -195,6 +203,20 @@ pub fn (mut app App) prism_js(mut ctx Context) veb.Result {
 	ctx.set_content_type(veb.mime_types[".js"] or { "" })
 	return ctx.ok(prism_js.to_string())
 }
+
+@['/assets/js/analytics.js']
+pub fn (mut app App) analytics_js(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".js"] or { "" })
+	return ctx.ok(analytics_js.to_string())
+}
+
+/*
+@['/assets/js/alasqlv4.js']
+pub fn (mut app App) alasqlv4_js(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".js"] or { "" })
+	return ctx.ok(alasqlv4_js.to_string())
+}
+*/
 
 @['/assets/css/fonts/:name']
 pub fn (mut app App) fonts(mut ctx Context, name string) veb.Result {
@@ -248,6 +270,7 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 	})
 
 	tab_title := "tauraamui's website"
+	metric_data := ""
 	return $veb.html()
 }
 
@@ -270,6 +293,7 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 
 	posts := blogs_listing()
 	tab_title := "Blog - tauraamui's website"
+	metric_data := ""
 	return $veb.html()
 }
 
@@ -292,6 +316,7 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 	})
 
 	tab_title := post.tab_title
+	metric_data := ""
 	header_content := $tmpl("./templates/header.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
 	return ctx.html(post.content.replace(
@@ -319,6 +344,7 @@ pub fn (mut app App) resume(mut ctx Context) veb.Result {
 	})
 
 	tab_title := "Resume - tauraamui's website'"
+	metric_data := ""
 	return $veb.html()
 }
 
@@ -344,6 +370,7 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 	github := html.escape("https://github.com/tauraamui")
 	telegram := html.escape("https://t.me/tauraamui")
 	discord := html.escape("https://discordapp.com/users/753689188213194862")
+	metric_data := ""
 	return $veb.html()
 }
 
@@ -363,6 +390,8 @@ pub fn (mut app App) analytics(mut ctx Context) veb.Result {
 	return veb.no_result()
 }
 
+const html_chunk_size := 1024
+
 fn (mut app App) serve_analytics(mut ctx Context) {
 	defer { ctx.conn.close() or { eprintln("error occurred during closing connection: ${err}") } }
 	metrics := query_metrics(app.cfg) or {
@@ -371,17 +400,27 @@ fn (mut app App) serve_analytics(mut ctx Context) {
 		return
 	}
 
-	mut sb := strings.new_builder(1024)
-
+	ctx.load_analytics = true
 	tab_title := "Analytics - tauraamui's website"
+	metric_data := base64.encode_str(json.encode(metrics))
 
-	header_content := $tmpl("./templates/header.html")
-	footer_content := $tmpl("./templates/footer.html")
-	sb.write_string(header_content)
-	sb.write_string(base64.encode_str(json.encode(metrics)))
-	sb.write_string(footer_content)
+	// the size of the page is so large that the built in auto
+	// html rendering methods don't seem to send all of the data
+	// the only way to guarantee that we send ALL of the data
+	// is to do it ourselves manually
+	page := $tmpl("./templates/analytics.html").str()
+	page_char_size := page.len
+	iter_count := page_char_size / html_chunk_size
+	remaining_bytes := (page_char_size - (html_chunk_size * iter_count))
+	ctx.conn.write_string("HTTP/1.1 200 OK\r\nContent-type: text/html\r\nContent-length: ${page_char_size}\r\n\r\n") or { eprintln("failed to write HTML header to connection: ${err}"); return }
 
-	ctx.html(sb.str())
+	for x in 0..iter_count {
+		start := x * html_chunk_size
+		end := (x + 1) * 1024
+		ctx.conn.write(page[start..end].bytes()) or { eprintln("failed to write HTML segment ${start} to ${end} to connection: ${err}"); continue }
+	}
+
+	ctx.conn.write(page[page_char_size - remaining_bytes..].bytes()) or { eprintln("failed to write HTML segment to connection: ${err}"); return }
 }
 
 @['/theme/:mode'; post]

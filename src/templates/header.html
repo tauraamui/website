@@ -48,7 +48,9 @@ wtf are you looking at
        <link rel="stylesheet" type="text/css" href="//at.alicdn.com/t/font_o5hd5vvqpoqiwwmi.css">
        <script src="/assets/js/prism.js" async></script>
        <title>${tab_title}</title>
-       <!-- @include 'analytics.html' >
+       @if ctx.load_analytics
+       @include 'analytics-scripts.html'
+       @end
     </head>
    <body class="hack dark-grey">
       <div style="max-width: fit-content; margin: .5em .5em 0 auto; display: flex; flex-direction: row; gap: .5em">
