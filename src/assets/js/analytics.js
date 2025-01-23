@@ -1,5 +1,5 @@
 function generateViewsPerCountryTable(data) {
-    const container = document.getElementById('views-per-country');
+    const container = document.getElementById('requests-per-country');
     const table = document.createElement('table');
 
     // Add a class to the table
@@ -10,7 +10,7 @@ function generateViewsPerCountryTable(data) {
 
     // Add caption to the table
     const caption = document.createElement('caption');
-    caption.textContent = 'Views by country';
+    caption.textContent = 'Requests by country';
     table.appendChild(caption);
 
     const thead = document.createElement('thead');

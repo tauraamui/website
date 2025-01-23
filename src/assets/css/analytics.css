@@ -1,42 +1,50 @@
 /* mobile view styles */
-#views-per-country {
+#requests-per-country {
   display: flex;
   flex-direction: column;
-  max-width: 46%;
+  max-width: 80%;
   margin: 0 auto;
+  font-size: large;
+
+  padding: 10px;
+  border: 1px solid #e2e2e2;
 }
 
-#views-per-country ul {
+#requests-per-country ul {
   display: flex;
   flex-wrap: wrap; /* Allow legend items to wrap */
-  margin-top: 10px; /* Add some space above the legend */
-  margin-left: 20px; /* Add space to the left of the legend */
+  margin-top: 20px; /* Add some space above the legend */
+  margin-bottom: 0;
 }
 
-#views-per-country td {
+#requests-per-country td {
   color: #1e1e1e;
 }
 
-#views-per-country caption {
+#requests-per-country caption {
   padding-bottom: 1em;
 }
 
-#views-per-country li::after {
+#requests-per-country li::after {
   content: '';
+}
+
+h1, h2, h3, h4, h5, h6 {
+    color: #f781b4;
 }
 
 /* desktop view styles */
 @media (min-width: 768px) { /* Adjust the breakpoint as needed */
-  #views-per-country {
+  #requests-per-country {
     flex-direction: row; /* Change to row for desktop */
     max-width: 94%;
   }
 
-  #views-per-country caption {
+  #requests-per-country caption {
     font-size: large;
   }
 
-  #views-per-country ul {
+  #requests-per-country ul {
     margin: auto;
     margin-left: 20px; /* Add space to the left of the legend */
   }
