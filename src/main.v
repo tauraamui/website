@@ -397,6 +397,7 @@ fn (mut app App) serve_analytics(mut ctx Context) {
 	metrics := query_metrics(app.cfg) or {
 		ctx.res.set_status(http.Status.internal_server_error)
 		ctx.text("unable to load metric data")
+		eprintln("faild to query metric data")
 		return
 	}
 

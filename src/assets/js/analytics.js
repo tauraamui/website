@@ -5,6 +5,9 @@ function generateViewsPerCountryTable(data) {
     // Add a class to the table
     table.className = 'charts-css pie show-heading'; // Updated class name
 
+    const legend = document.createElement('ul');
+    legend.className = "charts-css legend legend-circle legend-inline"
+
     // Add caption to the table
     const caption = document.createElement('caption');
     caption.textContent = 'Views by country';
@@ -38,6 +41,7 @@ function generateViewsPerCountryTable(data) {
         const row = document.createElement('tr');
         const countryCell = document.createElement('th');
         const viewsCell = document.createElement('td');
+        const legendItem = document.createElement('li')
 
         countryCell.setAttribute('scope', 'row');
         // Calculate the percentage size for bar graph
@@ -50,6 +54,7 @@ function generateViewsPerCountryTable(data) {
         viewsCell.style.setProperty('--start', start.toFixed(2)); // Set the --start property
         viewsCell.style.setProperty('--end', end.toFixed(2)); // Set the --end property
 
+        legendItem.textContent = item.country || 'N/A';
         countryCell.textContent = item.country || 'N/A'; // Handle empty country
         cumulativePercentage = end; // Update cumulative percentage
 
@@ -61,21 +66,30 @@ function generateViewsPerCountryTable(data) {
         row.appendChild(countryCell);
         row.appendChild(viewsCell);
         tbody.appendChild(row);
+
+        legend.appendChild(legendItem);
     });
 
     table.appendChild(tbody);
     container.appendChild(table);
+    container.appendChild(legend);
+
 }
 
 document.addEventListener("DOMContentLoaded", function() {
     const base64Data = document.getElementById('jsonData').textContent;
     const jsonData = atob(base64Data); // Decode Base64
     const data = JSON.parse(jsonData); // Parse JSON
-    console.log(data); // Process your JSON data here
-    var res = alasql(`
-        SELECT country, COUNT(*) as views FROM ? GROUP BY country ORDER BY views DESC
-    `, [data]);
-    console.log(res);
 
-    generateViewsPerCountryTable(res);
+    const views_per_country_query = `
+        SELECT
+            country,
+            COUNT(*) as views
+        FROM ?
+        WHERE
+            country NOT LIKE ''
+        GROUP BY country
+        ORDER BY views DESC
+    `;
+    generateViewsPerCountryTable(alasql(views_per_country_query, [data]));
 });

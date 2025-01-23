@@ -1,8 +1,16 @@
 
+/* mobile view styles */
 #views-per-country {
-  width: 100%;
-  max-width: 300px;
+  display: flex;
+  flex-direction: column;
+  max-width: 55%;
   margin: 0 auto;
+}
+
+#views-per-country ul {
+  display: flex;
+  flex-wrap: wrap; /* Allow legend items to wrap */
+  margin-top: 10px; /* Add some space above the legend */
 }
 
 #views-per-country td {
@@ -11,5 +19,21 @@
 
 #views-per-country caption {
   padding-bottom: 1em;
+}
+
+#views-per-country li::after {
+  content: '';
+}
+
+/* desktop view styles */
+@media (min-width: 768px) { /* Adjust the breakpoint as needed */
+  #views-per-country {
+    flex-direction: row; /* Change to row for desktop */
+    max-width: 94%;
+  }
+
+  #views-per-country ul {
+    margin: auto;
+  }
 }
 
