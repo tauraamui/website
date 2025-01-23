@@ -1,4 +1,3 @@
-
 /* mobile view styles */
 #views-per-country {
   display: flex;
@@ -11,6 +10,7 @@
   display: flex;
   flex-wrap: wrap; /* Allow legend items to wrap */
   margin-top: 10px; /* Add some space above the legend */
+  margin-left: 20px; /* Add space to the left of the legend */
 }
 
 #views-per-country td {
@@ -34,6 +34,6 @@
 
   #views-per-country ul {
     margin: auto;
+    margin-left: 20px; /* Add space to the left of the legend */
   }
 }
-
