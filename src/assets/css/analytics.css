@@ -2,7 +2,7 @@
 #views-per-country {
   display: flex;
   flex-direction: column;
-  max-width: 55%;
+  max-width: 46%;
   margin: 0 auto;
 }
 
@@ -30,6 +30,10 @@
   #views-per-country {
     flex-direction: row; /* Change to row for desktop */
     max-width: 94%;
+  }
+
+  #views-per-country caption {
+    font-size: large;
   }
 
   #views-per-country ul {
