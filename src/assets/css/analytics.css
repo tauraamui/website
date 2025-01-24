@@ -1,4 +1,15 @@
 /* mobile view styles */
+
+h1, h2, h3, h4, h5, h6 {
+    color: #f781b4;
+}
+
+.analytics-container {
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+}
+
 #requests-per-country {
   display: flex;
   flex-direction: column;
@@ -29,15 +40,22 @@
   content: '';
 }
 
-h1, h2, h3, h4, h5, h6 {
-    color: #f781b4;
+#twitter-views {
+  font-size: 3.2rem;
+  max-width: 80%;
+  margin-right: auto;
+  margin-left: 9%;
+}
+
+#twitter-views i {
+  font-size: 3.2rem;
 }
 
 /* desktop view styles */
 @media (min-width: 768px) { /* Adjust the breakpoint as needed */
   #requests-per-country {
     flex-direction: row; /* Change to row for desktop */
-    max-width: 94%;
+    max-width: 100%;
   }
 
   #requests-per-country caption {
@@ -47,5 +65,9 @@ h1, h2, h3, h4, h5, h6 {
   #requests-per-country ul {
     margin: auto;
     margin-left: 20px; /* Add space to the left of the legend */
+  }
+
+  #twitter-views {
+    margin: 0;
   }
 }

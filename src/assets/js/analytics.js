@@ -1,3 +1,4 @@
+
 function generateViewsPerCountryTable(data) {
     const container = document.getElementById('requests-per-country');
     const table = document.createElement('table');
@@ -77,7 +78,14 @@ function generateViewsPerCountryTable(data) {
     table.appendChild(tbody);
     container.appendChild(table);
     container.appendChild(legend);
+}
 
+function generateViewsFromTwitterTable(data) {
+	const container = document.getElementById('twitter-view-count');
+    if (data.length > 0) {
+        container.innerHTML = data[0].views;
+    }
+    // container.innerHTML = '8383';
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -96,4 +104,13 @@ document.addEventListener("DOMContentLoaded", function() {
         ORDER BY views DESC
     `;
     generateViewsPerCountryTable(alasql(views_per_country_query, [data]));
+
+	const views_from_twitter_short_links = `
+		SELECT
+			COUNT(*) as views
+		FROM ?
+		WHERE
+			referrer_url LIKE 'https://t.co/%'
+	`;
+    generateViewsFromTwitterTable(alasql(views_from_twitter_short_links, [data]));
 });

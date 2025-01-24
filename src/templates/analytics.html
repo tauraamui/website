@@ -1,6 +1,16 @@
 @include 'header.html'
 <div class="root container">
    <h2>Web Traffic</h2>
-   <div id="requests-per-country"></div>
+   <div class="analytics-container">
+      <div id="requests-per-country"></div>
+      <div id="twitter-views">
+          <h3>Requests via twitter</h3>
+          <span id="twitter-view-count" class="view-count"></span>
+          <span class="icon twitter-icon">
+             <i class="feather icon-twitter"></i>
+             <i class="feather icon-eye"></i>
+          </span>
+      </div>
+   </div>
 </div>
 @include 'footer.html'

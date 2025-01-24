@@ -11,7 +11,6 @@ import strconv
 import time
 import json
 import db.pg
-import v.reflection as reflect
 
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
