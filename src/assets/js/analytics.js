@@ -9,9 +9,13 @@ function generateViewsPerCountryTable(data) {
     legend.className = "charts-css legend legend-circle legend-inline"
 
     // Add caption to the table
-    const caption = document.createElement('caption');
-    caption.textContent = 'Requests by country';
-    table.appendChild(caption);
+    const caption_head = document.createElement('caption');
+    caption_head.textContent = 'Requests by country';
+    table.appendChild(caption_head);
+
+    const caption_data_lifetime = document.createElement('caption');
+    caption_data_lifetime.textContent = '(last 30 days)';
+    table.appendChild(caption_data_lifetime);
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');

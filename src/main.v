@@ -11,6 +11,7 @@ import strconv
 import time
 import json
 import db.pg
+import v.reflection as reflect
 
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
@@ -125,6 +126,38 @@ fn store_metric(cfg Config, metric Metric) {
 	} or { println("failed to insert metric into table: ${err}") }
 }
 
+const query_last_30_days_all_requests := "
+	SELECT
+		*
+	FROM
+		metrics
+	WHERE event_timestamp >= CURRENT_TIMESTAMP - INTERVAL '30 days'
+"
+
+const query_last_30_days_exclude_likely_bot_requests := "
+	WITH filtered_metrics AS (
+		SELECT
+			*,
+			LAG(event_timestamp) OVER (PARTITION BY ip ORDER BY event_timestamp) AS previous_timestamp
+		FROM
+			metrics
+		WHERE
+			event_timestamp >= CURRENT_TIMESTAMP - INTERVAL '30 days'
+	)
+	SELECT
+		*
+	FROM
+		filtered_metrics
+	WHERE
+		previous_timestamp IS NULL OR
+		event_timestamp - previous_timestamp > INTERVAL '1 second'
+	AND NOT (
+		page_url ~ '^(\\d{1,3}\\.){3}\\d{1,3}$' OR  -- Matches IPv4 format
+        referrer_url LIKE 'http://tauraamui.website%' OR
+        browser LIKE 'Twitterbot/%'
+    );
+"
+
 fn query_metrics(cfg Config) ?[]Metric {
 	db := pg.connect(pg.Config{
 		host: cfg.db_host
@@ -135,11 +168,31 @@ fn query_metrics(cfg Config) ?[]Metric {
 	}) or { eprintln("unable to connect to DB: ${err}"); return none }
 	defer { db.close() }
 
-	last_30_days := time.now().add_days(-30)
-	metric_rows := sql db {
-		select from Metric where event_timestamp >= last_30_days.ymmdd()
-	} or { eprintln("failed to query metrics: ${err}"); return none }
-	return metric_rows
+	metric_rows := db.exec(query_last_30_days_exclude_likely_bot_requests) or { eprintln("failed to query metrics: ${err}"); return none }
+
+	return metric_rows.map(fn (row pg.Row) Metric {
+		values := row.vals
+
+		id_val := values[0]
+		event_timestamp_val := values[1]
+		event_type_val := values[2]
+		page_url_val := values[3]
+		referrer_url := values[4]
+		ip_val := values[5]
+		browser_val := values[6]
+		country_val := values[7]
+
+		return Metric{
+			id: id_val or { "" }
+			event_timestamp: event_timestamp_val or { "" }
+			event_type: event_type_val or { "" }
+			page_url: page_url_val or { "" }
+			referrer_url: referrer_url or { "" }
+			ip: ip_val or { "" }
+			browser: browser_val or { "" }
+			country: country_val or { "" }
+		}
+	})
 }
 
 fn main() {
