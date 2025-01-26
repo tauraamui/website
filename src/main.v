@@ -422,6 +422,7 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 	github := html.escape("https://github.com/tauraamui")
 	telegram := html.escape("https://t.me/tauraamui")
 	discord := html.escape("https://discordapp.com/users/753689188213194862")
+	x       := html.escape("https://x.com/tauraamuix")
 	metric_data := ""
 	return $veb.html()
 }

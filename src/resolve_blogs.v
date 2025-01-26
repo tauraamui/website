@@ -16,7 +16,6 @@ struct Listing {
 fn blogs_listing() []Listing {
 	return [
 		Listing { date: "06/12/2024" tab_title: "Learning Zig", article_title: "Learning Zig (for the first time basically)", file_name: "learning-zig-for-the-first-time" }
-		Listing { date: "05/10/2023" tab_title: "Where did you buy your license?", article_title: "You can't drive (yes you)", file_name: "where-did-you-buy-your-license" }
 		Listing { date: "26/09/2023" tab_title: "How I write and publish blogs", article_title: "How I write and publish blogs", file_name: "how-i-write-and-publish-blogs" }
 		Listing { date: "24/09/2023" tab_title: "How to correctly wash up", article_title: "How to correctly wash up", file_name: "how-to-wash-up-correctly" }
 	]
