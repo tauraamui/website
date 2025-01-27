@@ -56,8 +56,9 @@ fn resolve_db_config() !Config {
 pub struct Context {
 	veb.Context
 mut:
-	theme_mode string
+	theme_mode     string
 	load_analytics bool
+	use_giscus     bool
 }
 
 pub fn before_request(mut ctx Context) bool {
@@ -367,13 +368,16 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
 	})
 
+	ctx.use_giscus = true
 	tab_title := post.tab_title
 	metric_data := ""
 	header_content := $tmpl("./templates/header.html")
+	footer_content := $tmpl("./templates/footer.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
 	return ctx.html(post.content.replace(
 		"\$\{tab_title\}", "${post.tab_title} - tauraamui's website"
 		).replace("\$<\{header\}>", header_content
+		).replace("\$<\{footer\}>", footer_content
 		).replace("site.css", "blog.css"
 	))
 }
