@@ -1,8 +1,8 @@
 ---
-date: 25/10/2024
+date: 27/01/2025
 tab_title: Lilly Devlog 1 - QSort macOS bug
-article_title: Lilly Devlog #1
-published: no
+article_title: Lilly Devlog 1 - File picker ordering bug
+published: yes
 ---
 #{article_title}
 
@@ -131,10 +131,50 @@ There were a couple of immediate avenues of what to investigate that occurred to
 	
 	In the past a subtle V(lang) compiler change resulted in some unexpected pointer reference behaviour, so perhaps the file list is sorting correctly, but the rendering is malformed, or otherwise broken in some way.
 
-misc notes
-https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173
+## Resolution of the Bug
 
+After extensive debugging and investigation, I stumbled upon a Stack Overflow article that shed light on the discrepancies in behavior between the C standard library's `qsort` implementation on Linux and macOS. This was a pivotal moment in my debugging journey, as it pointed me toward the root cause of the issue.
 
-![quicksort-anim.gif](/static/quicksort-anim.gif)
+### The Original Comparator Logic
 
-https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux
+Initially, the comparator logic in Lilly was structured as follows:
+
+```v
+
+if a_score < b_score { return 1 }
+if b_score > a_score { return -1 }
+return 0
+```
+
+At first glance, this logic seemed reasonable; however, it inadvertently led to unexpected sorting behaviour on macOS. The intention was to sort the file paths in descending order based on their scores, but the implementation did not align with the expectations of the sorting algorithm across different platforms.
+
+### Understanding the Undefined Behaviour
+
+As highlighted in the Stack Overflow discussion, the original comparator function was incorrect and could lead to undefined behaviour. While the interface for `qsort` requires a comparator function that returns an integer with three possible values, the implementation of `qsort` in glibc does not necessarily utilise all of that information. Instead, it may rely on a simpler two-way branch, which can lead to inconsistent results depending on the size of the array being sorted.
+
+In particular, the glibc implementation of `qsort` uses a merge sort that performs less-than-or-equal-to tests. This means that the faulty comparator could work under certain conditions, specifically when the array is not too large. However, if the array exceeds a certain size, the sort could fail entirely, leading to unpredictable behaviour. This nuance was critical in understanding why the file picker functioned correctly on Linux but faltered on macOS.
+
+### The Revised Comparator Logic
+
+Upon reviewing the article, I realised that a subtle adjustment to the comparator logic was necessary. I modified the comparator to:
+
+```v
+
+if b_score > a_score { return 1 }
+if a_score == b_score { return 0 }
+return -1
+```
+
+This change ensured that the sorting algorithm correctly interpreted the scores, leading to a consistent and expected order of file paths across all platforms. The revised logic explicitly checks if `b_score` is greater than `a_score`, returning `1` to indicate that `b` should come before `a`. If the scores are equal, it returns `0`, indicating that their order is indeterminate. Finally, if `a_score` is greater, it returns `-1`, placing `a` before `b`.
+
+### Testing the Fix
+
+After implementing the new comparator logic, I conducted thorough testing on all platforms—Linux, Windows, and macOS. To my relief, the file picker now functioned as intended, with the list of files being sorted accurately based on the search query. The behaviour was consistent and reliable, eliminating the previous confusion that had plagued the macOS implementation.
+
+### Conclusion
+
+I hope this article has been interesting, and that you've perhaps even learnt something! I appreciate the hard work and effort that the V language designers and stdlib authors put in to try and make a cross platform development experience as seamless as possible, but this has been an important lesson to not be complacent and keep an eye on potential cross platform implementation issues like this in future.
+
+As the Lilly editor continues to evolve, I remain committed to refining its features and ensuring a seamless experience for users across all platforms. I hope that sharing this journey provides useful insights for others who may encounter similar challenges in their projects.
+
+Thank you for following along, and I look forward to sharing more updates as the Lilly editor progresses! I recently added the ability to leave comments on my posts, please feel free if you so wish!

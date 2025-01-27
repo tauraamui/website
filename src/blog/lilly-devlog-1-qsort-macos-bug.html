@@ -1,12 +1,12 @@
 $<{header}>         <header>
-<h1 class="title">Lilly Devlog #1</h1>
+<h1 class="title">Lilly Devlog 1 - File picker ordering bug</h1>
 <div class="meta">
 <div class="postdate">
-<i class="icon feather icon-calendar"></i><time>2024-10-25</time>
+<i class="icon feather icon-calendar"></i><time>2025-01-27</time>
 </div>
 <span class="meta-separator">|</span>
 <div class="readtime">
-<i class="icon feather icon-clock"></i><time>6 minutes</time>
+<i class="icon feather icon-clock"></i><time>9 minutes</time>
 </div>
 </div>
 </header>
@@ -100,7 +100,30 @@ $<{header}>         <header>
          <p>In the past a subtle V(lang) compiler change resulted in some unexpected pointer reference behaviour, so perhaps the file list is sorting correctly, but the rendering is malformed, or otherwise broken in some way.</p>
          </li>
          </ol>
-         <p>misc notes
-         <a target='_blank' href="https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173">https://github.com/tauraamui/lilly/commit/1ec825eb1e843785319d3142222e700fac9e2c39#diff-8d3f22fa8dee4939ef9424992d181673cc07c6b6ecc47c34e1e136b7e6c7aee4R173</a></p>
-         <p><img src="/static/quicksort-anim.gif" alt="quicksort-anim.gif"></p>
-         <p><a target='_blank' href="https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux">https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux</a></p>$<{footer}>      </div>
+         <h2>Resolution of the Bug</h2>
+         <p>After extensive debugging and investigation, I stumbled upon a Stack Overflow article that shed light on the discrepancies in behavior between the C standard library's <code>qsort</code> implementation on Linux and macOS. This was a pivotal moment in my debugging journey, as it pointed me toward the root cause of the issue.</p>
+         <h3>The Original Comparator Logic</h3>
+         <p>Initially, the comparator logic in Lilly was structured as follows:</p>
+         <pre><code class="language-v">
+         if a_score &lt; b_score { return 1 }
+         if b_score &gt; a_score { return -1 }
+         return 0
+         </code></pre>
+         <p>At first glance, this logic seemed reasonable; however, it inadvertently led to unexpected sorting behaviour on macOS. The intention was to sort the file paths in descending order based on their scores, but the implementation did not align with the expectations of the sorting algorithm across different platforms.</p>
+         <h3>Understanding the Undefined Behaviour</h3>
+         <p>As highlighted in the Stack Overflow discussion, the original comparator function was incorrect and could lead to undefined behaviour. While the interface for <code>qsort</code> requires a comparator function that returns an integer with three possible values, the implementation of <code>qsort</code> in glibc does not necessarily utilise all of that information. Instead, it may rely on a simpler two-way branch, which can lead to inconsistent results depending on the size of the array being sorted.</p>
+         <p>In particular, the glibc implementation of <code>qsort</code> uses a merge sort that performs less-than-or-equal-to tests. This means that the faulty comparator could work under certain conditions, specifically when the array is not too large. However, if the array exceeds a certain size, the sort could fail entirely, leading to unpredictable behaviour. This nuance was critical in understanding why the file picker functioned correctly on Linux but faltered on macOS.</p>
+         <h3>The Revised Comparator Logic</h3>
+         <p>Upon reviewing the article, I realised that a subtle adjustment to the comparator logic was necessary. I modified the comparator to:</p>
+         <pre><code class="language-v">
+         if b_score &gt; a_score { return 1 }
+         if a_score == b_score { return 0 }
+         return -1
+         </code></pre>
+         <p>This change ensured that the sorting algorithm correctly interpreted the scores, leading to a consistent and expected order of file paths across all platforms. The revised logic explicitly checks if <code>b_score</code> is greater than <code>a_score</code>, returning <code>1</code> to indicate that <code>b</code> should come before <code>a</code>. If the scores are equal, it returns <code>0</code>, indicating that their order is indeterminate. Finally, if <code>a_score</code> is greater, it returns <code>-1</code>, placing <code>a</code> before <code>b</code>.</p>
+         <h3>Testing the Fix</h3>
+         <p>After implementing the new comparator logic, I conducted thorough testing on all platforms—Linux, Windows, and macOS. To my relief, the file picker now functioned as intended, with the list of files being sorted accurately based on the search query. The behaviour was consistent and reliable, eliminating the previous confusion that had plagued the macOS implementation.</p>
+         <h3>Conclusion</h3>
+         <p>This experience has been a valuable lesson in the intricacies of cross-platform development, particularly when it comes to sorting algorithms and their underlying logic. The journey from encountering a perplexing bug to discovering the solution through community resources has reinforced the importance of collaboration and knowledge sharing in the software development process.</p>
+         <p>As the Lilly editor continues to evolve, I remain committed to refining its features and ensuring a seamless experience for users across all platforms. I hope that sharing this journey provides useful insights for others who may encounter similar challenges in their projects.</p>
+         <p>Thank you for following along, and I look forward to sharing more updates as the Lilly editor progresses! I recently added the ability to leave comments on my posts, please feel free if you so wish!</p>$<{footer}>      </div>
