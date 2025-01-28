@@ -150,7 +150,7 @@ At first glance, this logic seemed reasonable; however, it inadvertently led to 
 
 ### Understanding the Undefined Behaviour
 
-As highlighted in the Stack Overflow discussion, the original comparator function was incorrect and could lead to undefined behaviour. While the interface for `qsort` requires a comparator function that returns an integer with three possible values, the implementation of `qsort` in glibc does not necessarily utilise all of that information. Instead, it may rely on a simpler two-way branch, which can lead to inconsistent results depending on the size of the array being sorted.
+As highlighted in this [StackOverflow discussion](https://stackoverflow.com/questions/50110709/unexplainable-difference-in-qsort-results-under-macos-and-linux) , the original comparator function was incorrect and could lead to undefined behaviour. While the interface for `qsort` requires a comparator function that returns an integer with three possible values, the implementation of `qsort` in glibc does not necessarily utilise all of that information. Instead, it may rely on a simpler two-way branch, which can lead to inconsistent results depending on the size of the array being sorted.
 
 In particular, the glibc implementation of `qsort` uses a merge sort that performs less-than-or-equal-to tests. This means that the faulty comparator could work under certain conditions, specifically when the array is not too large. However, if the array exceeds a certain size, the sort could fail entirely, leading to unpredictable behaviour. This nuance was critical in understanding why the file picker functioned correctly on Linux but faltered on macOS.
 
