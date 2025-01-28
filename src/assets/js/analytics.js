@@ -80,12 +80,65 @@ function generateViewsPerCountryTable(data) {
     container.appendChild(legend);
 }
 
+function generateViewedPagesTable(data) {
+    const container = document.getElementById('views-per-page');
+    const table = document.createElement('table');
+
+    // Add a class to the table
+    table.className = 'charts-css bar'; // Updated class name
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+
+    // Create table headers
+    const headers = ['Page URL', 'Views'];
+    headers.forEach(headerText => {
+        const header = document.createElement('th');
+        header.setAttribute('scope', 'col');
+        header.textContent = headerText;
+        headerRow.appendChild(header);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    // Calculate the maximum views
+    const maxViews = Math.max(...data.map(item => item.views));
+
+    // Create table body
+    const tbody = document.createElement('tbody');
+
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        const pageCell = document.createElement('th');
+        const viewsCell = document.createElement('td');
+
+		pageCell.setAttribute('scope', 'row');
+		pageCell.textContent = item.page_url.replace('tauraamui.website', '');
+
+        // Calculate the percentage size for bar graph
+        const percentageSize = maxViews > 0 ? (item.views / maxViews) : 0;
+        viewsCell.style.setProperty('--size', percentageSize.toFixed(2)); // Set the --size property
+        if (percentageSize.toFixed(2) >= 0.09) {
+	        const dataSpan = document.createElement('span');
+	        dataSpan.className = 'data';
+	        dataSpan.innerHTML = item.page_url.replace('tauraamui.website', '');
+	        viewsCell.appendChild(dataSpan);
+        }
+
+		row.appendChild(pageCell);
+		row.appendChild(viewsCell);
+		tbody.appendChild(row);
+    });
+
+	table.appendChild(tbody);
+	container.appendChild(table);
+}
+
 function generateViewsFromTwitterTable(data) {
 	const container = document.getElementById('twitter-view-count');
     if (data.length > 0) {
         container.innerHTML = data[0].views;
     }
-    // container.innerHTML = '8383';
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -105,6 +158,18 @@ document.addEventListener("DOMContentLoaded", function() {
     `;
     generateViewsPerCountryTable(alasql(views_per_country_query, [data]));
 
+    const most_viewed_pages_query = `
+        SELECT
+            page_url,
+            COUNT(*) as views
+        FROM ?
+        WHERE
+            page_url LIKE '%tauraamui.website%'
+        GROUP BY page_url
+        ORDER BY views DESC
+    `
+    generateViewedPagesTable(alasql(most_viewed_pages_query, [data]));
+
 	const views_from_twitter_short_links = `
 		SELECT
 			COUNT(*) as views
@@ -113,4 +178,5 @@ document.addEventListener("DOMContentLoaded", function() {
 			referrer_url LIKE 'https://t.co/%'
 	`;
     generateViewsFromTwitterTable(alasql(views_from_twitter_short_links, [data]));
+
 });
