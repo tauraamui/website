@@ -85,7 +85,7 @@ function generateViewedPagesTable(data) {
     const table = document.createElement('table');
 
     // Add a class to the table
-    table.className = 'charts-css bar'; // Updated class name
+    table.className = 'charts-css bar hide-data'; // Updated class name
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
@@ -107,6 +107,7 @@ function generateViewedPagesTable(data) {
     // Create table body
     const tbody = document.createElement('tbody');
 
+	const pageLabelContainer = document.getElementById('views-page-label');
     data.forEach(item => {
         const row = document.createElement('tr');
         const pageCell = document.createElement('th');
@@ -128,6 +129,10 @@ function generateViewedPagesTable(data) {
 		row.appendChild(pageCell);
 		row.appendChild(viewsCell);
 		tbody.appendChild(row);
+
+		const pageLabelSpan = document.createElement('span');
+		pageLabelSpan.innerHTML = item.page_url.replace('tauraamui.website', '');
+		pageLabelContainer.appendChild(pageLabelSpan);
     });
 
 	table.appendChild(tbody);
