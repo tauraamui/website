@@ -119,7 +119,7 @@ function generateViewedPagesTable(data) {
         // Calculate the percentage size for bar graph
         const percentageSize = maxViews > 0 ? (item.views / maxViews) : 0;
         viewsCell.style.setProperty('--size', percentageSize.toFixed(2)); // Set the --size property
-        if (percentageSize.toFixed(2) >= 0.09) {
+        if (percentageSize.toFixed(2) > 0.00) {
 	        const dataSpan = document.createElement('span');
 	        dataSpan.className = 'data';
 	        dataSpan.innerHTML = item.page_url.replace('tauraamui.website', '');
@@ -130,9 +130,13 @@ function generateViewedPagesTable(data) {
 		row.appendChild(viewsCell);
 		tbody.appendChild(row);
 
-		const pageLabelSpan = document.createElement('span');
-		pageLabelSpan.innerHTML = item.page_url.replace('tauraamui.website', '');
-		pageLabelContainer.appendChild(pageLabelSpan);
+		if (percentageSize.toFixed(2) > 0.00) {
+			const pageLabelSpan = document.createElement('span');
+			pageLabelSpan.title = item.page_url.replace("tauraamui.website", "");
+			pageLabelSpan.innerHTML = pageLabelSpan.title;
+			pageLabelSpan.title += " (" + item.views + ")";
+			pageLabelContainer.appendChild(pageLabelSpan);
+		}
     });
 
 	table.appendChild(tbody);
