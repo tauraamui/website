@@ -80,6 +80,13 @@ function generateViewsPerCountryTable(data) {
     container.appendChild(legend);
 }
 
+function generateViewsFromTwitterTable(data) {
+	const container = document.getElementById('twitter-view-count');
+    if (data.length > 0) {
+        container.innerHTML = data[0].views;
+    }
+}
+
 function generateViewedPagesTable(data) {
     const container = document.getElementById('views-per-page');
     const table = document.createElement('table');
@@ -144,11 +151,31 @@ function generateViewedPagesTable(data) {
 	container.appendChild(table);
 }
 
-function generateViewsFromTwitterTable(data) {
-	const container = document.getElementById('twitter-view-count');
-    if (data.length > 0) {
-        container.innerHTML = data[0].views;
-    }
+function generateViewsPerDayTable(data) {
+	const container = document.getElementById('views-per-day');
+	const table = document.createElement('table');
+
+	// assign table to represent column graph
+	table.className = 'charts-css column';
+
+	const thead = document.createElement('thead');
+	const headerRow = document.createElement('tr');
+
+	// create headers
+	const headers = ['Total Views', 'Date'];
+	headers.forEach(headerText => {
+		const header = document.createElement('th');
+		header.setAttribute('scope', 'col');
+		header.textContent = headerText;
+		headerRow.appendChild(header);
+	});
+	thead.appendChild(headerRow);
+	table.appendChild(thead);
+
+    const tbody = document.createElement('tbody');
+    data.forEach(item => console.log(item));
+
+	container.appendChild(table);
 }
 
 document.addEventListener("DOMContentLoaded", function() {
@@ -189,4 +216,17 @@ document.addEventListener("DOMContentLoaded", function() {
 	`;
     generateViewsFromTwitterTable(alasql(views_from_twitter_short_links, [data]));
 
+	const total_views_per_day = `
+        SELECT
+            DATE(event_timestamp)::date as date,
+            COUNT(*) as views
+        FROM ?
+        WHERE
+            event_type = 'page_view'
+        GROUP BY
+            DATE(event_timestamp)::date
+        ORDER BY
+            date;
+    `;
+	generateViewsPerDayTable(alasql(total_views_per_day, [data]));
 });
