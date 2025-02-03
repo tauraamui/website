@@ -124,11 +124,12 @@ function generateViewedPagesTable(data) {
 	        dataSpan.className = 'data';
 	        dataSpan.innerHTML = item.page_url.replace('tauraamui.website', '');
 	        viewsCell.appendChild(dataSpan);
+
+			row.appendChild(pageCell);
+			row.appendChild(viewsCell);
+			tbody.appendChild(row);
         }
 
-		row.appendChild(pageCell);
-		row.appendChild(viewsCell);
-		tbody.appendChild(row);
 
 		if (percentageSize.toFixed(2) > 0.00) {
 			const pageLabelSpan = document.createElement('span');
