@@ -40,6 +40,10 @@ h1, h2, h3, h4, h5, h6 {
   content: '';
 }
 
+#views-page-label span {
+  display: none;
+}
+
 #twitter-views {
   font-size: 3.2rem;
   max-width: 80%;
