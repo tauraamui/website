@@ -224,9 +224,9 @@ document.addEventListener("DOMContentLoaded", function() {
         WHERE
             event_type = 'page_view'
         GROUP BY
-            DATE(event_timestamp)::date
+            date
         ORDER BY
-            date;
+            date
     `;
 	generateViewsPerDayTable(alasql(total_views_per_day, [data]));
 });
