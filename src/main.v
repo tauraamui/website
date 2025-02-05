@@ -70,8 +70,6 @@ pub struct App {
 	veb.Middleware[Context]
 	veb.StaticHandler
 	cfg Config
-mut:
-	views shared map[string]int
 }
 
 @[table: 'metrics']
@@ -207,8 +205,7 @@ fn main() {
 }
 
 fn new_app(cfg Config) App {
-	shared views := map[string]int{}
-	mut app := App{ cfg: cfg, views: views }
+	mut app := App{ cfg: cfg }
 	app.serve_static("/assets/js/alasqlv4.js", "./assets/js/alasqlv4.js") or { panic(err) }
 	app.mount_static_folder_at("./blog/static", "/static") or { panic(err) }
 	return app
@@ -307,34 +304,27 @@ pub fn (mut app App) face(mut ctx Context) veb.Result {
 
 @['/']
 pub fn (mut app App) home(mut ctx Context) veb.Result {
-	lock app.views {
-		if !request_is_me(app) {
-			app.views["home"] += 1
+	match ctx.req.url {
+		"/" {
+			spawn store_metric(app.cfg, Metric{
+				event_type: "page_view"
+				page_url: "${ctx.req.host}${ctx.req.url}"
+				browser: ctx.req.header.get(.user_agent) or { "empty" }
+				ip: ctx.ip()
+				referrer_url: ctx.req.referer()
+				country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
+			})
+
+			tab_title := "tauraamui's website"
+			metric_data := ""
+			return $veb.html()
 		}
+		else { return ctx.not_found() }
 	}
-
-	spawn store_metric(app.cfg, Metric{
-		event_type: "page_view"
-		page_url: "${ctx.req.host}${ctx.req.url}"
-		browser: ctx.req.header.get(.user_agent) or { "empty" }
-		ip: ctx.ip()
-		referrer_url: ctx.req.referer()
-		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
-	})
-
-	tab_title := "tauraamui's website"
-	metric_data := ""
-	return $veb.html()
 }
 
 @['/blog']
 pub fn (mut app App) blog(mut ctx Context) veb.Result {
-	lock app.views {
-		if !request_is_me(app) {
-			app.views["blog"] += 1
-		}
-	}
-
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
@@ -353,11 +343,6 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 @['/blog/:name']
 pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 	post := resolve_blog(name) or { return ctx.not_found() }
-	lock app.views {
-		if !request_is_me(app) {
-			app.views["blog: ${name}"] += 1
-		}
-	}
 
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
@@ -384,12 +369,6 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 
 @['/resume']
 pub fn (mut app App) resume(mut ctx Context) veb.Result {
-	lock app.views {
-		if !request_is_me(app) {
-			app.views["resume"] += 1
-		}
-	}
-
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
@@ -406,12 +385,6 @@ pub fn (mut app App) resume(mut ctx Context) veb.Result {
 
 @['/contact']
 pub fn (mut app App) contact(mut ctx Context) veb.Result {
-	lock app.views {
-		if !request_is_me(app) {
-			app.views["contact"] += 1
-		}
-	}
-
 	spawn store_metric(app.cfg, Metric{
 		event_type: "page_view"
 		page_url: "${ctx.req.host}${ctx.req.url}"
@@ -483,12 +456,6 @@ fn (mut app App) serve_analytics(mut ctx Context) {
 
 @['/theme/:mode'; post]
 pub fn (mut app App) set_theme(mut ctx Context, mode string) veb.Result {
-	lock app.views {
-		if !request_is_me(app) {
-			app.views["set-theme"] += 1
-		}
-	}
-
 	spawn store_metric(app.cfg, Metric{
 		event_type: "theme_switch"
 		page_url: "${ctx.req.host}${ctx.req.url}"
