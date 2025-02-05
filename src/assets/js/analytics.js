@@ -189,22 +189,25 @@ function generateViewsPerDayTable(data) {
         const fullYear = year < 50 ? 2000 + year : 1900 + year;
         const dateObj = new Date(fullYear, month - 1, day); // month is 0-indexed
 
-        // Format the date as "DD / MMM\nYYYY"
-        const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} / ${
-          monthNames[dateObj.getMonth()]
-        }\n${dateObj.getFullYear()}`;
-
         return {
           ...item,
-          e_date: formattedDate // Store the formatted date string
+          e_date: dateObj // Store the formatted date string
         };
     });
+    data = data.sort((a, b) => a.e_date - b.e_date);
     data.forEach(item => {
         const row = document.createElement('tr');
 
         const th = document.createElement('th');
         th.scope = 'row';
-        th.innerHTML = item.e_date;
+        const dateObj = item.e_date;
+        // Format the date as "DD / MMM\nYYYY"
+        const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} / ${
+          monthNames[dateObj.getMonth()]
+        }\n${dateObj.getFullYear()}`;
+        th.innerHTML = formattedDate;
+
+
 
         row.appendChild(th);
 
