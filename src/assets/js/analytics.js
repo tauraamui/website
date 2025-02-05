@@ -92,7 +92,7 @@ function generateViewedPagesTable(data) {
     const table = document.createElement('table');
 
     // Add a class to the table
-    table.className = 'charts-css bar hide-data'; // Updated class name
+    table.className = 'charts-css bar'; // Updated class name
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
@@ -129,7 +129,9 @@ function generateViewedPagesTable(data) {
         if (percentageSize.toFixed(2) > 0.00) {
 	        const dataSpan = document.createElement('span');
 	        dataSpan.className = 'data';
-	        dataSpan.innerHTML = item.page_url.replace('tauraamui.website', '');
+            if (percentageSize.toFixed(2) >= 0.04) {
+                dataSpan.innerHTML = item.views;
+            }
 	        viewsCell.appendChild(dataSpan);
 
 			row.appendChild(pageCell);
@@ -140,9 +142,11 @@ function generateViewedPagesTable(data) {
 
 		if (percentageSize.toFixed(2) > 0.00) {
 			const pageLabelSpan = document.createElement('span');
-			pageLabelSpan.title = item.page_url.replace("tauraamui.website", "");
-			pageLabelSpan.innerHTML = pageLabelSpan.title;
-			pageLabelSpan.title += " (" + item.views + ")";
+			pageLabelSpan.innerHTML = item.page_url.replace("tauraamui.website", "");
+            if (percentageSize.toFixed(2) < 0.04) {
+                pageLabelSpan.title = pageLabelSpan.innerHTML;
+                pageLabelSpan.title += " (" + item.views + ")";
+            }
 			pageLabelContainer.appendChild(pageLabelSpan);
 		}
     });
