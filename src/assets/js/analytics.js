@@ -202,9 +202,8 @@ function generateViewsPerDayTable(data) {
         th.scope = 'row';
         const dateObj = item.e_date;
         // Format the date as "DD / MMM\nYYYY"
-        const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} / ${
-          monthNames[dateObj.getMonth()]
-        }\n${dateObj.getFullYear()}`;
+        var formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} ${monthNames[dateObj.getMonth()]}`;
+        formattedDate += `\n${dateObj.getFullYear()}`;
         th.innerHTML = formattedDate;
 
 
