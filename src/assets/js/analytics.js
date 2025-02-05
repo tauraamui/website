@@ -153,7 +153,7 @@ function generateViewedPagesTable(data) {
 
 function generateViewsPerDayTable(data) {
     const styles = document.createElement('style');
-    styles.innerHTML = '#views-per-day .column { --labels-size: 4rem; }'
+    styles.innerHTML = '#views-per-day .column { --labels-size: 3.5rem; }'
 	const container = document.getElementById('views-per-day');
     container.appendChild(styles);
 	const table = document.createElement('table');
@@ -204,7 +204,7 @@ function generateViewsPerDayTable(data) {
             } ${
                 monthNames[dateObj.getMonth()]
             } ${
-                (lastYear === dateObj.getFullYear()) ? '' : `\n${dateObj.getFullYear()}`
+                lastYear === null || lastYear === dateObj.getFullYear() ? '' : `\n${dateObj.getFullYear()}`
             }
         `;
         lastYear = dateObj.getFullYear();
@@ -215,9 +215,7 @@ function generateViewsPerDayTable(data) {
 
         const th = document.createElement('th');
         th.scope = 'row';
-        const dateObj = item.e_date;
-        // Format the date as "DD / MMM\nYYYY"
-        th.innerHTML = formattedDate;
+        th.innerHTML = item.e_date;
 
 
 
