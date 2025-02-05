@@ -152,11 +152,14 @@ function generateViewedPagesTable(data) {
 }
 
 function generateViewsPerDayTable(data) {
+    const styles = document.createElement('style');
+    styles.innerHTML = '#views-per-day .column { --labels-size: 4rem; }'
 	const container = document.getElementById('views-per-day');
+    container.appendChild(styles);
 	const table = document.createElement('table');
 
 	// assign table to represent column graph
-	table.className = 'charts-css column';
+	table.className = 'charts-css column show-labels';
 
 	const thead = document.createElement('thead');
 	const headerRow = document.createElement('tr');
@@ -172,11 +175,56 @@ function generateViewsPerDayTable(data) {
 	thead.appendChild(headerRow);
 	table.appendChild(thead);
 
-    const tbody = document.createElement('tbody');
-    data.forEach(item => console.log(item));
+    // Calculate the maximum views
+    const maxViews = Math.max(...data.map(item => item.views));
 
+    const tbody = document.createElement('tbody');
+    const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+      ];
+    data = data.map(item => {
+        const [year, month, day] = item.e_date.split('.').map(Number);
+        // Adjust the year to be four digits
+        const fullYear = year < 50 ? 2000 + year : 1900 + year;
+        const dateObj = new Date(fullYear, month - 1, day); // month is 0-indexed
+
+        // Format the date as "DD / MMM\nYYYY"
+        const formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} / ${
+          monthNames[dateObj.getMonth()]
+        }\n${dateObj.getFullYear()}`;
+
+        return {
+          ...item,
+          e_date: formattedDate // Store the formatted date string
+        };
+    });
+    data.forEach(item => {
+        const row = document.createElement('tr');
+
+        const th = document.createElement('th');
+        th.scope = 'row';
+        th.innerHTML = item.e_date;
+
+        row.appendChild(th);
+
+        const td  = document.createElement('td');
+        const percentageSize = maxViews > 0 ? (item.views / maxViews) : 0;
+        td.style.setProperty('--size', percentageSize.toFixed(2));
+        const dataSpan = document.createElement('span');
+        dataSpan.className = 'data';
+        dataSpan.innerHTML = item.views;
+        td.appendChild(dataSpan);
+
+        row.appendChild(td);
+
+        tbody.appendChild(row);
+    })
+
+    table.appendChild(tbody);
 	container.appendChild(table);
 }
+
 
 document.addEventListener("DOMContentLoaded", function() {
     const base64Data = document.getElementById('jsonData').textContent;
@@ -218,15 +266,13 @@ document.addEventListener("DOMContentLoaded", function() {
 
 	const total_views_per_day = `
         SELECT
-            DATE(event_timestamp)::date as date,
+            DATE(event_timestamp)::date as e_date,
             COUNT(*) as views
         FROM ?
         WHERE
             event_type = 'page_view'
-        GROUP BY
-            date
-        ORDER BY
-            date
+        GROUP BY DATE(event_timestamp)::date
+        ORDER BY DATE(event_timestamp)::date
     `;
 	generateViewsPerDayTable(alasql(total_views_per_day, [data]));
 });
