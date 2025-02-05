@@ -195,6 +195,21 @@ function generateViewsPerDayTable(data) {
         };
     });
     data = data.sort((a, b) => a.e_date - b.e_date);
+    let lastYear = null;
+    date = data.map(item => {
+        const dateObj = item.e_date;
+        var formattedDate = `
+            ${
+                String(dateObj.getDate()).padStart(2, '0')
+            } ${
+                monthNames[dateObj.getMonth()]
+            } ${
+                (lastYear === dateObj.getFullYear()) ? '' : `\n${dateObj.getFullYear()}`
+            }
+        `;
+        lastYear = dateObj.getFullYear();
+        item.e_date = formattedDate;
+    });
     data.forEach(item => {
         const row = document.createElement('tr');
 
@@ -202,8 +217,6 @@ function generateViewsPerDayTable(data) {
         th.scope = 'row';
         const dateObj = item.e_date;
         // Format the date as "DD / MMM\nYYYY"
-        var formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} ${monthNames[dateObj.getMonth()]}`;
-        formattedDate += `\n${dateObj.getFullYear()}`;
         th.innerHTML = formattedDate;
 
 
