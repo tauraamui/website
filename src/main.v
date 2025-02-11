@@ -12,6 +12,7 @@ import time
 import json
 import db.pg
 
+const favicon_ico = $embed_file('./src/assets/imgs/favicon.ico')
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
 const dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
@@ -209,6 +210,12 @@ fn new_app(cfg Config) App {
 	app.serve_static("/assets/js/alasqlv4.js", "./assets/js/alasqlv4.js") or { panic(err) }
 	app.mount_static_folder_at("./blog/static", "/static") or { panic(err) }
 	return app
+}
+
+@['/favicon.ico']
+pub fn (mut app App) favicon_ico(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".ico"] or { "" })
+	return ctx.ok(favicon_ico.to_string())
 }
 
 @['/assets/css/:name']
