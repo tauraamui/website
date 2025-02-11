@@ -56,6 +56,7 @@ fn resolve_all_posts() []Post {
 		println("found post: ${path}")
 
 		front_matter, mut contents := extract_front_matter(raw_contents)
+		if !front_matter.published { return }
 		read_time_minutes := front_matter.readtime.seconds / 60
 
 		mut html_content := arrays.join_to_string(
