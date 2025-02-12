@@ -345,6 +345,7 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 
 	posts := blogs_listing()
 	tab_title := "Blog - tauraamui's website"
+	rss_feed_url := "https://tauraamui.website/blog/feed.rss"
 	metric_data := ""
 	return $veb.html()
 }
