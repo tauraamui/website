@@ -17,7 +17,7 @@
 			Sun, 12 Jan 2025 15:00:00 GMT
 		</pubDate>
 		<lastBuildDate>
-			Wed, 12 Feb 2025 14:38:07 GMT
+			Wed, 12 Feb 2025 14:46:59 GMT
 		</lastBuildDate>
 		<docs>
 			https://rssboard.org/rss-specification
@@ -46,6 +46,12 @@
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/lilly-devlog-1-qsort-macos-bug
 			</guid>
+			<author>
+				tauraamui, Adam Lewis-Stringer (adamstringer@hey.com)
+			</author>
+			<source url="https://tauraamui.website/blog/feed.rss">
+				tauraamui&apos;s blog&apos;
+			</source>
 		</item>
 		<item>
 			<title>
@@ -61,6 +67,12 @@
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/learning-zig-for-the-first-time
 			</guid>
+			<author>
+				tauraamui, Adam Lewis-Stringer (adamstringer@hey.com)
+			</author>
+			<source url="https://tauraamui.website/blog/feed.rss">
+				tauraamui&apos;s blog&apos;
+			</source>
 		</item>
 		<item>
 			<title>
@@ -76,6 +88,12 @@
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/how-i-write-and-publish-blogs
 			</guid>
+			<author>
+				tauraamui, Adam Lewis-Stringer (adamstringer@hey.com)
+			</author>
+			<source url="https://tauraamui.website/blog/feed.rss">
+				tauraamui&apos;s blog&apos;
+			</source>
 		</item>
 		<item>
 			<title>
@@ -91,6 +109,12 @@
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/how-to-wash-up-correctly
 			</guid>
+			<author>
+				tauraamui, Adam Lewis-Stringer (adamstringer@hey.com)
+			</author>
+			<source url="https://tauraamui.website/blog/feed.rss">
+				tauraamui&apos;s blog&apos;
+			</source>
 		</item>
 	</channel>
 </rss>

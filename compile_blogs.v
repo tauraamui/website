@@ -266,6 +266,17 @@ fn generate_rss_feed(posts []Post) string {
 					}
 					children: [ "https://tauraamui.website/blog/${os.base(post.html_path).replace('.html', '')}" ]
 				}
+				xml.XMLNode{
+					name: "author"
+					children: [ "tauraamui, Adam Lewis-Stringer (adamstringer@hey.com)" ]
+				}
+				xml.XMLNode{
+					name: "source"
+					attributes: {
+						"url": "https://tauraamui.website/blog/feed.rss"
+					}
+					children: [ "tauraamui's blog'" ]
+				}
 			]
 		}
 	}
