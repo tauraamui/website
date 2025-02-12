@@ -28,6 +28,8 @@ const analytics_js = $embed_file('./src/assets/js/analytics.js', .zlib)
 
 const rubik_font = $embed_file('./src/assets/css/fonts/latin-rubik.woff2', .zlib)
 const rubik_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-rubik.woff2', .zlib)
+
+const feed_rss = $embed_file('./src/blog/feed.rss', .zlib)
 // pending potential removal
 /*
 spectral_font = $embed_file('./src/assets/css/fonts/latin-spectral.woff2', .zlib)
@@ -345,6 +347,12 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 	tab_title := "Blog - tauraamui's website"
 	metric_data := ""
 	return $veb.html()
+}
+
+@['/blog/feed.rss']
+pub fn (mut app App) rss_feed(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".rss"] or { "" })
+	return ctx.ok(feed_rss.to_string())
 }
 
 @['/blog/:name']

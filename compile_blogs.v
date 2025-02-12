@@ -6,6 +6,7 @@ import strings
 import src.lib.read_time
 import arrays
 import time
+import encoding.xml
 
 struct Post {
 	path string
@@ -159,13 +160,9 @@ fn main() {
 	println("\nBlog compiler\n")
 	mut posts := resolve_all_posts()
 
-	// header_content := os.read_file("./src/templates/header.html") or { panic("unable to extract header content") }
-	// footer_content := os.read_file("./src/templates/footer.html") or { panic("unable to extract footer content") }
-
 	os.walk("./src/blog", fn (path string) { os.rm(path) or { println("unable to remove ${path}: ${err}"); return } })
 
 	for _, mut p in posts {
-		// p.write_html_post(footer_content)
 		p.write_html_post()
 	}
 
@@ -176,7 +173,63 @@ fn main() {
 	mut wfd := os.open_file(target, 'w') or { println("unable to open writable file: ${target}"); return }
 	defer { wfd.close() }
 	println("writing generated embed code to ${target}")
-	wfd.write_string(code) or { panic("unable to write to file: ${target}") }
+	wfd.write_string(code) or { panic("unable to write to file: ${target}: ${err}") }
+
+	feed_xml := generate_rss_feed(posts)
+	rss_target := "./src/blog/feed.rss"
+	os.rm(rss_target) or { println("unable to remove existing RSS target: ${rss_target}: ${err}") }
+	mut w_fd := os.open_file(rss_target, 'w') or { println("unable to open writable file ${rss_target}"); return }
+	defer { w_fd.close() }
+	println("writing generated RSS feed to ${rss_target}")
+	w_fd.write_string(feed_xml) or { panic("unable to write to file: ${target}: ${err}") }
+}
+
+fn generate_rss_feed(posts []Post) string {
+	mut items := []xml.XMLNodeContents{}
+	for post in posts {
+		items << xml.XMLNode{
+			name: "item"
+			children: [
+				xml.XMLNode{
+					name: "title"
+					children: [ "${post.meta.article_title}" ]
+				},
+				xml.XMLNode{
+					name: "link"
+					children: [ "https://tauraamui.website/blog/${os.base(post.html_path).replace('.html', '')}" ]
+				},
+				xml.XMLNode{ name: "description" },
+				xml.XMLNode{
+					name: "pubDate"
+					children: [ "${post.meta.date.custom_format('DD/MM/YYYY')}" ]
+				}
+				xml.XMLNode{
+					name: "guid"
+					attributes: {
+						"isPermaLink": "false"
+					}
+					children: [ "https://tauraamui.website/blog/${os.base(post.html_path).replace('.html', '')}" ]
+				}
+			]
+		}
+	}
+
+	rss_doc := xml.XMLDocument{
+		root: xml.XMLNode{
+			name: "rss"
+			attributes: {
+				"version": "2.0"
+			}
+			children: [
+				xml.XMLNode{
+					name: "channel"
+					children: items
+				}
+			]
+		}
+	}
+
+	return rss_doc.pretty_str("\t")
 }
 
 fn generate_embedding_code(posts []Post) string {
