@@ -1,6 +1,37 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <rss version="2.0">
 	<channel>
+		<title>
+			tauraamui.website&apos;s blog
+		</title>
+		<link>
+			https://tauraamui.website
+		</link>
+		<description>
+			A collection of articles of topics ranging from general life stuff, technical/programming journeys etc.,
+		</description>
+		<language>
+			en-gb
+		</language>
+		<pubDate>
+			Sun, 12 Jan 2025 15:00:00 GMT
+		</pubDate>
+		<lastBuildDate>
+			Wed, 12 Feb 2025 14:29:48 GMT
+		</lastBuildDate>
+		<docs>
+			https://rssboard.org/rss-specification
+		</docs>
+		<generator>
+			tauraamui&apos;s website blog compiler 0.0.0
+		</generator>
+		<managingEditor>
+			adamstringer@hey.com (Adam Lewis-Stringer)
+		</managingEditor>
+		<webMaster>
+			adamstringer@hey.com (Adam Lewis-Stringer)
+		</webMaster>
+		<atom:link href="https://tauraamui.website/blog/feed.rss" rel="self" type="application/rss+xml"/>
 		<item>
 			<title>
 				Lilly Devlog 1 - File picker ordering bug
@@ -10,7 +41,7 @@
 			</link>
 			<description/>
 			<pubDate>
-				27/01/2025
+				Mon, 27 Jan 2025 00:00:00 GMT
 			</pubDate>
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/lilly-devlog-1-qsort-macos-bug
@@ -25,7 +56,7 @@
 			</link>
 			<description/>
 			<pubDate>
-				06/12/2024
+				Fri, 06 Dec 2024 00:00:00 GMT
 			</pubDate>
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/learning-zig-for-the-first-time
@@ -40,7 +71,7 @@
 			</link>
 			<description/>
 			<pubDate>
-				26/09/2023
+				Tue, 26 Sep 2023 00:00:00 GMT
 			</pubDate>
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/how-i-write-and-publish-blogs
@@ -55,7 +86,7 @@
 			</link>
 			<description/>
 			<pubDate>
-				24/09/2023
+				Sun, 24 Sep 2023 00:00:00 GMT
 			</pubDate>
 			<guid isPermaLink="false">
 				https://tauraamui.website/blog/how-to-wash-up-correctly

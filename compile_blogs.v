@@ -184,8 +184,64 @@ fn main() {
 	w_fd.write_string(feed_xml) or { panic("unable to write to file: ${target}: ${err}") }
 }
 
+fn time_as_rfc_822(t time.Time) string {
+	return "${t.custom_format('ddd, DD MMM YYYY HH:mm:ss')} GMT"
+}
+
+const channel_first_publish_date = "2025-01-12 15:00:00"
+
 fn generate_rss_feed(posts []Post) string {
-	mut items := []xml.XMLNodeContents{}
+	mut items := [
+		xml.XMLNodeContents(xml.XMLNode{
+			name: "title",
+			children: [ "tauraamui.website's blog" ]
+		})
+		xml.XMLNode{
+			name: "link",
+			children: [ "https://tauraamui.website" ]
+		}
+		xml.XMLNode{
+			name: "description",
+			children: [ "A collection of articles of topics ranging from general life stuff, technical/programming journeys etc.," ]
+		}
+		xml.XMLNode{
+			name: "language",
+			children: [ "en-gb" ]
+		}
+		xml.XMLNode{
+			name: "pubDate"
+			children: [ time_as_rfc_822(time.parse(channel_first_publish_date) or { panic("cannot parse date/time: ${channel_first_publish_date}") }) ]
+		}
+		xml.XMLNode{
+			name: "lastBuildDate"
+			children: [ time_as_rfc_822(time.now()) ]
+		}
+		xml.XMLNode{
+			name: "docs"
+			children: [ "https://rssboard.org/rss-specification" ]
+		}
+		xml.XMLNode{
+			name: "generator"
+			children: [ "tauraamui's website blog compiler 0.0.0" ]
+		}
+		xml.XMLNode{
+			name: "managingEditor"
+			children: [ "adamstringer@hey.com (Adam Lewis-Stringer)" ]
+		}
+		xml.XMLNode{
+			name: "webMaster"
+			children: [ "adamstringer@hey.com (Adam Lewis-Stringer)" ]
+		}
+		xml.XMLNode{
+			name: "atom:link"
+			attributes: {
+				"href": "https://tauraamui.website/blog/feed.rss"
+				"rel": "self"
+				"type": "application/rss+xml"
+			}
+		}
+	]
+
 	for post in posts {
 		items << xml.XMLNode{
 			name: "item"
@@ -193,15 +249,15 @@ fn generate_rss_feed(posts []Post) string {
 				xml.XMLNode{
 					name: "title"
 					children: [ "${post.meta.article_title}" ]
-				},
+				}
 				xml.XMLNode{
 					name: "link"
 					children: [ "https://tauraamui.website/blog/${os.base(post.html_path).replace('.html', '')}" ]
-				},
+				}
 				xml.XMLNode{ name: "description" },
 				xml.XMLNode{
 					name: "pubDate"
-					children: [ "${post.meta.date.custom_format('DD/MM/YYYY')}" ]
+					children: [ time_as_rfc_822(post.meta.date) ]
 				}
 				xml.XMLNode{
 					name: "guid"
