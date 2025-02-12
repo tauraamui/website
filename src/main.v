@@ -351,7 +351,7 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 
 @['/blog/feed.rss']
 pub fn (mut app App) rss_feed(mut ctx Context) veb.Result {
-	ctx.set_content_type(veb.mime_types[".rss"] or { "" })
+	ctx.set_content_type("application/rss+xml")
 	return ctx.ok(feed_rss.to_string())
 }
 
