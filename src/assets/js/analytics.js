@@ -88,6 +88,17 @@ function generateViewsFromTwitterTable(data) {
 }
 
 function generateViewedPagesTable(data) {
+	const wwwRequests = new Map(data.filter(item => item.page_url.startsWith("www.")).map(obj => [obj.page_url.replace("www.", ""), obj.views]));
+
+	data = data.filter(item => !item.page_url.startsWith("www.")).map((item) => {
+		var totalViews = item.views;
+		if (wwwRequests.has(item.page_url)) {
+			const wwwPageViews = wwwRequests.get(item.page_url);
+			if (wwwPageViews !== undefined) { totalViews += wwwPageViews }
+		}
+		return { ...item, views: totalViews }
+	});
+
     const container = document.getElementById('views-per-page');
     const table = document.createElement('table');
 
