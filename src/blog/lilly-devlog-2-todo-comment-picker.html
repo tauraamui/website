@@ -1,0 +1,38 @@
+$<{header}>         <header>
+<h1 class="title">Lilly Devlog 2 - Todo comment picker</h1>
+<div class="meta">
+<div class="postdate">
+<i class="icon feather icon-calendar"></i><time>2025-02-28</time>
+</div>
+<span class="meta-separator">|</span>
+<div class="readtime">
+<i class="icon feather icon-clock"></i><time>2 minutes</time>
+</div>
+</div>
+</header>
+
+         <p>The Lilly project feature set target is based on my personal existing Neovim configuration. That is to say that all of the functionality and behaviour of Neovim as I have configured it is the target goal for the Lilly editor project.</p>
+         <p>One main feature that I want to re-create from my Neovim setup is the functionality of a plugin called <a target='_blank' href="https://github.com/folke/todo-comments.nvim">todo comments</a>.</p>
+         <h2>What does todo comments (the Neovim plugin) do?</h2>
+         <p>It is a plugin that mostly helps you locate and highlight different kinds comments which have a specific prefix pattern. This is very useful for me, as I tend to leave comments as bookmarks or notes all over the different code bases I work on, but later on unless I happen to stumble across these once again later, and in that moment are able to address what it is referring to (unlikely) they are unlikely to be addressed again.</p>
+         <p>Having the dialog require a specific format to look for helps to keep me consistent with their layout when writing them.
+         Different default prefixes it looks for:</p>
+         <ul>
+         <li><code>PERF</code></li>
+         <li><code>HACK</code></li>
+         <li><code>TODO</code></li>
+         <li><code>NOTE</code></li>
+         <li><code>FIX / FIXME</code></li>
+         <li><code>WARNING</code></li>
+         </ul>
+         <p>The core user interface that this plugin provides is a Neovim &quot;pop-up&quot; or &quot;modal&quot;. In this modal it provides a tree style/nestable list of all of the files which contain comments that it found that match the filter being used, the file names/paths are the root nodes in the list and underneath there is the list of the individual found todo comments within the file itself. By default the list root nodes are expanded so its immediately easy to see the individual match entries per file. (Fig .1)</p>
+         <p><img src="/static/todo-comments-example.png" alt="todo-comments-example.png">
+         (figure 1. an example screenshot of the modal)</p>
+         <h2>How does it search?</h2>
+         <p>This question is integral to understanding how we could go about re-implementing our own custom version of this plugins functionality to be a built-in &quot;core&quot; feature of the Lilly editor. We need to decide if the integral mechanism with which this plugin does its pattern/searching of specially formatted comments is what we want to directly emulate or not.</p>
+         <p>We're in a very unique position, being the author of the entire editor and its surrounding ecosystem that the authors of Neovim plugins do not. Writing a pattern matcher as generic or as flexible as a regex engine in something like Lua is a bad idea. Because it's slow. It makes much more sense, if the language you're using to develop a plugin for Neovim is Lua to instead call out to a separate much faster and better optimised for the task program to carry out the searching.</p>
+         <p>This is how the Neovim plugin <code>todo comments</code> implements its searching functionality. It doesn't implement it directly at all. So what program(s) does it use? And how? Well, lets take a look.</p>
+         <p>If we go to the plugins &quot;homepage&quot; on Github, there is a <a target='_blank' href="https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#%EF%B8%8F-requirements">&quot;requirements&quot;</a> section. This list has a sub list called &quot;optional&quot;. Within this list we see:</p>
+         <blockquote>
+         <p><code>ripgrep</code> and <code>plenary.nvim</code> are used for searching</p>
+         </blockquote>$<{footer}>      </div>

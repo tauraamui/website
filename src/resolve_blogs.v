@@ -1,5 +1,6 @@
 module main
 
+const lilly_devlog_2_todo_comment_picker = $embed_file('./src/blog/lilly-devlog-2-todo-comment-picker.html', .zlib)
 const lilly_devlog_1_qsort_macos_bug = $embed_file('./src/blog/lilly-devlog-1-qsort-macos-bug.html', .zlib)
 const learning_zig_for_the_first_time = $embed_file('./src/blog/learning-zig-for-the-first-time.html', .zlib)
 const how_i_write_and_publish_blogs = $embed_file('./src/blog/how-i-write-and-publish-blogs.html', .zlib)
@@ -28,6 +29,9 @@ struct Post {
 
 fn resolve_blog(name string) !Post {
 	return match name {
+		"lilly-devlog-2-todo-comment-picker" {
+			Post { tab_title: "Lilly Devlog 2 - Todo comment picker", article_title: "Lilly Devlog 2 - Todo comment picker", content: lilly_devlog_2_todo_comment_picker.to_string() }
+		}
 		"lilly-devlog-1-qsort-macos-bug" {
 			Post { tab_title: "Lilly Devlog 1 - QSort macOS bug", article_title: "Lilly Devlog 1 - File picker ordering bug", content: lilly_devlog_1_qsort_macos_bug.to_string() }
 		}

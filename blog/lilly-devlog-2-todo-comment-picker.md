@@ -2,11 +2,12 @@
 date: 28/02/2025
 tab_title: Lilly Devlog 2 - Todo comment picker
 article_title: Lilly Devlog 2 - Todo comment picker
-published: no
+published: yes
+unlisted: yes
 ---
 #{article_title}
 
-The Lilly project feature set target is based on my personal existing Neovim configuration. This is to say that all of the functionality and behaviour of Neovim as I have configured it is the target goal for the Lilly editor project.
+The Lilly project feature set target is based on my personal existing Neovim configuration. That is to say that all of the functionality and behaviour of Neovim as I have configured it is the target goal for the Lilly editor project.
 
 One main feature that I want to re-create from my Neovim setup is the functionality of a plugin called [todo comments](https://github.com/folke/todo-comments.nvim).
 
@@ -16,12 +17,12 @@ It is a plugin that mostly helps you locate and highlight different kinds commen
 
 Having the dialog require a specific format to look for helps to keep me consistent with their layout when writing them.
 Different default prefixes it looks for:
-- PERF
-- HACK
-- TODO
-- NOTE
-- FIX / FIXME
-- WARNING
+- `PERF`
+- `HACK`
+- `TODO`
+- `NOTE`
+- `FIX / FIXME`
+- `WARNING`
 
 The core user interface that this plugin provides is a Neovim "pop-up" or "modal". In this modal it provides a tree style/nestable list of all of the files which contain comments that it found that match the filter being used, the file names/paths are the root nodes in the list and underneath there is the list of the individual found todo comments within the file itself. By default the list root nodes are expanded so its immediately easy to see the individual match entries per file. (Fig .1)
 
@@ -36,4 +37,7 @@ We're in a very unique position, being the author of the entire editor and its s
 
 This is how the Neovim plugin `todo comments` implements its searching functionality. It doesn't implement it directly at all. So what program(s) does it use? And how? Well, lets take a look.
 
-If we go to the plugins "homepage" on Github, there is a ["requirements"](https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#%EF%B8%8F-requirements) section.
+If we go to the plugins "homepage" on Github, there is a ["requirements"](https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#%EF%B8%8F-requirements) section. This list has a sub list called "optional". Within this list we see: 
+> `ripgrep` and `plenary.nvim` are used for searching
+
+The install section on the [`README.md`](https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#-installation) shows that the default required dependency is `nvim-lua/plenary.nvim`.

@@ -23,6 +23,7 @@ mut:
 	tab_title      string
 	article_title  string
 	published      bool
+	unlisted       bool
 	readtime       read_time.ReadTime
 }
 
@@ -57,7 +58,9 @@ fn resolve_all_posts() []Post {
 		println("found post: ${path}")
 
 		front_matter, mut contents := extract_front_matter(raw_contents)
+
 		if !front_matter.published { return }
+
 		read_time_minutes := front_matter.readtime.seconds / 60
 
 		mut html_content := arrays.join_to_string(
@@ -136,6 +139,14 @@ fn extract_front_matter(content string) (FrontMatter, string) {
 					else { false }
 				}
 				println("\t-> published: ${matter.published}")
+			}
+			"unlisted" {
+				matter.unlisted = match parts[1].trim_space() {
+					"yes" { true }
+					"no" { false }
+					else { false }
+				}
+				println("\t-> unlisted: ${matter.unlisted}")
 			}
 			else {}
 		}
@@ -320,13 +331,14 @@ fn generate_embedding_code(posts []Post) string {
 	code.writeln("\treturn [")
 	println("generating blog list:")
 	for _, p in posts {
-		if !p.meta.published {
-			println("skipping adding \"${p.meta.article_title.trim_left(' ')}\" to listing page, as its unpublished...")
+		if p.meta.unlisted {
+			println("skipping adding \"${p.meta.article_title.trim_left(' ')}\" to listing page, as its unlisted...")
+			continue
 		}
-		if p.meta.published {
-			println(">\t writing blog ${p.meta.article_title}")
-			code.writeln("\t\tListing { date: \"${p.meta.date.custom_format('DD/MM/YYYY')}\" tab_title: \"${p.meta.tab_title}\", article_title: \"${p.meta.article_title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
-		}
+		// if p.meta.published {
+		println(">\t writing blog ${p.meta.article_title}")
+		code.writeln("\t\tListing { date: \"${p.meta.date.custom_format('DD/MM/YYYY')}\" tab_title: \"${p.meta.tab_title}\", article_title: \"${p.meta.article_title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
+		// }
 	}
 	code.writeln("\t]")
 	code.writeln("}")
