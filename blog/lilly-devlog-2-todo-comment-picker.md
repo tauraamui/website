@@ -40,4 +40,4 @@ This is how the Neovim plugin `todo comments` implements its searching functiona
 If we go to the plugins "homepage" on Github, there is a ["requirements"](https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#%EF%B8%8F-requirements) section. This list has a sub list called "optional". Within this list we see: 
 > `ripgrep` and `plenary.nvim` are used for searching
 
-The install section on the [`README.md`](https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#-installation) shows that the default required dependency is `nvim-lua/plenary.nvim`.
+The [installation section](https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#-installation) install section on the [`README.md`](https://github.com/folke/todo-comments.nvim/tree/main?tab=readme-ov-file#-todo-comments) shows that the default required dependency is `nvim-lua/plenary.nvim`.
