@@ -103,7 +103,7 @@ fn create_tables(cfg Config) ! {
 		password: cfg.db_pass
 		dbname: cfg.db_name
 	}) or { return error("unable to connect to DB: ${err}") }
-	defer { db.close() }
+	defer { db.close() or { eprintln("failed to close DB connection: ${err}") } }
 
 	sql db {
 		create table Metric
@@ -121,7 +121,7 @@ fn store_metric(cfg Config, metric Metric) {
 		password: cfg.db_pass
 		dbname: cfg.db_name
 	}) or { println("unable to connect to DB: ${err}"); return }
-	defer { db.close() }
+	defer { db.close() or { eprintln("unable to close DB connection: ${err}") } }
 	sql db {
 		insert metric into Metric
 	} or { println("failed to insert metric into table: ${err}") }
@@ -167,7 +167,7 @@ fn query_metrics(cfg Config) ?[]Metric {
 		password: cfg.db_pass
 		dbname: cfg.db_name
 	}) or { eprintln("unable to connect to DB: ${err}"); return none }
-	defer { db.close() }
+	defer { db.close() or { eprintln("unable to close DB conn: ${err}") } }
 
 	metric_rows := db.exec(query_last_30_days_exclude_likely_bot_requests) or { eprintln("failed to query metrics: ${err}"); return none }
 
