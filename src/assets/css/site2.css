@@ -11,6 +11,7 @@
 
 #tauraamuipic {
 	float: left;
+	border: 1px solid rgb(182, 0, 0, .6);
 	margin: 10px 10px 5px 5px;
 	width: 100px;
 	height: 94px;
