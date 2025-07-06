@@ -14,6 +14,7 @@ import db.pg
 
 const favicon_ico = $embed_file('./src/assets/imgs/favicon.ico')
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
+const logo_png = $embed_file('./src/assets/imgs/logo.png')
 const red_wolf_eyes_png = $embed_file('./src/assets/imgs/red-wolf-eyes.png')
 const left_red_eye_png = $embed_file('./src/assets/imgs/left-red-eye.png')
 const right_red_eye_png = $embed_file('./src/assets/imgs/right-red-eye.png')
@@ -321,6 +322,12 @@ pub fn (mut app App) fonts(mut ctx Context, name string) veb.Result {
 			return ctx.not_found()
 		}
 	}
+}
+
+@['/assets/logo.png']
+pub fn (mut app App) logo(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".png"] or { "" })
+	return ctx.ok(logo_png.to_string())
 }
 
 @['/assets/black_wolf_face.png']
