@@ -22,7 +22,7 @@
     line-height: .8em;
 }
 
-.hack p {
+.hack p, .hack a {
     font-family: "Pixel Operator Mono";
     font-size: 1.3em;
     -webkit-font-smoothing: none;
