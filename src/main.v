@@ -381,7 +381,11 @@ pub fn (mut app App) home2(mut ctx Context) veb.Result {
 		"/v2" {
 			tab_title := "tauraamui's neocities page"
 			posts := blogs_listing()
-			rss_feed_url := "https://tauraamui.website/blog/feed.rss"
+			// rss_feed_url := "https://tauraamui.website/blog/feed.rss"
+			home_url := "${ctx.req.host}${ctx.req.url}"
+			blog_index_url := "/blog"
+			github_url := "https://github.com/tauraamui"
+			guestbook_url := "https://tauraamui.atabook.org"
 			metric_data := ""
 			return $veb.html()
 		}
