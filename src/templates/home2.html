@@ -25,7 +25,7 @@
             @for post in posts
                <li>
                   <span>
-                     <b><a href="/blog/${post.file_name}">${post.article_title}</a></b>&nbsp;&nbsp;—&nbsp;&nbsp;Thursday, April 4th, 2024
+                     <b><a href="/blog/${post.file_name}">${post.article_title}</a></b>&nbsp;&nbsp;—&nbsp;&nbsp;${post.formatted_date}
                   </span>
                </li>
             @end

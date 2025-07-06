@@ -7,16 +7,17 @@ const how_to_wash_up_correctly = $embed_file('./src/blog/how-to-wash-up-correctl
 
 struct Listing {
 	date string
+	formatted_date string
 	tab_title string
 	article_title string
 	file_name string
 }
 fn blogs_listing() []Listing {
 	return [
-		Listing { date: "27/01/2025" tab_title: "Lilly Devlog 1 - QSort macOS bug", article_title: "Lilly Devlog 1 - File picker ordering bug", file_name: "lilly-devlog-1-qsort-macos-bug" }
-		Listing { date: "06/12/2024" tab_title: "Learning Zig", article_title: "Learning Zig (for the first time basically)", file_name: "learning-zig-for-the-first-time" }
-		Listing { date: "26/09/2023" tab_title: "How I write and publish blogs", article_title: "How I write and publish blogs", file_name: "how-i-write-and-publish-blogs" }
-		Listing { date: "24/09/2023" tab_title: "How to correctly wash up", article_title: "How to correctly wash up", file_name: "how-to-wash-up-correctly" }
+		Listing { date: "27/01/2025", formatted_date: "Monday, January 1, 2025" tab_title: "Lilly Devlog 1 - QSort macOS bug", article_title: "Lilly Devlog 1 - File picker ordering bug", file_name: "lilly-devlog-1-qsort-macos-bug" }
+		Listing { date: "06/12/2024", formatted_date: "Friday, December 12, 2024" tab_title: "Learning Zig", article_title: "Learning Zig (for the first time basically)", file_name: "learning-zig-for-the-first-time" }
+		Listing { date: "26/09/2023", formatted_date: "Tuesday, September 9, 2023" tab_title: "How I write and publish blogs", article_title: "How I write and publish blogs", file_name: "how-i-write-and-publish-blogs" }
+		Listing { date: "24/09/2023", formatted_date: "Sunday, September 9, 2023" tab_title: "How to correctly wash up", article_title: "How to correctly wash up", file_name: "how-to-wash-up-correctly" }
 	]
 }
 

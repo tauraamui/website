@@ -311,6 +311,7 @@ fn generate_embedding_code(posts []Post) string {
 
 	code.writeln("struct Listing {")
 	code.writeln("\tdate string")
+	code.writeln("\tformatted_date string")
 	code.writeln("\ttab_title string")
 	code.writeln("\tarticle_title string")
 	code.writeln("\tfile_name string")
@@ -325,7 +326,7 @@ fn generate_embedding_code(posts []Post) string {
 		}
 		if p.meta.published {
 			println(">\t writing blog ${p.meta.article_title}")
-			code.writeln("\t\tListing { date: \"${p.meta.date.custom_format('DD/MM/YYYY')}\" tab_title: \"${p.meta.tab_title}\", article_title: \"${p.meta.article_title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
+			code.writeln("\t\tListing { date: \"${p.meta.date.custom_format('DD/MM/YYYY')}\", formatted_date: \"${p.meta.date.custom_format('dddd, MMMM M, YYYY')}\" tab_title: \"${p.meta.tab_title}\", article_title: \"${p.meta.article_title}\", file_name: \"${os.base(p.html_path).replace(".html", "")}\" }")
 		}
 	}
 	code.writeln("\t]")
