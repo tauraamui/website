@@ -17,6 +17,7 @@ const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
 const dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
 const site_css = $embed_file('./src/assets/css/site.css', .zlib)
+const site2_css = $embed_file('./src/assets/css/site2.css', .zlib)
 const blog_css = $embed_file('./src/assets/css/blog.css', .zlib)
 const resume_css = $embed_file('./src/assets/css/resume.css', .zlib)
 const prism_css = $embed_file('./src/assets/css/prism.css', .zlib)
@@ -28,6 +29,10 @@ const analytics_js = $embed_file('./src/assets/js/analytics.js', .zlib)
 
 const rubik_font = $embed_file('./src/assets/css/fonts/latin-rubik.woff2', .zlib)
 const rubik_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-rubik.woff2', .zlib)
+const micro_five_font = $embed_file('./src/assets/css/fonts/Micro5-Regular.ttf', .zlib)
+const rainy_hearts_font = $embed_file('./src/assets/css/fonts/rainyhearts.ttf', .zlib)
+const dogica_font = $embed_file('./src/assets/css/fonts/dogica.ttf', .zlib)
+const pixel_operator_mono_font = $embed_file('./src/assets/css/fonts/PixelOperatorMono.ttf', .zlib)
 
 const feed_rss = $embed_file('./src/blog/feed.rss', .zlib)
 // pending potential removal
@@ -235,6 +240,10 @@ pub fn (mut app App) css(mut ctx Context, name string) veb.Result {
 			ctx.set_content_type(veb.mime_types[".css"] or { "" })
 			return ctx.ok(site_css.to_string())
 		}
+		"site2.css" {
+			ctx.set_content_type(veb.mime_types[".css"] or { "" })
+			return ctx.ok(site2_css.to_string())
+		}
 		"blog.css" {
 			ctx.set_content_type(veb.mime_types[".css"] or { "" })
 			return ctx.ok(blog_css.to_string())
@@ -288,6 +297,14 @@ pub fn (mut app App) fonts(mut ctx Context, name string) veb.Result {
 			ctx.set_content_type(veb.mime_types[".woff2"] or { "" })
 			return ctx.ok(rubik_ext_font.to_string())
 		}
+		"Micro5-Regular.ttf" {
+			ctx.set_content_type(veb.mime_types[".ttf"] or { "" })
+			return ctx.ok(micro_five_font.to_string())
+		}
+		"PixelOperatorMono.ttf" {
+			ctx.set_content_type(veb.mime_types[".ttf"] or { "" })
+			return ctx.ok(pixel_operator_mono_font.to_string())
+		}
 		// pending potential removal
 		/*
 		"latin-spectral.woff2" {
@@ -325,6 +342,18 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 			})
 
 			tab_title := "tauraamui's website"
+			metric_data := ""
+			return $veb.html()
+		}
+		else { return ctx.not_found() }
+	}
+}
+
+@['/v2']
+pub fn (mut app App) home2(mut ctx Context) veb.Result {
+	match ctx.req.url {
+		"/v2" {
+			tab_title := "tauraamui's neocities page"
 			metric_data := ""
 			return $veb.html()
 		}
