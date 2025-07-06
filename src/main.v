@@ -16,6 +16,7 @@ const favicon_ico = $embed_file('./src/assets/imgs/favicon.ico')
 const bg_png = $embed_file('./src/assets/imgs/wolf-bg.png')
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
 const red_wolf_bust_png = $embed_file('./src/assets/imgs/red-wolf-bust.png')
+const rss_feed_icon_svg = $embed_file('./src/assets/imgs/feedicon.svg')
 const logo_png = $embed_file('./src/assets/imgs/logo.png')
 const left_red_eye_png = $embed_file('./src/assets/imgs/left-red-eye.png')
 const right_red_eye_png = $embed_file('./src/assets/imgs/right-red-eye.png')
@@ -359,6 +360,12 @@ pub fn (mut app App) right_red_eye(mut ctx Context) veb.Result {
 pub fn (mut app App) red_wolf_bust(mut ctx Context) veb.Result {
 	ctx.set_content_type(veb.mime_types[".png"] or { "" })
 	return ctx.ok(red_wolf_bust_png.to_string())
+}
+
+@['/assets/rss_feed_icon.svg']
+pub fn (mut app App) rss_feed_icon(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".svg"] or { "" })
+	return ctx.ok(rss_feed_icon_svg.to_string())
 }
 
 @['/']
