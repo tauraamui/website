@@ -30,8 +30,6 @@ const analytics_js = $embed_file('./src/assets/js/analytics.js', .zlib)
 const rubik_font = $embed_file('./src/assets/css/fonts/latin-rubik.woff2', .zlib)
 const rubik_ext_font = $embed_file('./src/assets/css/fonts/latin-ext-rubik.woff2', .zlib)
 const micro_five_font = $embed_file('./src/assets/css/fonts/Micro5-Regular.ttf', .zlib)
-const rainy_hearts_font = $embed_file('./src/assets/css/fonts/rainyhearts.ttf', .zlib)
-const dogica_font = $embed_file('./src/assets/css/fonts/dogica.ttf', .zlib)
 const pixel_operator_mono_font = $embed_file('./src/assets/css/fonts/PixelOperatorMono.ttf', .zlib)
 
 const feed_rss = $embed_file('./src/blog/feed.rss', .zlib)
