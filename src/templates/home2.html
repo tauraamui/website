@@ -5,18 +5,32 @@
       <img src="/assets/right_red_eye.png" style="transform: rotate(15deg)">
    </div>
    <div class="grid -top">
-       <div class="box cell">
-          <h2 class="digitized-header" style="display:inline;">welcome to tauraamui.website!</h2>
-          <br>
-	      <img id="tauraamuipic" src="/assets/black_wolf_face.png">
-          <p>
-             This is my personal website for fun and blogs. This site was heavily inspired by
-             many of the different sites on Neocities.org. It was redesigned in July 2025.
-          </p>
-          <p>
-          	I am a software developer. I mostly specialise in TUI based stuff. Current I am mainly
-          	working on a Neovim/Helix alternative called "Lilly" (you can find more about it here).
-          </p>
+       <div class="cell -9of12">
+          <div class="box">
+             <h2 class="digitized-header" style="display:inline;">welcome to tauraamui.website!</h2>
+             <br>
+             <img id="tauraamuipic" src="/assets/black_wolf_face.png">
+             <p>
+                This is my personal website for fun and blogs. This site was heavily inspired by
+                many of the different sites on Neocities.org. It was redesigned in July 2025.
+             </p>
+             <p>
+               I am a software developer. I mostly specialise in TUI based stuff. Current I am mainly
+               working on a Neovim/Helix alternative called "Lilly" (you can find more about it here).
+             </p>
+          </div>
+          <div class="box">
+             <h2 class="digitized-header" style="display:inline;">blog</h2>
+            <ul>
+            @for post in posts
+               <li>
+                  <span>
+                     <b><a href="/blog/${post.file_name}">${post.article_title}</a></b>&nbsp;&nbsp;—&nbsp;&nbsp;Thursday, April 4th, 2024
+                  </span>
+               </li>
+            @end
+            </ul>
+          </div>
        </div>
        <div class="cell -3of12">
           <div class="box">

@@ -373,6 +373,8 @@ pub fn (mut app App) home2(mut ctx Context) veb.Result {
 	match ctx.req.url {
 		"/v2" {
 			tab_title := "tauraamui's neocities page"
+			posts := blogs_listing()
+			rss_feed_url := "https://tauraamui.website/blog/feed.rss"
 			metric_data := ""
 			return $veb.html()
 		}
