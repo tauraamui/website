@@ -1,4 +1,6 @@
 @include 'header2.html'
+<img src="/assets/bg.png" id="bg">
+<div class="full-screen-overlay"></div>
 <div class="root container">
    <div id="logo">
       <img src="/assets/left_red_eye.png" style="transform: rotate(-15deg)">
@@ -7,6 +9,7 @@
    <div class="grid -top">
        <div class="cell -9of12">
           <div class="box">
+             <img src="/assets/red_wolf_bust.png" style="vertical-align: sub; margin-right: 5px;" class="wolf-icon">
              <h2 class="digitized-header" style="display:inline;">welcome to tauraamui.website!</h2>
              <br>
              <img id="tauraamuipic" src="/assets/black_wolf_face.png">
@@ -19,8 +22,9 @@
                working on a Neovim/Helix alternative called "Lilly" (you can find more about it here).
              </p>
           </div>
-          <div class="box">
-             <h2 class="digitized-header" style="display:inline;">blog</h2>
+          <div class="box" style="margin-top: 10px">
+            <img src="/assets/red_wolf_bust.png" style="vertical-align: sub; margin-right: 5px;" class="wolf-icon">
+            <h2 class="digitized-header" style="display:inline;">blog</h2>
             <ul>
             @for post in posts
                <li>

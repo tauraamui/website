@@ -13,9 +13,10 @@ import json
 import db.pg
 
 const favicon_ico = $embed_file('./src/assets/imgs/favicon.ico')
+const bg_png = $embed_file('./src/assets/imgs/wolf-bg.png')
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
+const red_wolf_bust_png = $embed_file('./src/assets/imgs/red-wolf-bust.png')
 const logo_png = $embed_file('./src/assets/imgs/logo.png')
-const red_wolf_eyes_png = $embed_file('./src/assets/imgs/red-wolf-eyes.png')
 const left_red_eye_png = $embed_file('./src/assets/imgs/left-red-eye.png')
 const right_red_eye_png = $embed_file('./src/assets/imgs/right-red-eye.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
@@ -324,6 +325,12 @@ pub fn (mut app App) fonts(mut ctx Context, name string) veb.Result {
 	}
 }
 
+@['/assets/bg.png']
+pub fn (mut app App) bg(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".png"] or { "" })
+	return ctx.ok(bg_png.to_string())
+}
+
 @['/assets/logo.png']
 pub fn (mut app App) logo(mut ctx Context) veb.Result {
 	ctx.set_content_type(veb.mime_types[".png"] or { "" })
@@ -336,12 +343,6 @@ pub fn (mut app App) face(mut ctx Context) veb.Result {
 	return ctx.ok(wolf_face_png.to_string())
 }
 
-@['/assets/red_wolf_eyes.png']
-pub fn (mut app App) wolf_eyes(mut ctx Context) veb.Result {
-	ctx.set_content_type(veb.mime_types[".png"] or { "" })
-	return ctx.ok(red_wolf_eyes_png.to_string())
-}
-
 @['/assets/left_red_eye.png']
 pub fn (mut app App) left_red_eye(mut ctx Context) veb.Result {
 	ctx.set_content_type(veb.mime_types[".png"] or { "" })
@@ -352,6 +353,12 @@ pub fn (mut app App) left_red_eye(mut ctx Context) veb.Result {
 pub fn (mut app App) right_red_eye(mut ctx Context) veb.Result {
 	ctx.set_content_type(veb.mime_types[".png"] or { "" })
 	return ctx.ok(right_red_eye_png.to_string())
+}
+
+@['/assets/red_wolf_bust.png']
+pub fn (mut app App) red_wolf_bust(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".png"] or { "" })
+	return ctx.ok(red_wolf_bust_png.to_string())
 }
 
 @['/']
