@@ -35,8 +35,17 @@
     margin: 5px;
 }
 
+.navlink {
+	color: white;
+}
+
+h2 {
+	color: var(--link-color);
+}
+
 a {
 	border-bottom: none;
+	color: var(--link-color);
 }
 
 .hack h2 {
@@ -113,5 +122,9 @@ a.rss-button:hover {
     src: url("/assets/css/fonts/PixelOperatorMono.ttf") format("truetype");
     font-weight: normal;
     font-style: normal;
+}
+
+:root {
+	--link-color: #eb3a3a
 }
 
