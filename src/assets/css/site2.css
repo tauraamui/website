@@ -25,11 +25,11 @@
 .hack p, .hack a {
     font-family: "Pixel Operator Mono";
     font-size: 1.3em;
-    -webkit-font-smoothing: none;
 }
 
 body {
     background-color: black;
+    -webkit-font-smoothing: none;
 }
 
 nav {
