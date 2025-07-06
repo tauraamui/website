@@ -14,6 +14,9 @@ import db.pg
 
 const favicon_ico = $embed_file('./src/assets/imgs/favicon.ico')
 const wolf_face_png = $embed_file('./src/assets/imgs/black_wolf_face.png')
+const red_wolf_eyes_png = $embed_file('./src/assets/imgs/red-wolf-eyes.png')
+const left_red_eye_png = $embed_file('./src/assets/imgs/left-red-eye.png')
+const right_red_eye_png = $embed_file('./src/assets/imgs/right-red-eye.png')
 const hack_css = $embed_file('./src/assets/css/hack.css', .zlib)
 const dark_grey_css = $embed_file('./src/assets/css/dark-grey.css', .zlib)
 const site_css = $embed_file('./src/assets/css/site.css', .zlib)
@@ -324,6 +327,24 @@ pub fn (mut app App) fonts(mut ctx Context, name string) veb.Result {
 pub fn (mut app App) face(mut ctx Context) veb.Result {
 	ctx.set_content_type(veb.mime_types[".png"] or { "" })
 	return ctx.ok(wolf_face_png.to_string())
+}
+
+@['/assets/red_wolf_eyes.png']
+pub fn (mut app App) wolf_eyes(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".png"] or { "" })
+	return ctx.ok(red_wolf_eyes_png.to_string())
+}
+
+@['/assets/left_red_eye.png']
+pub fn (mut app App) left_red_eye(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".png"] or { "" })
+	return ctx.ok(left_red_eye_png.to_string())
+}
+
+@['/assets/right_red_eye.png']
+pub fn (mut app App) right_red_eye(mut ctx Context) veb.Result {
+	ctx.set_content_type(veb.mime_types[".png"] or { "" })
+	return ctx.ok(right_red_eye_png.to_string())
 }
 
 @['/']

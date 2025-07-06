@@ -1,9 +1,27 @@
+
+#logo {
+	display: flex;
+	justify-content: center;
+	gap: 80px;
+}
+
+#logo img {
+	height: 100px;
+}
+
+#tauraamuipic {
+	float: left;
+	margin: 10px 10px 5px 5px;
+	width: 100px;
+	height: 94px;
+}
+
 .container {
     max-width: 75rem;
 }
 
 .root {
-    padding: 20px 10px;
+    padding: 5px 20px 20px;
     font-size: 1.2rem;
 }
 
