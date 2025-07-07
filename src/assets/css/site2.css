@@ -96,7 +96,7 @@ a {
     line-height: .8em;
 }
 
-.hack p, .hack a {
+.hack p, .hack a, .hack span {
     font-family: "Pixel Operator Mono";
     font-size: 1.3em;
 }
