@@ -28,7 +28,7 @@ html {
     0,
     0,
     0,
-    0.71
+    0.75
   ); /* Dark transparent effect (adjust 0.5 for more/less opacity) */
   z-index: -998; /* IMPORTANT: Must be higher than #bg's z-index (-999)
                                 but lower than your main content's z-index (default 0 or higher) */
