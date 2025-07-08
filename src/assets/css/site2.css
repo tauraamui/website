@@ -73,8 +73,60 @@ html {
     margin: 5px;
 }
 
+.nav-bar {
+	display: flex;
+	flex-direction: column;
+}
+
 .navlink {
 	color: white;
+}
+
+.nav-bar .navlink:hover {
+    background-color: var(--link-color);
+}
+
+.digitized-header {
+	display: inline;
+}
+
+@media (max-width: 768px) {
+    .nav-bar {
+        flex-direction: row;
+        align-items: center;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+	.nav-bar .digitized-header {
+        display: none;
+    }
+
+    .nav-bar .navlink {
+        padding: 8px 12px;
+        border: 1px solid #383838;
+        border-radius: 3px;
+        background-color: rgba(0, 0, 0, 0.4);
+        text-decoration: none;
+        white-space: nowrap;
+    }
+
+    .nav-bar .navlink:hover {
+        background-color: rgba(235, 58, 58, 0.3);
+        border-color: var(--link-color);
+    }
+}
+
+@media (max-width: 480px) {
+    .nav-bar {
+        gap: 6px;
+    }
+
+    .nav-bar .navlink {
+        padding: 6px 8px;
+        font-size: 0.9em;
+    }
 }
 
 .wolf-icon {
@@ -98,16 +150,12 @@ a {
 
 .hack p, .hack a, .hack span {
     font-family: "Pixel Operator Mono";
-    font-size: 1.3em;
+    font-size: 1.1em;
 }
 
 body {
     background-color: black;
     -webkit-font-smoothing: none;
-}
-
-nav {
-    font-size: 1.8rem;
 }
 
 .hack li {
