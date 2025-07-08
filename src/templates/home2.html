@@ -37,7 +37,7 @@
           <div class="box" style="margin-top: 10px">
             <img src="/assets/red_wolf_bust.png" style="vertical-align: sub; margin-right: 5px;" class="wolf-icon">
             <h2 class="digitized-header" style="display:inline;">blog</h2>
-            <a href="/blog/feed.rss">
+            <a href="${rss_feed_url}">
                <img src="/assets/rss_feed_icon.svg" style="float: right; width: 16px; height: 16px;"></img>
             </a>
             <ul>
@@ -45,6 +45,19 @@
                <li>
                   <span>
                      <b><a href="/blog/${post.file_name}">${post.article_title}</a></b>&nbsp;&nbsp;—&nbsp;&nbsp;${post.formatted_date}
+                  </span>
+               </li>
+            @end
+            </ul>
+          </div>
+          <div class="box" style="margin-top: 10px">
+            <img src="/assets/red_wolf_bust.png" style="vertical-align: sub; margin-right: 5px;" class="wolf-icon">
+            <h2 class="digitized-header" style="display:inline;">projects</h2>
+            <ul>
+            @for project in projects
+               <li>
+                  <span>
+                     <b><a href="${project.url}">${project.title}</a></b><br>${project.description}
                   </span>
                </li>
             @end

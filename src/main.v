@@ -389,13 +389,33 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 	}
 }
 
+/*
+<a href="https://github.com/tauraamui/lilly" target="_blank">Lilly:</a>
+A TUI text editor designed as an alternative to Neovim
+<a href="https://github.com/tauraamui/bubble-note" target="_blank">Bubble Note:</a>
+Cross computer reminder/todo manager for my shell
+<a href="https://github.com/tauraamui/bluepanda" target="_blank">BluePanda:</a>
+A NoSQL database based on KVS with an ownership relationship model
+<a href="https://github.com/tauraamui/kvs" target="_blank">KVS:</a>
+Go library for easy and very fast storing and loading of structs to BadgerDB
+<a href="https://github.com/tauraamui/xerror" target="_blank">xerror:</a>
+Go library for tagging error strings with a `KIND` prefix for easier introspection
+<a href="https://github.com/tauraamui/starcloud" target="_blank">starcloud:</a>
+A desktop application/experiement to provide Excelike functionality across an infinite canvas
+<a href="https://github.com/tauraamui/website" target="_blank">website:</a>
+<h3>Links</h3>
+<ul>
+  <li><a href="https://github.com/tauraamui" target="_blank">Github</a></li>
+*/
+
 @['/v2']
 pub fn (mut app App) home2(mut ctx Context) veb.Result {
 	match ctx.req.url {
 		"/v2" {
 			tab_title := "tauraamui's neocities page"
 			posts := blogs_listing()
-			// rss_feed_url := "https://tauraamui.website/blog/feed.rss"
+			projects := projects_listing()
+			rss_feed_url := "/blog/feed.rss"
 			home_url := "${ctx.req.host}${ctx.req.url}"
 			blog_index_url := "/blog"
 			github_url := "https://github.com/tauraamui"
