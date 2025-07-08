@@ -3,7 +3,6 @@ html {
 	margin: 0;
 	padding: 0;
 	height: 100%;
-	overflow: hidden;
 }
 
 #bg {
@@ -145,6 +144,12 @@ a {
 .hack h2 {
     font-family: "Micro5";
     font-size: 3em;
+    line-height: .8em;
+}
+
+.hack h3 {
+    font-family: "Pixel Operator Mono";
+    font-size: 2.2em;
     line-height: .8em;
 }
 

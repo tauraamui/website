@@ -53,15 +53,16 @@
           <div class="box" style="margin-top: 10px">
             <img src="/assets/red_wolf_bust.png" style="vertical-align: sub; margin-right: 5px;" class="wolf-icon">
             <h2 class="digitized-header" style="display:inline;">projects</h2>
-            <ul>
-            @for project in projects
-               <li>
-                  <span>
-                     <b><a href="${project.url}">${project.title}</a></b><br>${project.description}
-                  </span>
-               </li>
-            @end
-            </ul>
+            <div style="margin-top: 20px">
+               @for project in projects
+               <span>
+               <a href="${project.url}"><h3>${project.title}</h3></a>
+               ${project.description}
+               </span>
+               <br>
+               <br>
+               @end
+            </div>
           </div>
        </div>
    </div>
