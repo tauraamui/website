@@ -134,12 +134,12 @@ html {
 }
 
 h2 {
-	color: var(--link-color);
+	color: var(--header-color);
 }
 
 a {
 	border-bottom: none;
-	color: var(--link-color);
+	color: var(--header-color);
 }
 
 .hack h2 {
@@ -215,6 +215,7 @@ a.rss-button:hover {
 }
 
 :root {
-	--link-color: #eb3a3a
+	--header-color: #eb3a3a;
+	--link-color: #ff2e88;
 }
 
