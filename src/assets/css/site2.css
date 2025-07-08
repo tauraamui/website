@@ -141,6 +141,11 @@ a {
 	color: var(--header-color);
 }
 
+a:hover h3 {
+	text-decoration: underline;
+	color: var(--link-color);
+}
+
 .hack h2 {
     font-family: "Micro5";
     font-size: 3em;
@@ -149,8 +154,8 @@ a {
 
 .hack h3 {
     font-family: "Pixel Operator Mono";
-    font-size: 2.2em;
     line-height: .8em;
+    font-size: 1.8rem;
 }
 
 .hack p, .hack a, .hack span {
@@ -165,11 +170,6 @@ body {
 
 .hack li {
     padding-bottom: .5rem;
-}
-
-.hack h3 {
-	word-spacing: -.3em;
-    font-size: 1.8rem;
 }
 
 .hack h4 {
