@@ -15,8 +15,13 @@ The current project homepage lives [here.](https://github.com/tauraamui/lilly)
 
 ## Jobs (Past/Present)
 
+**Charm_ - consultant/contractor**
+(October 2025 - present)
+
+Working on developer tools and libraries to empower the creation of modern and rich terminal based applications.
+
 **Novafutur (now Logispin/Logifuture) - Software Engineer**
-(October 2021 - Present)
+(October 2021 - 2025)
 
 High performance data ingestion and processing using Docker, Golang, GCP, K8, Pubsub, Redis, Clickhouse DB, BigQuery, Postgres.
 
