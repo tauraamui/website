@@ -103,7 +103,7 @@ function generateViewedPagesTable(data) {
     const table = document.createElement('table');
 
     // Add a class to the table
-    table.className = 'charts-css bar'; // Updated class name
+    table.className = 'charts-css bar show-labels'; // Updated class name
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
@@ -326,7 +326,7 @@ function generateLillyPingsPerDayTable(data) {
 function generateLillyBreakdownTable(containerId, data, labelField) {
     const container = document.getElementById(containerId);
     const table = document.createElement('table');
-    table.className = 'charts-css bar';
+    table.className = 'charts-css bar show-labels';
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
