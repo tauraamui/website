@@ -340,7 +340,7 @@ function generateLillyBreakdownTable(containerId, data, labelField) {
     thead.appendChild(headerRow);
     table.appendChild(thead);
 
-    const maxCount = Math.max(...data.map(item => item.count));
+    const maxCount = Math.max(...data.map(item => item.total));
     const tbody = document.createElement('tbody');
 
     data.forEach(item => {
@@ -350,12 +350,12 @@ function generateLillyBreakdownTable(containerId, data, labelField) {
         labelCell.textContent = item.label || 'unknown';
 
         const valueCell = document.createElement('td');
-        const percentageSize = maxCount > 0 ? (item.count / maxCount) : 0;
+        const percentageSize = maxCount > 0 ? (item.total / maxCount) : 0;
         valueCell.style.setProperty('--size', percentageSize.toFixed(2));
         if (percentageSize.toFixed(2) > 0.00) {
             const dataSpan = document.createElement('span');
             dataSpan.className = 'data';
-            dataSpan.innerHTML = item.count;
+            dataSpan.innerHTML = item.total;
             valueCell.appendChild(dataSpan);
         }
 
@@ -438,20 +438,20 @@ document.addEventListener("DOMContentLoaded", function() {
         const lilly_version_breakdown = `
             SELECT
                 version as label,
-                COUNT(*) as count
+                COUNT(*) as total
             FROM ?
             GROUP BY version
-            ORDER BY count DESC
+            ORDER BY total DESC
         `;
         generateLillyBreakdownTable('lilly-versions', alasql(lilly_version_breakdown, [lillyData]), 'Version');
 
         const lilly_os_breakdown = `
             SELECT
                 os as label,
-                COUNT(*) as count
+                COUNT(*) as total
             FROM ?
             GROUP BY os
-            ORDER BY count DESC
+            ORDER BY total DESC
         `;
         generateLillyBreakdownTable('lilly-os', alasql(lilly_os_breakdown, [lillyData]), 'OS');
     }
