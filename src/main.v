@@ -308,7 +308,7 @@ fn main() {
 	mut config := resolve_db_config() or { println("failed to resolve DB config: ${err}"); Config{ use_analytics: false } }
 	if config.use_analytics {
 		println("ANALYTICS ENABLED -> SETTING UP DB")
-		// create_tables(config) or { config.use_analytics = false; println("failed to setup DB: ${err}"); println("ANALYTICS FORCE DISABLED!") }
+		create_tables(config) or { config.use_analytics = false; println("failed to setup DB: ${err}"); println("ANALYTICS FORCE DISABLED!") }
 	}
 	mut app := new_app(config)
 	app.use(handler: before_request)
