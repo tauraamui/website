@@ -438,20 +438,20 @@ document.addEventListener("DOMContentLoaded", function() {
         const lilly_version_breakdown = `
             SELECT
                 version as label,
-                COUNT(*) as total
+                COUNT(*) as [total]
             FROM ?
             GROUP BY version
-            ORDER BY total DESC
+            ORDER BY [total] DESC
         `;
         generateLillyBreakdownTable('lilly-versions', alasql(lilly_version_breakdown, [lillyData]), 'Version');
 
         const lilly_os_breakdown = `
             SELECT
                 os as label,
-                COUNT(*) as total
+                COUNT(*) as [total]
             FROM ?
             GROUP BY os
-            ORDER BY total DESC
+            ORDER BY [total] DESC
         `;
         generateLillyBreakdownTable('lilly-os', alasql(lilly_os_breakdown, [lillyData]), 'OS');
     }
