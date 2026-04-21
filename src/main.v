@@ -656,17 +656,24 @@ fn (mut app App) serve_analytics(mut ctx Context) {
 	// is to do it ourselves manually
 	page := $tmpl("./templates/analytics.html").str()
 	page_char_size := page.len
-	iter_count := page_char_size / html_chunk_size
-	remaining_bytes := (page_char_size - (html_chunk_size * iter_count))
 	ctx.conn.write_string("HTTP/1.1 200 OK\r\nContent-type: text/html\r\nContent-length: ${page_char_size}\r\n\r\n") or { eprintln("failed to write HTML header to connection: ${err}"); return }
 
-	for x in 0..iter_count {
-		start := x * html_chunk_size
-		end := (x + 1) * 1024
-		ctx.conn.write(page[start..end].bytes()) or { eprintln("failed to write HTML segment ${start} to ${end} to connection: ${err}"); continue }
+	mut start := 0
+	for start < page_char_size {
+		mut end := start + html_chunk_size
+		if end > page_char_size {
+			end = page_char_size
+		}
+		if end <= start {
+			break
+		}
+		ctx.conn.write(page[start..end].bytes()) or {
+			eprintln("failed to write HTML segment ${start} to ${end} to connection: ${err}")
+			start = end
+			continue
+		}
+		start = end
 	}
-
-	ctx.conn.write(page[page_char_size - remaining_bytes..].bytes()) or { eprintln("failed to write HTML segment to connection: ${err}"); return }
 }
 
 @['/api/v1/lilly-ping'; post]
