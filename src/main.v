@@ -96,6 +96,25 @@ struct Metric {
 	country         ?string
 }
 
+@[table: 'lilly_pings']
+struct LillyPing {
+	id              string @[default: 'gen_random_uuid()'; primary; sql_type: 'uuid']
+	event_timestamp string @[default: 'CURRENT_TIMESTAMP'; sql_type: 'TIMESTAMP WITH TIME ZONE NOT NULL']
+	kind            string
+	version         string
+	os              string
+	arch            string
+	ip              ?string
+	country         ?string
+}
+
+struct LillyPingPayload {
+	kind    string
+	version string
+	os      string
+	arch    string
+}
+
 fn resolve_port() int {
 	port_arg := cmdline.option(os.args_after(""), "-port", "8080")
 	return strconv.atoi(port_arg) or {
@@ -117,6 +136,86 @@ fn create_tables(cfg Config) ! {
 	sql db {
 		create table Metric
 	} or { println("failed to create table: ${err}") }
+	sql db {
+		create table LillyPing
+	} or { println("failed to create table: ${err}") }
+}
+
+fn lilly_ping_rate_limited(cfg Config, ip string) bool {
+	db := pg.connect(pg.Config{
+		host: cfg.db_host
+		port: cfg.db_port
+		user: cfg.db_user
+		password: cfg.db_pass
+		dbname: cfg.db_name
+	}) or { println("unable to connect to DB for rate limit check: ${err}"); return false }
+	defer { db.close() or { eprintln("unable to close DB connection: ${err}") } }
+
+	rows := db.exec_param_many("SELECT COUNT(*) FROM lilly_pings WHERE ip = \$1 AND event_timestamp >= CURRENT_TIMESTAMP - INTERVAL '24 hours'",
+		[ip]
+	) or { println("failed to check rate limit: ${err}"); return false }
+
+	if rows.len > 0 {
+		if count_str := rows[0].vals[0] {
+			count := strconv.atoi(count_str) or { 0 }
+			return count > 0
+		}
+	}
+	return false
+}
+
+fn store_lilly_ping(cfg Config, ping LillyPing) {
+	db := pg.connect(pg.Config{
+		host: cfg.db_host
+		port: cfg.db_port
+		user: cfg.db_user
+		password: cfg.db_pass
+		dbname: cfg.db_name
+	}) or { println("unable to connect to DB: ${err}"); return }
+	defer { db.close() or { eprintln("unable to close DB connection: ${err}") } }
+	sql db {
+		insert ping into LillyPing
+	} or { println("failed to insert lilly ping into table: ${err}") }
+}
+
+fn query_lilly_pings(cfg Config) ?[]LillyPing {
+	db := pg.connect(pg.Config{
+		host: cfg.db_host
+		port: cfg.db_port
+		user: cfg.db_user
+		password: cfg.db_pass
+		dbname: cfg.db_name
+	}) or { eprintln("unable to connect to DB: ${err}"); return none }
+	defer { db.close() or { eprintln("unable to close DB conn: ${err}") } }
+
+	rows := db.exec("SELECT * FROM lilly_pings WHERE event_timestamp >= CURRENT_TIMESTAMP - INTERVAL '30 days'") or {
+		eprintln("failed to query lilly pings: ${err}")
+		return none
+	}
+
+	return rows.map(fn (row pg.Row) LillyPing {
+		values := row.vals
+
+		id_val := values[0]
+		event_timestamp_val := values[1]
+		kind_val := values[2]
+		version_val := values[3]
+		os_val := values[4]
+		arch_val := values[5]
+		ip_val := values[6]
+		country_val := values[7]
+
+		return LillyPing{
+			id:              id_val or { "" }
+			event_timestamp: event_timestamp_val or { "" }
+			kind:            kind_val or { "" }
+			version:         version_val or { "" }
+			os:              os_val or { "" }
+			arch:            arch_val or { "" }
+			ip:              ip_val or { "" }
+			country:         country_val or { "" }
+		}
+	})
 }
 
 fn store_metric(cfg Config, metric Metric) {
@@ -209,7 +308,7 @@ fn main() {
 	mut config := resolve_db_config() or { println("failed to resolve DB config: ${err}"); Config{ use_analytics: false } }
 	if config.use_analytics {
 		println("ANALYTICS ENABLED -> SETTING UP DB")
-		// create_tables(config) or { config.use_analytics = false; println("failed to setup DB: ${err}"); println("ANALYTICS FORCE DISABLED!") }
+		create_tables(config) or { config.use_analytics = false; println("failed to setup DB: ${err}"); println("ANALYTICS FORCE DISABLED!") }
 	}
 	mut app := new_app(config)
 	app.use(handler: before_request)
@@ -383,6 +482,7 @@ pub fn (mut app App) home(mut ctx Context) veb.Result {
 
 			tab_title := "tauraamui's website"
 			metric_data := ""
+			lilly_ping_data := ""
 			return $veb.html()
 		}
 		else { return ctx.not_found() }
@@ -414,6 +514,7 @@ pub fn (mut app App) home2(mut ctx Context) veb.Result {
 			github_url := "https://github.com/tauraamui"
 			guestbook_url := "https://tauraamui.atabook.org"
 			metric_data := ""
+			lilly_ping_data := ""
 			return $veb.html()
 		}
 		else { return ctx.not_found() }
@@ -435,6 +536,7 @@ pub fn (mut app App) blog(mut ctx Context) veb.Result {
 	tab_title := "Blog - tauraamui's website"
 	rss_feed_url := "https://tauraamui.website/blog/feed.rss"
 	metric_data := ""
+	lilly_ping_data := ""
 	return $veb.html()
 }
 
@@ -460,6 +562,7 @@ pub fn (mut app App) blog_view(mut ctx Context, name string) veb.Result {
 	ctx.use_giscus = true
 	tab_title := post.tab_title
 	metric_data := ""
+	lilly_ping_data := ""
 	header_content := $tmpl("./templates/header.html")
 	footer_content := $tmpl("./templates/footer.html")
 	// return app.html(post.content.replace("\$\{title\}", "${post.title} - tauraamui's website").replace("site.css", "blog.css"))
@@ -484,6 +587,7 @@ pub fn (mut app App) resume(mut ctx Context) veb.Result {
 
 	tab_title := "Resume - tauraamui's website'"
 	metric_data := ""
+	lilly_ping_data := ""
 	return $veb.html()
 }
 
@@ -505,6 +609,7 @@ pub fn (mut app App) contact(mut ctx Context) veb.Result {
 	discord := html.escape("https://discordapp.com/users/753689188213194862")
 	x       := html.escape("https://x.com/tauraamuix")
 	metric_data := ""
+	lilly_ping_data := ""
 	return $veb.html()
 }
 
@@ -535,9 +640,15 @@ fn (mut app App) serve_analytics(mut ctx Context) {
 		return
 	}
 
+	lilly_pings := query_lilly_pings(app.cfg) or {
+		eprintln("failed to query lilly ping data")
+		[]LillyPing{}
+	}
+
 	ctx.load_analytics = true
 	tab_title := "Analytics - tauraamui's website"
 	metric_data := base64.encode_str(json.encode(metrics))
+	lilly_ping_data := base64.encode_str(json.encode(lilly_pings))
 
 	// the size of the page is so large that the built in auto
 	// html rendering methods don't seem to send all of the data
@@ -545,17 +656,55 @@ fn (mut app App) serve_analytics(mut ctx Context) {
 	// is to do it ourselves manually
 	page := $tmpl("./templates/analytics.html").str()
 	page_char_size := page.len
-	iter_count := page_char_size / html_chunk_size
-	remaining_bytes := (page_char_size - (html_chunk_size * iter_count))
 	ctx.conn.write_string("HTTP/1.1 200 OK\r\nContent-type: text/html\r\nContent-length: ${page_char_size}\r\n\r\n") or { eprintln("failed to write HTML header to connection: ${err}"); return }
 
-	for x in 0..iter_count {
-		start := x * html_chunk_size
-		end := (x + 1) * 1024
-		ctx.conn.write(page[start..end].bytes()) or { eprintln("failed to write HTML segment ${start} to ${end} to connection: ${err}"); continue }
+	mut start := 0
+	for start < page_char_size {
+		mut end := start + html_chunk_size
+		if end > page_char_size {
+			end = page_char_size
+		}
+		if end <= start {
+			break
+		}
+		ctx.conn.write(page[start..end].bytes()) or {
+			eprintln("failed to write HTML segment ${start} to ${end} to connection: ${err}")
+			start = end
+			continue
+		}
+		start = end
+	}
+}
+
+@['/api/v1/lilly-ping'; post]
+pub fn (mut app App) lilly_ping(mut ctx Context) veb.Result {
+	body := ctx.req.data
+	payload := json.decode(LillyPingPayload, body) or {
+		ctx.res.set_status(http.Status.bad_request)
+		return ctx.text('error: invalid payload')
 	}
 
-	ctx.conn.write(page[page_char_size - remaining_bytes..].bytes()) or { eprintln("failed to write HTML segment to connection: ${err}"); return }
+	if payload.kind.len == 0 || payload.version.len == 0 {
+		ctx.res.set_status(http.Status.bad_request)
+		return ctx.text('error: missing required fields')
+	}
+
+	ip := ctx.ip()
+	if lilly_ping_rate_limited(app.cfg, ip) {
+		ctx.res.set_status(http.Status.too_many_requests)
+		return ctx.text('rate limited')
+	}
+
+	spawn store_lilly_ping(app.cfg, LillyPing{
+		kind:    payload.kind
+		version: payload.version
+		os:      payload.os
+		arch:    payload.arch
+		ip:      ip
+		country: ctx.req.header.get_custom("CF-IPCountry", http.HeaderQueryConfig{ exact: true }) or { "" }
+	})
+
+	return ctx.text('ok')
 }
 
 @['/theme/:mode'; post]

@@ -103,7 +103,7 @@ function generateViewedPagesTable(data) {
     const table = document.createElement('table');
 
     // Add a class to the table
-    table.className = 'charts-css bar'; // Updated class name
+    table.className = 'charts-css bar show-labels'; // Updated class name
 
     const thead = document.createElement('thead');
     const headerRow = document.createElement('tr');
@@ -254,6 +254,120 @@ function generateViewsPerDayTable(data) {
 }
 
 
+function generateLillyPingCount(data) {
+    const container = document.getElementById('lilly-ping-count');
+    container.innerHTML = data.length;
+}
+
+function generateLillyPingsPerDayTable(data) {
+    const styles = document.createElement('style');
+    styles.innerHTML = '#lilly-pings-per-day .column { --labels-size: 3.5rem; }'
+    const container = document.getElementById('lilly-pings-per-day');
+    container.appendChild(styles);
+    const table = document.createElement('table');
+
+    table.className = 'charts-css column show-labels';
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    const headers = ['Launches', 'Date'];
+    headers.forEach(headerText => {
+        const header = document.createElement('th');
+        header.setAttribute('scope', 'col');
+        header.textContent = headerText;
+        headerRow.appendChild(header);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const maxViews = Math.max(...data.map(item => item.views));
+    const tbody = document.createElement('tbody');
+    const monthNames = [
+        "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+        "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+    ];
+
+    data = data.map(item => {
+        const [year, month, day] = item.e_date.split('.').map(Number);
+        const fullYear = year < 50 ? 2000 + year : 1900 + year;
+        const dateObj = new Date(fullYear, month - 1, day);
+        return { ...item, e_date: dateObj };
+    });
+    data = data.sort((a, b) => a.e_date - b.e_date);
+    let lastYear = null;
+    data.map(item => {
+        const dateObj = item.e_date;
+        var formattedDate = `${String(dateObj.getDate()).padStart(2, '0')} ${monthNames[dateObj.getMonth()]} ${lastYear === null || lastYear === dateObj.getFullYear() ? '' : `\n${dateObj.getFullYear()}`}`;
+        lastYear = dateObj.getFullYear();
+        item.e_date = formattedDate;
+    });
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        const th = document.createElement('th');
+        th.scope = 'row';
+        th.innerHTML = item.e_date;
+        row.appendChild(th);
+
+        const td = document.createElement('td');
+        const percentageSize = maxViews > 0 ? (item.views / maxViews) : 0;
+        td.style.setProperty('--size', percentageSize.toFixed(2));
+        const dataSpan = document.createElement('span');
+        dataSpan.className = 'data';
+        dataSpan.innerHTML = item.views;
+        td.appendChild(dataSpan);
+        row.appendChild(td);
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    container.appendChild(table);
+}
+
+function generateLillyBreakdownTable(containerId, data, labelField) {
+    const container = document.getElementById(containerId);
+    const table = document.createElement('table');
+    table.className = 'charts-css bar show-labels';
+
+    const thead = document.createElement('thead');
+    const headerRow = document.createElement('tr');
+    const headers = [labelField, 'Count'];
+    headers.forEach(headerText => {
+        const header = document.createElement('th');
+        header.setAttribute('scope', 'col');
+        header.textContent = headerText;
+        headerRow.appendChild(header);
+    });
+    thead.appendChild(headerRow);
+    table.appendChild(thead);
+
+    const maxCount = Math.max(...data.map(item => item.total));
+    const tbody = document.createElement('tbody');
+
+    data.forEach(item => {
+        const row = document.createElement('tr');
+        const labelCell = document.createElement('th');
+        labelCell.setAttribute('scope', 'row');
+        labelCell.textContent = item.label || 'unknown';
+
+        const valueCell = document.createElement('td');
+        const percentageSize = maxCount > 0 ? (item.total / maxCount) : 0;
+        valueCell.style.setProperty('--size', percentageSize.toFixed(2));
+        if (percentageSize.toFixed(2) > 0.00) {
+            const dataSpan = document.createElement('span');
+            dataSpan.className = 'data';
+            dataSpan.innerHTML = item.total;
+            valueCell.appendChild(dataSpan);
+        }
+
+        row.appendChild(labelCell);
+        row.appendChild(valueCell);
+        tbody.appendChild(row);
+    });
+
+    table.appendChild(tbody);
+    container.appendChild(table);
+}
+
 document.addEventListener("DOMContentLoaded", function() {
     const base64Data = document.getElementById('jsonData').textContent;
     const jsonData = atob(base64Data); // Decode Base64
@@ -303,4 +417,42 @@ document.addEventListener("DOMContentLoaded", function() {
         ORDER BY DATE(event_timestamp)::date
     `;
 	generateViewsPerDayTable(alasql(total_views_per_day, [data]));
+
+    // Lilly editor usage data
+    const lillyBase64 = document.getElementById('lillyPingData').textContent;
+    if (lillyBase64 && lillyBase64.length > 0) {
+        const lillyData = JSON.parse(atob(lillyBase64));
+
+        generateLillyPingCount(lillyData);
+
+        const lilly_pings_per_day = `
+            SELECT
+                DATE(event_timestamp)::date as e_date,
+                COUNT(*) as views
+            FROM ?
+            GROUP BY DATE(event_timestamp)::date
+            ORDER BY DATE(event_timestamp)::date
+        `;
+        generateLillyPingsPerDayTable(alasql(lilly_pings_per_day, [lillyData]));
+
+        const lilly_version_breakdown = `
+            SELECT
+                version as label,
+                COUNT(*) as [total]
+            FROM ?
+            GROUP BY version
+            ORDER BY [total] DESC
+        `;
+        generateLillyBreakdownTable('lilly-versions', alasql(lilly_version_breakdown, [lillyData]), 'Version');
+
+        const lilly_os_breakdown = `
+            SELECT
+                os as label,
+                COUNT(*) as [total]
+            FROM ?
+            GROUP BY os
+            ORDER BY [total] DESC
+        `;
+        generateLillyBreakdownTable('lilly-os', alasql(lilly_os_breakdown, [lillyData]), 'OS');
+    }
 });

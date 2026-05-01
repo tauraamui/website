@@ -108,3 +108,13 @@ h1, h2, h3, h4, h5, h6 {
     min-width: 75%;
   }
 }
+
+#lilly-versions .bar,
+#lilly-os .bar {
+  --labels-size: 120px;
+}
+
+#lilly-versions .bar th,
+#lilly-os .bar th {
+  white-space: nowrap;
+}
